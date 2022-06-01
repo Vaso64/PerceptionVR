@@ -69,11 +69,11 @@ namespace PerceptionVR.Portal
             Pose pairPose;
             
             // Calculate delta
-            Vector3 positionDelta = pose.position - transform.position;
-            Quaternion portalRotationDelta = portalPair.rotation * Quaternion.Inverse(transform.rotation) * Quaternion.Euler(0, 180, 0);
+            Vector3 positionDelta = transform.position - pose.position;
+            Quaternion portalRotationDelta = Quaternion.Inverse(portalPair.rotation) * transform.rotation;
 
             // Position camera
-            pairPose.position = portalPair.position + portalRotationDelta * positionDelta;
+            pairPose.position = portalPair.position - portalRotationDelta * positionDelta;
             pairPose.rotation = portalRotationDelta * pose.rotation;
 
             return pairPose;
