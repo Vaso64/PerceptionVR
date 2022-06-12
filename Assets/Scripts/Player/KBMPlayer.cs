@@ -11,18 +11,18 @@ namespace PerceptionVR.Player
         public float moveSpeed;
 
         [Range(0, 3)]
-        public float moveSpeedMultiplier;
+        public float sprintMultiplier;
 
         [Range(0, 1)]
         public float lookSpeed;
 
-        private PlayerInputAction.PlayerActions playerActions;
+        private PlayerInputAction.KBMPlayerActions playerActions;
 
         private void Awake()
         {
             var playerInputAction = new PlayerInputAction();
             playerInputAction.Enable();
-            this.playerActions = playerInputAction.Player;
+            this.playerActions = playerInputAction.KBMPlayer;
         }
 
         protected override void Update()
@@ -39,7 +39,7 @@ namespace PerceptionVR.Player
 
         public void Move(Vector3 direction, bool sprint)
         {
-            direction *= Time.deltaTime * moveSpeed * (sprint ? moveSpeedMultiplier : 1);
+            direction *= Time.deltaTime * moveSpeed * (sprint ? sprintMultiplier : 1);
 
             // Forward & Backward
             transform.position += transform.forward * direction.z;

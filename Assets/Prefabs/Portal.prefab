@@ -87,8 +87,9 @@ GameObject:
   - component: {fileID: 2492407617453771005}
   - component: {fileID: 6110820974279912162}
   - component: {fileID: 2669493002730786114}
-  - component: {fileID: 5865015079928212887}
   - component: {fileID: 4688924218690209829}
+  - component: {fileID: 5865015079928212887}
+  - component: {fileID: 6415556976443911360}
   m_Layer: 0
   m_Name: Portal
   m_TagString: Untagged
@@ -162,19 +163,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &5865015079928212887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3519204814406711909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9431e7139ea0a7744819b1252fc7a24c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  portalPair: {fileID: 0}
 --- !u!65 &4688924218690209829
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -188,6 +176,31 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.1, y: 1, z: 0.25}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5865015079928212887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519204814406711909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9431e7139ea0a7744819b1252fc7a24c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalPair: {fileID: 0}
+--- !u!114 &6415556976443911360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3519204814406711909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a9fc372221269b499574118c3c6c5e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8693925454754278176
 GameObject:
   m_ObjectHideFlags: 0

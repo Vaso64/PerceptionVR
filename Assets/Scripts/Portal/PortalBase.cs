@@ -8,10 +8,11 @@ namespace PerceptionVR.Portal
 {
     public class PortalBase : MonoBehaviour
     {
+        public delegate void OnTeleportDelegate();
+
+        public Dictionary<Transform, OnTeleportDelegate> OnTeleport = new Dictionary<Transform, OnTeleportDelegate>();
+
         public Transform portalPair;
-
-        private Camera portalCamera;
-
 
         private List<VicimityObject> portalVicimity = new List<VicimityObject>();
 
@@ -28,10 +29,6 @@ namespace PerceptionVR.Portal
 
         protected virtual void Start()
         {
-            portalCamera = GetComponentInChildren<Camera>();
-            portalCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
-            gameObject.GetComponent<Renderer>().material.mainTexture = portalCamera.targetTexture;
-
             StartCoroutine(VicimityTracking());
         }
         
@@ -46,7 +43,7 @@ namespace PerceptionVR.Portal
                     // Object passed through portal
                     if (currentDot < 0 && vicimityObject.dot > 0)
                     {
-                        Debug.Log($"{vicimityObject.transform.name} passed through {transform.name}");
+                        
                         Teleport(vicimityObject.transform);
                     }
 
@@ -56,40 +53,36 @@ namespace PerceptionVR.Portal
             }
         }
         
-        private void Teleport(Transform transform)
+        private void Teleport(Transform teleportTransform)
         {
-            var pairPose = CalculatePairPose(new Pose(transform.position, transform.rotation));
+            Debug.Log($"{teleportTransform.name} passed through {transform.name}");
             
-            transform.position = pairPose.position;
-            transform.rotation = pairPose.rotation;
+            var pairPose = CalculatePairPose(new Pose(teleportTransform.position, teleportTransform.rotation));
+            
+            teleportTransform.position = pairPose.position;
+            teleportTransform.rotation = pairPose.rotation;
+
+            
         }
 
         public Pose CalculatePairPose(Pose pose)
         {
-            Pose pairPose;
+            Pose resultPose;
             
-            // Calculate delta
-            Vector3 positionDelta = transform.position - pose.position;
-            Quaternion portalRotationDelta = Quaternion.Inverse(portalPair.rotation) * transform.rotation;
+            // Calculate position
+            Vector3 positionDelta = pose.position - transform.position;
+            Quaternion portalRotationDelta = portalPair.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
+            resultPose.position = portalPair.position + portalRotationDelta * positionDelta;
 
-            // Position camera
-            pairPose.position = portalPair.position - portalRotationDelta * positionDelta;
-            pairPose.rotation = portalRotationDelta * pose.rotation;
+            // Rotation rotation
+            Quaternion rotationDelta = Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation) * pose.rotation;
+            resultPose.rotation = portalPair.rotation * rotationDelta;
 
-            return pairPose;
+            return resultPose;
         }
 
 
-        public void RenderFromPose(Pose pose)
-        {
-            var pairPose = CalculatePairPose(pose);
 
-            portalCamera.transform.position = pairPose.position;
-            portalCamera.transform.rotation = pairPose.rotation;
-
-            // Render
-            portalCamera.Render();
-        }
 
         private void OnTriggerEnter(Collider other)
         {

@@ -7,12 +7,12 @@ namespace PerceptionVR.Player
 {
     public class PlayerBase : MonoBehaviour
     {
-        List<PortalBase> portalList;
+        List<PortalRenderer> portalList;
         // Start is called before the first frame update
         protected virtual void Start()
         {
-            portalList = new List<PortalBase>();
-            portalList.AddRange(FindObjectsOfType<PortalBase>());
+            portalList = new List<PortalRenderer>();
+            portalList.AddRange(FindObjectsOfType<PortalRenderer>());
         }
 
         // Update is called once per frame
