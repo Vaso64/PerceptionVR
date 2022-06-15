@@ -8,13 +8,13 @@ namespace PerceptionVR.Portal
 {
     public class PortalBase : MonoBehaviour
     {
-        public delegate void OnTeleportDelegate();
+        public delegate void OnTeleportDelegate(Quaternion portalDelta);
 
-        public Dictionary<Transform, OnTeleportDelegate> OnTeleport = new Dictionary<Transform, OnTeleportDelegate>();
+        public static Dictionary<Transform, OnTeleportDelegate> OnTeleport = new();
 
         public Transform portalPair;
 
-        private List<VicimityObject> portalVicimity = new List<VicimityObject>();
+        private List<VicimityObject> portalVicimity = new();
 
         record VicimityObject
         {
@@ -42,10 +42,7 @@ namespace PerceptionVR.Portal
 
                     // Object passed through portal
                     if (currentDot < 0 && vicimityObject.dot > 0)
-                    {
-                        
                         Teleport(vicimityObject.transform);
-                    }
 
                     vicimityObject.dot = currentDot;  
                 }
@@ -56,31 +53,32 @@ namespace PerceptionVR.Portal
         private void Teleport(Transform teleportTransform)
         {
             Debug.Log($"{teleportTransform.name} passed through {transform.name}");
-            
-            var pairPose = CalculatePairPose(new Pose(teleportTransform.position, teleportTransform.rotation));
-            
+
+            Quaternion portalRotationDelta;
+            var pairPose = CalculatePairPose(new Pose(teleportTransform.position, teleportTransform.rotation), out portalRotationDelta);
+
             teleportTransform.position = pairPose.position;
             teleportTransform.rotation = pairPose.rotation;
 
-            
+            OnTeleport[teleportTransform]?.Invoke(portalRotationDelta);
         }
 
-        public Pose CalculatePairPose(Pose pose)
+        
+        public Pose CalculatePairPose(Pose pose) => CalculatePairPose(pose, out _);
+
+        public Pose CalculatePairPose(Pose pose, out Quaternion portalRotationDelta)
         {
             Pose resultPose;
-            
+            portalRotationDelta = portalPair.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
+
             // Calculate position
-            Vector3 positionDelta = pose.position - transform.position;
-            Quaternion portalRotationDelta = portalPair.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
-            resultPose.position = portalPair.position + portalRotationDelta * positionDelta;
+            resultPose.position = portalPair.position + portalRotationDelta * (pose.position - transform.position);
 
             // Rotation rotation
-            Quaternion rotationDelta = Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation) * pose.rotation;
-            resultPose.rotation = portalPair.rotation * rotationDelta;
+            resultPose.rotation = portalRotationDelta * pose.rotation;
 
             return resultPose;
         }
-
 
 
 
@@ -99,9 +97,9 @@ namespace PerceptionVR.Portal
             // Portable object left the vicimity / got teleported
             if (MultiTag.ObjectHasTag(other, Tag.Teleportable))
             {
+                Debug.Log($"{other.name} left {transform.name} vicimity.");
                 portalVicimity.RemoveAll(x => x.transform == other.transform);
             }
-
         }
 
         private float PortalDot(Transform vicimityObject) => Vector3.Dot(transform.forward, transform.position - vicimityObject.position);
