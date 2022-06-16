@@ -33,7 +33,7 @@ namespace PerceptionVR.Player
         private void OnTeleport(Quaternion portalDelta) => worldRotation = portalDelta * worldRotation;
         
 
-        protected override void Update()
+        protected virtual void Update()
         {
             // Controls
             if(!playerActions.ControlBlock.IsPressed())
@@ -43,8 +43,6 @@ namespace PerceptionVR.Player
             }
 
             Debug.DrawRay(transform.position, this.worldRotation * Vector3.up, Color.red);
-
-            base.Update();
         }
 
         public void Move(Vector3 direction, bool sprint)

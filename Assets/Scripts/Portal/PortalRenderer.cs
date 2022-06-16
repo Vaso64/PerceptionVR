@@ -7,6 +7,8 @@ namespace PerceptionVR.Portal
     [RequireComponent(typeof(PortalBase))]
     public class PortalRenderer : MonoBehaviour
     {
+        [SerializeField]
+        private Renderer portalRend;
 
         private PortalBase portalBase;
         
@@ -17,7 +19,7 @@ namespace PerceptionVR.Portal
             portalBase = GetComponent<PortalBase>();
             portalCamera = GetComponentInChildren<Camera>();
             portalCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
-            gameObject.GetComponent<Renderer>().material.mainTexture = portalCamera.targetTexture;
+            portalRend.material.mainTexture = portalCamera.targetTexture;
         }
 
         public void RenderFromPose(Pose pose)
