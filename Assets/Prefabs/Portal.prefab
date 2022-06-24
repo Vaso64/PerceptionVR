@@ -40,7 +40,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1116448689126889687}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 2
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
@@ -151,6 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   portalRend: {fileID: 7679456692946978909}
+  portalCollider: {fileID: 5189768356145301672}
+  portalRendererPair: {fileID: 0}
 --- !u!1 &4316051025611887685
 GameObject:
   m_ObjectHideFlags: 0
@@ -162,6 +164,7 @@ GameObject:
   - component: {fileID: 5441783008315836083}
   - component: {fileID: 620418503305124133}
   - component: {fileID: 7679456692946978909}
+  - component: {fileID: 5189768356145301672}
   m_Layer: 0
   m_Name: PortalRend
   m_TagString: Untagged
@@ -234,6 +237,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5189768356145301672
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4316051025611887685}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 0.001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8693925454754278176
 GameObject:
   m_ObjectHideFlags: 0

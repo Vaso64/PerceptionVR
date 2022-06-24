@@ -74,3 +74,4 @@ crashlytics-build.properties
 # VS
 .vscode/
 .vsconfig
+omnisharp.json
