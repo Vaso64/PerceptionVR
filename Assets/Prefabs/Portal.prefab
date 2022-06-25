@@ -152,7 +152,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalRend: {fileID: 7679456692946978909}
   portalCollider: {fileID: 5189768356145301672}
-  portalRendererPair: {fileID: 0}
 --- !u!1 &4316051025611887685
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,8 +247,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 0.001}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 0.01}
+  m_Center: {x: 0, y: 0, z: 0.005}
 --- !u!1 &8693925454754278176
 GameObject:
   m_ObjectHideFlags: 0
