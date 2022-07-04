@@ -16,6 +16,8 @@ namespace PerceptionVR.Portal
 
         private List<VicimityObject> portalVicimity = new();
 
+        private Plane portalPlane = new Plane();
+
         record VicimityObject
         {
             public VicimityObject(Transform transform, float dot)
@@ -30,6 +32,12 @@ namespace PerceptionVR.Portal
         protected virtual void Start()
         {
             StartCoroutine(VicimityTracking());
+        }
+
+        protected virtual void Update()
+        {
+            if (transform.hasChanged)
+                portalPlane.SetNormalAndPosition(transform.forward, transform.position);
         }
         
         private IEnumerator VicimityTracking()
@@ -60,7 +68,9 @@ namespace PerceptionVR.Portal
             teleportTransform.position = pairPose.position;
             teleportTransform.rotation = pairPose.rotation;
 
-            OnTeleport[teleportTransform]?.Invoke(portalRotationDelta);
+            // Notify teleported object
+            if(OnTeleport.ContainsKey(teleportTransform))
+                OnTeleport[teleportTransform]?.Invoke(portalRotationDelta);
         }
 
         
@@ -87,11 +97,20 @@ namespace PerceptionVR.Portal
             // Portable object nearby
             if(MultiTag.ObjectHasTag(other, Tag.Teleportable))
             {
+                // Start tracking
                 Debug.Log($"{other.name} entered {transform.name} vicimity.");
                 portalVicimity.Add(new VicimityObject(other.transform, PortalDot(other.transform)));
-            }   
-        }
 
+                // Set clip plane
+                var objectRend = other.GetComponent<Renderer>();
+                if (objectRend != null && objectRend.material.HasProperty("_ClipPlane"))
+                    objectRend.material.SetVector("_ClipPlane", new Vector4(portalPlane.normal.x,
+                                                                            portalPlane.normal.y,
+                                                                            portalPlane.normal.z,
+                                                                            portalPlane.distance));
+            }
+        }
+        
         private void OnTriggerExit(Collider other)
         {
             // Portable object left the vicimity / got teleported

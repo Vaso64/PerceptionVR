@@ -1,10 +1,9 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "ProBuilder/UnlitVertexColorTexture"
+Shader "PerceptionVR/UnlitVertexColorTexture"
 {
     Properties
     {
         _MainTex("Albedo (RGB)", 2D) = "white" {}
+		_ClipPlane ("Clip plane", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -33,6 +32,7 @@ Shader "ProBuilder/UnlitVertexColorTexture"
             {
                 float4 pos : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                float3 worldPos : TEXCOORD1;
                 float4 color : COLOR;
             };
 
@@ -45,12 +45,17 @@ Shader "ProBuilder/UnlitVertexColorTexture"
                 o.pos = UnityObjectToClipPos(v.vertex);
 				o.uv = v.texcoord0.xy;
                 o.color = v.color;
+				o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 
                 return o;
             }
 
+			float4 _ClipPlane;
+
             half4 frag (v2f i) : COLOR
             {
+			    float distanceFromPlane = dot(i.worldPos, _ClipPlane.xyz) + _ClipPlane.w;
+				clip(-distanceFromPlane);
                 return tex2D(_MainTex, i.uv) * i.color;
             }
 
