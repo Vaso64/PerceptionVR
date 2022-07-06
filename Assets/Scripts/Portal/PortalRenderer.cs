@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using PerceptionVR.Extensions;
+using PerceptionVR.Global;
 using PerceptionVR.Player;
 using UnityEngine;
 using System.Linq;
@@ -12,8 +13,9 @@ namespace PerceptionVR.Portal
     {
         private const int recurssionLimit = 3;
 
-        private RenderTexture[] RTArray;
-        private Stack<int> RTArrayIndexStack;
+        private RenderTexture[] RTArray = new RenderTexture[recurssionLimit + 1];
+        private Stack<int> RTArrayIndexStack = new Stack<int>(recurssionLimit);
+        private bool RTArrayAlocated = false;
 
         [SerializeField]
         private Renderer portalRend;
@@ -35,24 +37,36 @@ namespace PerceptionVR.Portal
             portalCollider = GetComponentInChildren<Collider>();
             allPortalRenderers = FindObjectsOfType<PortalRenderer>();
 
-            // Create portal renderer states array
-            RTArray = new RenderTexture[recurssionLimit + 1];
-            RTArrayIndexStack = new Stack<int>(recurssionLimit);
-            for (int i = 0; i <= recurssionLimit; i++)
-                RTArray[i] = new RenderTexture(Screen.width, Screen.height, 24);
-
             // Register to events
             PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
+            RenderingManagment.OnResolutionChange += AllocateRTArray;
+        }
+
+        private void AllocateRTArray(Vector2Int resolution)
+        {
+            // Free old RTs
+            if (RTArrayAlocated)
+                for (int i = 0; i <= recurssionLimit; i++)
+                        RTArray[i].Release();
+
+            // Allocate
+            RTArrayAlocated = true;
+            for (int i = 0; i <= recurssionLimit; i++)
+                RTArray[i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.ARGB32);
         }
 
 
         private void OnBeforePlayerCameraRenderCallback(Camera playerCamera)
         {
-            var visibleArea = new Rect(0, 0, Screen.width, Screen.height);
+            // Skip if not yet allocated
+            if(!RTArrayAlocated)
+                return;
+            
+            var visibleArea = new Rect(0, 0, RenderingManagment.currentResolution.x, RenderingManagment.currentResolution.y);
             var playerCameraFrustum = GeometryUtility.CalculateFrustumPlanes(playerCamera);
             var playerCameraPose = new Pose(playerCamera.transform.position, playerCamera.transform.rotation);
             if(IsVisibleFromCamera(playerCamera, playerCameraFrustum, visibleArea))
-                RenderPortal(playerCameraPose, visibleArea, 0);
+                RenderPortal(playerCameraPose, visibleArea, playerCamera.fieldOfView, 0);
         }
 
 
@@ -65,7 +79,7 @@ namespace PerceptionVR.Portal
         }
 
         // Recursivly renders portals
-        public void RenderPortal(Pose fromPose, Rect visibleArea, int recurssionDepth)
+        public void RenderPortal(Pose fromPose, Rect visibleArea, float fov, int recurssionDepth)
         {
             // Calculate visible area
             portalCamera.transform.SetPositionAndRotation(fromPose.position, fromPose.rotation);
@@ -74,6 +88,7 @@ namespace PerceptionVR.Portal
             // Position camera & calculate frustum
             var pairPose = portalBase.CalculatePairPose(fromPose);
             portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
+            portalCamera.fieldOfView = fov;
             var portalCameraFrustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
             
 
@@ -83,7 +98,7 @@ namespace PerceptionVR.Portal
                 visiblePortalRenderers.AddRange(allPortalRenderers.Where(pr => pr.IsVisibleFromCamera(portalCamera, portalCameraFrustum, visibleArea)));
 
             // Render others
-            visiblePortalRenderers.ForEach(pr => pr.RenderPortal(pairPose, visibleArea, recurssionDepth + 1));
+            visiblePortalRenderers.ForEach(pr => pr.RenderPortal(pairPose, visibleArea, fov, recurssionDepth + 1));
 
             // Render self
             portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);

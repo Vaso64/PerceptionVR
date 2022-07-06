@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PerceptionVR.Common
+namespace PerceptionVR.Global
 {
     public class GlobalSettings : MonoBehaviour
     {

@@ -9,16 +9,13 @@ namespace PerceptionVR.Player
     {
         // XR References
         [SerializeField]
-        private Transform LeftEye;
+        private Transform head;
 
         [SerializeField]
-        private Transform RightEye;
+        private Transform leftHand;
 
         [SerializeField]
-        private Transform LeftHand;
-
-        [SerializeField]
-        private Transform RightHand;
+        private Transform rightHand;
 
 
         private PlayerInputAction.VRPlayerActions playerActions;
@@ -28,6 +25,21 @@ namespace PerceptionVR.Player
             var playerInputAction = new PlayerInputAction();
             playerInputAction.Enable();
             this.playerActions = playerInputAction.VRPlayer;
+        }
+
+        private void Update()
+        {
+            // Left Hand
+            leftHand.localPosition = playerActions.LeftHandPosition.ReadValue<Vector3>();
+            leftHand.localRotation = playerActions.LeftHandRotation.ReadValue<Quaternion>();
+
+            // Right Hand
+            rightHand.localPosition = playerActions.RightHandPosition.ReadValue<Vector3>();
+            rightHand.localRotation = playerActions.RightHandRotation.ReadValue<Quaternion>();
+
+            // Head
+            head.localPosition = playerActions.HeadPosition.ReadValue<Vector3>();
+            head.localRotation = playerActions.HeadRotation.ReadValue<Quaternion>();
         }
 
     }
