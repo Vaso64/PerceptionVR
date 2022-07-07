@@ -7,7 +7,7 @@ namespace PerceptionVR.Global
         void Awake()
         {
             // Cap the framerate to screen refresh rate
-            Application.targetFrameRate = Screen.currentResolution.refreshRate;
+            //Application.targetFrameRate = Screen.currentResolution.refreshRate;
         }
     }
 }

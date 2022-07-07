@@ -248,6 +248,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "042e1689-657d-437b-8a00-24154c6fa0c2",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Rotate",
+                    "type": "Value",
+                    "id": "4baf5008-5eef-46ff-8e31-2d3c4adb1ea6",
+                    "expectedControlType": "Vector2",
+                    "processors": "StickDeadzone",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -345,7 +363,7 @@
                     "path": "<XRHMD>/devicePosition",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "VR",
                     "action": "HeadPosition",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -356,8 +374,30 @@
                     "path": "<XRHMD>/deviceRotation",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "VR",
                     "action": "HeadRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f55d6462-d54c-4532-b1c2-d0d60f2759d9",
+                    "path": "<XRController>{LeftHand}/thumbstick",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": "VR",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "103599a4-4b1b-4263-865d-36cffb67fdeb",
+                    "path": "<XRController>{RightHand}/thumbstick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "VR",
+                    "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
