@@ -1,0 +1,113 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class VRPlayerInput : MonoBehaviour
+{
+    private PlayerInputAction.VRPlayerActions playerActions;
+    
+    [Header("Debugging")]
+    [SerializeField] private bool debugMode = false;
+    [Space(8)]
+    [SerializeField] private Transform debugHmd;
+    [SerializeField] private Transform debugLeftController;
+    [SerializeField] private Transform debugRightController;
+    [SerializeField] private Vector2 debugMove;
+    [SerializeField] private Vector2 debugRotate;
+    
+    [HideInInspector] public Pose hmdPose;
+    [HideInInspector] public Pose hmdDeltaPose;
+    [HideInInspector] public Pose leftControllerPose;
+    [HideInInspector] public Pose leftControllerDeltaPose;
+    [HideInInspector] public Pose rightControllerPose;
+    [HideInInspector] public Pose rightControllerDeltaPose;
+    [HideInInspector] public Vector2 move;
+    [HideInInspector] public Vector2 rotate;
+    
+    private void Awake()
+    {
+        var playerInputAction = new PlayerInputAction();
+        playerInputAction.Enable();
+        this.playerActions = playerInputAction.VRPlayer;
+        Fetch();
+    }
+
+    public void Fetch()
+    {
+        if(debugMode) FetchDebugInput();
+        else          FetchRealInput();
+    }
+
+    private void FetchRealInput()
+    {
+        Vector3 tempPosition; 
+        Quaternion tempRotation;
+        
+        // HMD position
+        tempPosition = playerActions.HMDPosition.ReadValue<Vector3>();
+        hmdDeltaPose.position = tempPosition - hmdPose.position;
+        hmdPose.position = tempPosition;
+        
+        // HMD rotation
+        tempRotation = playerActions.HMDRotation.ReadValue<Quaternion>();
+        hmdDeltaPose.rotation = tempRotation * Quaternion.Inverse(hmdPose.rotation);
+        hmdPose.rotation = tempRotation;
+        
+        // Left controller position
+        tempPosition = playerActions.LeftControllerPosition.ReadValue<Vector3>();
+        leftControllerDeltaPose.position = tempPosition - leftControllerPose.position;
+        leftControllerPose.position = tempPosition;
+        
+        // Left controller rotation
+        tempRotation = playerActions.LeftControllerRotation.ReadValue<Quaternion>();
+        leftControllerDeltaPose.rotation = tempRotation * Quaternion.Inverse(leftControllerPose.rotation);
+        leftControllerPose.rotation = tempRotation;
+        
+        // Right controller position
+        tempPosition = playerActions.RightControllerPosition.ReadValue<Vector3>();
+        rightControllerDeltaPose.position = tempPosition - rightControllerPose.position;
+        rightControllerPose.position = tempPosition;
+        
+        // Right controller rotation
+        tempRotation = playerActions.RightControllerRotation.ReadValue<Quaternion>();
+        rightControllerDeltaPose.rotation = tempRotation * Quaternion.Inverse(rightControllerPose.rotation);
+        rightControllerPose.rotation = tempRotation;
+        
+        // Joysticks
+        move = playerActions.Move.ReadValue<Vector2>();
+        rotate = playerActions.Rotate.ReadValue<Vector2>();
+    }
+
+    private void FetchDebugInput()
+    {
+        // HMD position
+        hmdDeltaPose.position = debugHmd.localPosition - hmdPose.position;
+        hmdPose.position = debugHmd.localPosition;
+        
+        // HMD rotation
+        hmdDeltaPose.rotation = debugHmd.localRotation * Quaternion.Inverse(hmdPose.rotation);
+        hmdPose.rotation = debugHmd.localRotation;
+        
+        // Left controller position
+        leftControllerDeltaPose.position = debugLeftController.localPosition - leftControllerPose.position;
+        leftControllerPose.position = debugLeftController.localPosition;
+        
+        // Left controller rotation
+        leftControllerDeltaPose.rotation = debugLeftController.localRotation * Quaternion.Inverse(leftControllerPose.rotation);
+        leftControllerPose.rotation = debugLeftController.localRotation;
+        
+        // Right controller position
+        rightControllerDeltaPose.position = debugRightController.localPosition - rightControllerPose.position;
+        rightControllerPose.position =  debugRightController.localPosition;
+        
+        // Right controller rotation
+        rightControllerDeltaPose.rotation = debugRightController.localRotation * Quaternion.Inverse(rightControllerPose.rotation);
+        rightControllerPose.rotation = debugRightController.localRotation;
+        
+        // Joysticks
+        move.x =   Mathf.Clamp(debugMove.x,   -1, 1);
+        move.y =   Mathf.Clamp(debugMove.y,   -1, 1);
+        rotate.x = Mathf.Clamp(debugRotate.x, -1, 1);
+        rotate.y = Mathf.Clamp(debugRotate.y, -1, 1);
+    }
+}

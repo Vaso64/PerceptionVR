@@ -182,16 +182,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
             ""id"": ""baea3ebe-5e00-4566-85fd-aca98a8c49ea"",
             ""actions"": [
                 {
-                    ""name"": ""LeftEyePosition"",
-                    ""type"": ""Value"",
-                    ""id"": ""97f4c488-a77f-4fb2-9db4-0e0ebc4466f4"",
-                    ""expectedControlType"": ""Vector3"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""LeftHandPosition"",
+                    ""name"": ""LeftControllerPosition"",
                     ""type"": ""Value"",
                     ""id"": ""d6c14dda-8224-4272-91fc-fc59fc64ceab"",
                     ""expectedControlType"": ""Vector3"",
@@ -200,16 +191,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""RightEyePosition"",
-                    ""type"": ""Value"",
-                    ""id"": ""599eca9b-2429-4e5f-8921-21e41619b633"",
-                    ""expectedControlType"": ""Vector3"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""RightHandPosition"",
+                    ""name"": ""RightControllerPosition"",
                     ""type"": ""Value"",
                     ""id"": ""b54d1b32-974e-4650-85c6-2c3df5952bed"",
                     ""expectedControlType"": ""Vector3"",
@@ -218,16 +200,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""LeftEyeRotation"",
-                    ""type"": ""Value"",
-                    ""id"": ""dd089204-c8d7-41b6-abd1-73b35e2c9bf7"",
-                    ""expectedControlType"": ""Quaternion"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""LeftHandRotation"",
+                    ""name"": ""LeftControllerRotation"",
                     ""type"": ""Value"",
                     ""id"": ""84c8597b-36e8-4af4-9898-2e95b8ee4068"",
                     ""expectedControlType"": ""Quaternion"",
@@ -236,16 +209,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""RightEyeRotation"",
-                    ""type"": ""Value"",
-                    ""id"": ""277e84e8-a09d-42ac-9f32-3ca2e7260889"",
-                    ""expectedControlType"": ""Quaternion"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""RightHandRotation"",
+                    ""name"": ""RightControllerRotation"",
                     ""type"": ""Value"",
                     ""id"": ""2c69e8b4-c3b7-40d8-9bad-58a8a697b5b4"",
                     ""expectedControlType"": ""Quaternion"",
@@ -254,7 +218,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""HeadPosition"",
+                    ""name"": ""HMDPosition"",
                     ""type"": ""Value"",
                     ""id"": ""59da6209-35b6-4321-bede-840f9f4e807d"",
                     ""expectedControlType"": ""Vector3"",
@@ -263,7 +227,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""HeadRotation"",
+                    ""name"": ""HMDRotation"",
                     ""type"": ""Value"",
                     ""id"": ""3bfde6d2-8c81-468e-9082-7a69bdb930fd"",
                     ""expectedControlType"": ""Quaternion"",
@@ -276,7 +240,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""042e1689-657d-437b-8a00-24154c6fa0c2"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -293,56 +257,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""b4ee7d1c-9eb0-45bf-8fa7-75d56be1e2a8"",
-                    ""path"": ""<XRHMD>/leftEyePosition"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""VR"",
-                    ""action"": ""LeftEyePosition"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""342994f7-33e1-4908-9afc-c167aa3fc3af"",
-                    ""path"": ""<XRHMD>/rightEyePosition"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""VR"",
-                    ""action"": ""RightEyePosition"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3d8cbfd3-03cd-4ea3-bdf9-9fc0a8db7002"",
-                    ""path"": ""<XRHMD>/leftEyeRotation"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""VR"",
-                    ""action"": ""LeftEyeRotation"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e883d6d1-3110-42b2-9f24-525c905d659c"",
-                    ""path"": ""<XRHMD>/rightEyeRotation"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""VR"",
-                    ""action"": ""RightEyeRotation"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""4266eacd-eb4d-4eda-868a-10f95a6f7deb"",
                     ""path"": ""<XRController>{LeftHand}/devicePosition"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""VR"",
-                    ""action"": ""LeftHandPosition"",
+                    ""action"": ""LeftControllerPosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -353,7 +273,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""VR"",
-                    ""action"": ""RightHandPosition"",
+                    ""action"": ""RightControllerPosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -364,7 +284,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""VR"",
-                    ""action"": ""LeftHandRotation"",
+                    ""action"": ""LeftControllerRotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -375,7 +295,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""VR"",
-                    ""action"": ""RightHandRotation"",
+                    ""action"": ""RightControllerRotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -386,7 +306,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""VR"",
-                    ""action"": ""HeadPosition"",
+                    ""action"": ""HMDPosition"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -397,7 +317,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""VR"",
-                    ""action"": ""HeadRotation"",
+                    ""action"": ""HMDRotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -406,7 +326,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""id"": ""f55d6462-d54c-4532-b1c2-d0d60f2759d9"",
                     ""path"": ""<XRController>{LeftHand}/thumbstick"",
                     ""interactions"": """",
-                    ""processors"": ""StickDeadzone"",
+                    ""processors"": """",
                     ""groups"": ""VR"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
@@ -474,16 +394,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_KBMPlayer_ControlBlock = m_KBMPlayer.FindAction("ControlBlock", throwIfNotFound: true);
         // VRPlayer
         m_VRPlayer = asset.FindActionMap("VRPlayer", throwIfNotFound: true);
-        m_VRPlayer_LeftEyePosition = m_VRPlayer.FindAction("LeftEyePosition", throwIfNotFound: true);
-        m_VRPlayer_LeftHandPosition = m_VRPlayer.FindAction("LeftHandPosition", throwIfNotFound: true);
-        m_VRPlayer_RightEyePosition = m_VRPlayer.FindAction("RightEyePosition", throwIfNotFound: true);
-        m_VRPlayer_RightHandPosition = m_VRPlayer.FindAction("RightHandPosition", throwIfNotFound: true);
-        m_VRPlayer_LeftEyeRotation = m_VRPlayer.FindAction("LeftEyeRotation", throwIfNotFound: true);
-        m_VRPlayer_LeftHandRotation = m_VRPlayer.FindAction("LeftHandRotation", throwIfNotFound: true);
-        m_VRPlayer_RightEyeRotation = m_VRPlayer.FindAction("RightEyeRotation", throwIfNotFound: true);
-        m_VRPlayer_RightHandRotation = m_VRPlayer.FindAction("RightHandRotation", throwIfNotFound: true);
-        m_VRPlayer_HeadPosition = m_VRPlayer.FindAction("HeadPosition", throwIfNotFound: true);
-        m_VRPlayer_HeadRotation = m_VRPlayer.FindAction("HeadRotation", throwIfNotFound: true);
+        m_VRPlayer_LeftControllerPosition = m_VRPlayer.FindAction("LeftControllerPosition", throwIfNotFound: true);
+        m_VRPlayer_RightControllerPosition = m_VRPlayer.FindAction("RightControllerPosition", throwIfNotFound: true);
+        m_VRPlayer_LeftControllerRotation = m_VRPlayer.FindAction("LeftControllerRotation", throwIfNotFound: true);
+        m_VRPlayer_RightControllerRotation = m_VRPlayer.FindAction("RightControllerRotation", throwIfNotFound: true);
+        m_VRPlayer_HMDPosition = m_VRPlayer.FindAction("HMDPosition", throwIfNotFound: true);
+        m_VRPlayer_HMDRotation = m_VRPlayer.FindAction("HMDRotation", throwIfNotFound: true);
         m_VRPlayer_Move = m_VRPlayer.FindAction("Move", throwIfNotFound: true);
         m_VRPlayer_Rotate = m_VRPlayer.FindAction("Rotate", throwIfNotFound: true);
     }
@@ -602,32 +518,24 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     // VRPlayer
     private readonly InputActionMap m_VRPlayer;
     private IVRPlayerActions m_VRPlayerActionsCallbackInterface;
-    private readonly InputAction m_VRPlayer_LeftEyePosition;
-    private readonly InputAction m_VRPlayer_LeftHandPosition;
-    private readonly InputAction m_VRPlayer_RightEyePosition;
-    private readonly InputAction m_VRPlayer_RightHandPosition;
-    private readonly InputAction m_VRPlayer_LeftEyeRotation;
-    private readonly InputAction m_VRPlayer_LeftHandRotation;
-    private readonly InputAction m_VRPlayer_RightEyeRotation;
-    private readonly InputAction m_VRPlayer_RightHandRotation;
-    private readonly InputAction m_VRPlayer_HeadPosition;
-    private readonly InputAction m_VRPlayer_HeadRotation;
+    private readonly InputAction m_VRPlayer_LeftControllerPosition;
+    private readonly InputAction m_VRPlayer_RightControllerPosition;
+    private readonly InputAction m_VRPlayer_LeftControllerRotation;
+    private readonly InputAction m_VRPlayer_RightControllerRotation;
+    private readonly InputAction m_VRPlayer_HMDPosition;
+    private readonly InputAction m_VRPlayer_HMDRotation;
     private readonly InputAction m_VRPlayer_Move;
     private readonly InputAction m_VRPlayer_Rotate;
     public struct VRPlayerActions
     {
         private @PlayerInputAction m_Wrapper;
         public VRPlayerActions(@PlayerInputAction wrapper) { m_Wrapper = wrapper; }
-        public InputAction @LeftEyePosition => m_Wrapper.m_VRPlayer_LeftEyePosition;
-        public InputAction @LeftHandPosition => m_Wrapper.m_VRPlayer_LeftHandPosition;
-        public InputAction @RightEyePosition => m_Wrapper.m_VRPlayer_RightEyePosition;
-        public InputAction @RightHandPosition => m_Wrapper.m_VRPlayer_RightHandPosition;
-        public InputAction @LeftEyeRotation => m_Wrapper.m_VRPlayer_LeftEyeRotation;
-        public InputAction @LeftHandRotation => m_Wrapper.m_VRPlayer_LeftHandRotation;
-        public InputAction @RightEyeRotation => m_Wrapper.m_VRPlayer_RightEyeRotation;
-        public InputAction @RightHandRotation => m_Wrapper.m_VRPlayer_RightHandRotation;
-        public InputAction @HeadPosition => m_Wrapper.m_VRPlayer_HeadPosition;
-        public InputAction @HeadRotation => m_Wrapper.m_VRPlayer_HeadRotation;
+        public InputAction @LeftControllerPosition => m_Wrapper.m_VRPlayer_LeftControllerPosition;
+        public InputAction @RightControllerPosition => m_Wrapper.m_VRPlayer_RightControllerPosition;
+        public InputAction @LeftControllerRotation => m_Wrapper.m_VRPlayer_LeftControllerRotation;
+        public InputAction @RightControllerRotation => m_Wrapper.m_VRPlayer_RightControllerRotation;
+        public InputAction @HMDPosition => m_Wrapper.m_VRPlayer_HMDPosition;
+        public InputAction @HMDRotation => m_Wrapper.m_VRPlayer_HMDRotation;
         public InputAction @Move => m_Wrapper.m_VRPlayer_Move;
         public InputAction @Rotate => m_Wrapper.m_VRPlayer_Rotate;
         public InputActionMap Get() { return m_Wrapper.m_VRPlayer; }
@@ -639,36 +547,24 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_VRPlayerActionsCallbackInterface != null)
             {
-                @LeftEyePosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyePosition;
-                @LeftEyePosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyePosition;
-                @LeftEyePosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyePosition;
-                @LeftHandPosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftHandPosition;
-                @LeftHandPosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftHandPosition;
-                @LeftHandPosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftHandPosition;
-                @RightEyePosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyePosition;
-                @RightEyePosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyePosition;
-                @RightEyePosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyePosition;
-                @RightHandPosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightHandPosition;
-                @RightHandPosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightHandPosition;
-                @RightHandPosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightHandPosition;
-                @LeftEyeRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyeRotation;
-                @LeftEyeRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyeRotation;
-                @LeftEyeRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyeRotation;
-                @LeftHandRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftHandRotation;
-                @LeftHandRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftHandRotation;
-                @LeftHandRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftHandRotation;
-                @RightEyeRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
-                @RightEyeRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
-                @RightEyeRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
-                @RightHandRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightHandRotation;
-                @RightHandRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightHandRotation;
-                @RightHandRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightHandRotation;
-                @HeadPosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHeadPosition;
-                @HeadPosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHeadPosition;
-                @HeadPosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHeadPosition;
-                @HeadRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHeadRotation;
-                @HeadRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHeadRotation;
-                @HeadRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHeadRotation;
+                @LeftControllerPosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerPosition;
+                @LeftControllerPosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerPosition;
+                @LeftControllerPosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerPosition;
+                @RightControllerPosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerPosition;
+                @RightControllerPosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerPosition;
+                @RightControllerPosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerPosition;
+                @LeftControllerRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerRotation;
+                @LeftControllerRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerRotation;
+                @LeftControllerRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerRotation;
+                @RightControllerRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerRotation;
+                @RightControllerRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerRotation;
+                @RightControllerRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerRotation;
+                @HMDPosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHMDPosition;
+                @HMDPosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHMDPosition;
+                @HMDPosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHMDPosition;
+                @HMDRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHMDRotation;
+                @HMDRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHMDRotation;
+                @HMDRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnHMDRotation;
                 @Move.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnMove;
@@ -679,36 +575,24 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
             m_Wrapper.m_VRPlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @LeftEyePosition.started += instance.OnLeftEyePosition;
-                @LeftEyePosition.performed += instance.OnLeftEyePosition;
-                @LeftEyePosition.canceled += instance.OnLeftEyePosition;
-                @LeftHandPosition.started += instance.OnLeftHandPosition;
-                @LeftHandPosition.performed += instance.OnLeftHandPosition;
-                @LeftHandPosition.canceled += instance.OnLeftHandPosition;
-                @RightEyePosition.started += instance.OnRightEyePosition;
-                @RightEyePosition.performed += instance.OnRightEyePosition;
-                @RightEyePosition.canceled += instance.OnRightEyePosition;
-                @RightHandPosition.started += instance.OnRightHandPosition;
-                @RightHandPosition.performed += instance.OnRightHandPosition;
-                @RightHandPosition.canceled += instance.OnRightHandPosition;
-                @LeftEyeRotation.started += instance.OnLeftEyeRotation;
-                @LeftEyeRotation.performed += instance.OnLeftEyeRotation;
-                @LeftEyeRotation.canceled += instance.OnLeftEyeRotation;
-                @LeftHandRotation.started += instance.OnLeftHandRotation;
-                @LeftHandRotation.performed += instance.OnLeftHandRotation;
-                @LeftHandRotation.canceled += instance.OnLeftHandRotation;
-                @RightEyeRotation.started += instance.OnRightEyeRotation;
-                @RightEyeRotation.performed += instance.OnRightEyeRotation;
-                @RightEyeRotation.canceled += instance.OnRightEyeRotation;
-                @RightHandRotation.started += instance.OnRightHandRotation;
-                @RightHandRotation.performed += instance.OnRightHandRotation;
-                @RightHandRotation.canceled += instance.OnRightHandRotation;
-                @HeadPosition.started += instance.OnHeadPosition;
-                @HeadPosition.performed += instance.OnHeadPosition;
-                @HeadPosition.canceled += instance.OnHeadPosition;
-                @HeadRotation.started += instance.OnHeadRotation;
-                @HeadRotation.performed += instance.OnHeadRotation;
-                @HeadRotation.canceled += instance.OnHeadRotation;
+                @LeftControllerPosition.started += instance.OnLeftControllerPosition;
+                @LeftControllerPosition.performed += instance.OnLeftControllerPosition;
+                @LeftControllerPosition.canceled += instance.OnLeftControllerPosition;
+                @RightControllerPosition.started += instance.OnRightControllerPosition;
+                @RightControllerPosition.performed += instance.OnRightControllerPosition;
+                @RightControllerPosition.canceled += instance.OnRightControllerPosition;
+                @LeftControllerRotation.started += instance.OnLeftControllerRotation;
+                @LeftControllerRotation.performed += instance.OnLeftControllerRotation;
+                @LeftControllerRotation.canceled += instance.OnLeftControllerRotation;
+                @RightControllerRotation.started += instance.OnRightControllerRotation;
+                @RightControllerRotation.performed += instance.OnRightControllerRotation;
+                @RightControllerRotation.canceled += instance.OnRightControllerRotation;
+                @HMDPosition.started += instance.OnHMDPosition;
+                @HMDPosition.performed += instance.OnHMDPosition;
+                @HMDPosition.canceled += instance.OnHMDPosition;
+                @HMDRotation.started += instance.OnHMDRotation;
+                @HMDRotation.performed += instance.OnHMDRotation;
+                @HMDRotation.canceled += instance.OnHMDRotation;
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
@@ -746,16 +630,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     }
     public interface IVRPlayerActions
     {
-        void OnLeftEyePosition(InputAction.CallbackContext context);
-        void OnLeftHandPosition(InputAction.CallbackContext context);
-        void OnRightEyePosition(InputAction.CallbackContext context);
-        void OnRightHandPosition(InputAction.CallbackContext context);
-        void OnLeftEyeRotation(InputAction.CallbackContext context);
-        void OnLeftHandRotation(InputAction.CallbackContext context);
-        void OnRightEyeRotation(InputAction.CallbackContext context);
-        void OnRightHandRotation(InputAction.CallbackContext context);
-        void OnHeadPosition(InputAction.CallbackContext context);
-        void OnHeadRotation(InputAction.CallbackContext context);
+        void OnLeftControllerPosition(InputAction.CallbackContext context);
+        void OnRightControllerPosition(InputAction.CallbackContext context);
+        void OnLeftControllerRotation(InputAction.CallbackContext context);
+        void OnRightControllerRotation(InputAction.CallbackContext context);
+        void OnHMDPosition(InputAction.CallbackContext context);
+        void OnHMDRotation(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
         void OnRotate(InputAction.CallbackContext context);
     }

@@ -1,68 +1,74 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using PerceptionVR.Extensions;
-using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder;
 
 namespace PerceptionVR.Player
 {
+    [RequireComponent(typeof(VRPlayerInput))]
     public class VRPlayer : PlayerBase
     {
-        // XR References
-        [SerializeField]
-        private Transform head;
-
-        [SerializeField]
-        private Transform leftController;
+        private VRPlayerInput vrInput;
         
-        [SerializeField]
-        private  Transform rightController;
-
-        [SerializeField]
-        private Rigidbody leftHand;
-
-        [SerializeField]
-        private Rigidbody rightHand;
-
-        public float moveSpeed;
-        public float rotateSpeed;
-
-        public float controllerToHandIntensity;
+        [Header("References")]
+        [SerializeField] private Rigidbody head;
+        [SerializeField] private ConfigurableJoint leftHand;
+        [SerializeField] private ConfigurableJoint rightHand;
+        [SerializeField] private Rigidbody body;
+        
+        [Header("Speeds")]
+        public float joystickMoveSpeed;    //  m / s
+        public float joystickRotateSpeed;  //  deg / s
 
 
-        private PlayerInputAction.VRPlayerActions playerActions;
+        [Header("Hand Physics")]
+        public float handLinearSpringStrength;
+        public float handLinearSpringDamper;
+        public float handAngularSpringStrength;
+        public float handAngularSpringDamper;
 
-        private void Awake()
+        protected override void Start()
         {
-            var playerInputAction = new PlayerInputAction();
-            playerInputAction.Enable();
-            this.playerActions = playerInputAction.VRPlayer;
+            vrInput = GetComponent<VRPlayerInput>();
+        }
+
+        private void OnValidate()
+        {
+            // Set joints
+            var linearJointDrive = new JointDrive {positionSpring = handLinearSpringStrength, positionDamper = handLinearSpringDamper, maximumForce = Mathf.Infinity};
+            var angularJointDrive = new JointDrive {positionSpring = handAngularSpringStrength, positionDamper = handAngularSpringDamper, maximumForce = Mathf.Infinity};
+            ConfigurableJoint[] joints = {leftHand, rightHand}; 
+            foreach (var joint in joints)
+            {
+
+                joint.xDrive = linearJointDrive;
+                joint.yDrive = linearJointDrive;
+                joint.zDrive = linearJointDrive;
+                joint.angularXDrive = angularJointDrive;
+                joint.angularYZDrive = angularJointDrive;
+            }
         }
 
         private void FixedUpdate()
         {
-            // Left 
-            leftController.localPosition = playerActions.LeftHandPosition.ReadValue<Vector3>();
-            leftController.localRotation = playerActions.LeftHandRotation.ReadValue<Quaternion>();
-            leftHand.velocity = (leftController.position - leftHand.position) * controllerToHandIntensity;
-            leftHand.angularVelocity = (leftController.rotation * Quaternion.Inverse(leftHand.transform.rotation)).GetClampedEulerAngles();
+            // Fetch input
+            vrInput.Fetch();
 
-            // Right
-            rightController.localPosition = playerActions.RightHandPosition.ReadValue<Vector3>();
-            rightController.localRotation = playerActions.RightHandRotation.ReadValue<Quaternion>();
-            rightHand.velocity = (rightController.position - rightHand.position) * controllerToHandIntensity;
-            rightHand.angularVelocity = (rightController.rotation * Quaternion.Inverse(rightHand.transform.rotation)).GetClampedEulerAngles();
-
-            // Head
-            head.localPosition = playerActions.HeadPosition.ReadValue<Vector3>();
-            head.localRotation = playerActions.HeadRotation.ReadValue<Quaternion>();
-
-            // Body
-            var move = playerActions.Move.ReadValue<Vector2>();
-            var rotate = playerActions.Rotate.ReadValue<Vector2>();
-            transform.position += move.y * moveSpeed * Time.fixedDeltaTime * Vector3.Scale(head.forward, new Vector3(1,0,1)).normalized;
-            transform.position += move.x * moveSpeed * Time.fixedDeltaTime * Vector3.Scale(head.right, new Vector3(1,0,1)).normalized;
-            transform.RotateAround(head.position, Vector3.up, rotate.x * rotateSpeed * Time.fixedDeltaTime);
+            // Joystick & HMD movement
+            var joystickMove = Quaternion.Euler(new Vector3(0, head.rotation.eulerAngles.y, 0)) * (joystickMoveSpeed * new Vector3(vrInput.move.x, 0, vrInput.move.y));
+            var hmdMove      = body.rotation * new Vector3(vrInput.hmdDeltaPose.position.x, 0, vrInput.hmdDeltaPose.position.z);
+            body.AddForce((joystickMove + hmdMove - new Vector3(body.velocity.x, 0, body.velocity.z)), ForceMode.VelocityChange);
+            head.VelocityMove(new Vector3(0, vrInput.hmdPose.position.y, 0), true);
+            
+            // Joystick & HMD rotation
+            body.MoveRotation(body.rotation * Quaternion.Euler(new Vector3(0, vrInput.rotate.x * joystickRotateSpeed * Time.fixedDeltaTime, 0)));
+            head.transform.localRotation = vrInput.hmdPose.rotation;
+            
+            // Hands
+            var jointRoot = new Vector3(vrInput.hmdPose.position.x, 0, vrInput.hmdPose.position.z);
+            leftHand.targetPosition = vrInput.leftControllerPose.position - jointRoot;
+            leftHand.targetRotation = vrInput.leftControllerPose.rotation;
+            rightHand.targetPosition = vrInput.rightControllerPose.position - jointRoot;
+            rightHand.targetRotation = vrInput.rightControllerPose.rotation;
         }
 
     }

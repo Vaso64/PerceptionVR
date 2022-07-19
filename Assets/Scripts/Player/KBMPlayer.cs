@@ -52,10 +52,10 @@ namespace PerceptionVR.Player
             // Forward & Backward
             transform.position += transform.forward * direction.z;
 
-            // Left & Right
+            // Up & Down
             transform.position += this.worldRotation * Vector3.up * direction.y;
 
-            // Up & Down
+            // Left & Right
             transform.position += transform.right * direction.x;
         }
 
