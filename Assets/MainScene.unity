@@ -598,6 +598,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 44
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 1327905251}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -1155,7 +1159,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &138096114
 Transform:
   m_ObjectHideFlags: 0
@@ -1478,6 +1482,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 47
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 562108877}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -1707,7 +1715,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &153714464
 Transform:
   m_ObjectHideFlags: 0
@@ -2070,7 +2078,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19752
+  m_Name: pb_Mesh23074
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3563,6 +3571,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 44
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 143738198}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -15680,7 +15692,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19580
+  m_Name: pb_Mesh19568
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -16055,7 +16067,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1043306637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16638,7 +16650,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19710
+  m_Name: pb_Mesh23032
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -17130,7 +17142,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19722
+  m_Name: pb_Mesh23044
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -18097,6 +18109,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 47
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 413890854}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -19240,6 +19256,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 44
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 317043645}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -19471,7 +19491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1543241126
 Transform:
   m_ObjectHideFlags: 0
@@ -20398,6 +20418,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 44
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 878222515}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -20631,7 +20655,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1679220377
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -20948,7 +20972,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &1716464662
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -21999,7 +22023,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &1904645771
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -23076,6 +23100,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 44
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 1353827933}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 
@@ -23597,6 +23625,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 44
       objectReference: {fileID: 0}
+    - target: {fileID: 5545682430611451814, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: portalPair
+      value: 
+      objectReference: {fileID: 932274630}
     - target: {fileID: 5865015079928212887, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: portalPair
       value: 

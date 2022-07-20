@@ -9,29 +9,20 @@ namespace PerceptionVR.Portal
     public class PortalBase : MonoBehaviour
     {
         public delegate void OnTeleportDelegate(Quaternion portalDelta);
-
-        public static Dictionary<Transform, OnTeleportDelegate> OnTeleport = new();
+        
 
         public Transform portalPair;
 
-        private List<VicimityObject> portalVicimity = new();
 
-        private Plane portalPlane = new Plane();
+        public Plane portalPlane { get; protected set; }
 
-        record VicimityObject
+        private void Awake()
         {
-            public VicimityObject(Transform transform, float dot)
-            {
-                this.transform = transform;
-                this.dot = dot;
-            }
-            public Transform transform;
-            public float dot;
-        }
-
-        protected virtual void Start()
-        {
-            StartCoroutine(VicimityTracking());
+            // Portal pair checks
+            if (portalPair == null) 
+                Debug.LogError("PortalBase: No portal pair assigned");
+            if (portalPair == transform)
+                Debug.LogError("PortalBase: Portal pair cannot be self");
         }
 
         protected virtual void Update()
@@ -39,44 +30,24 @@ namespace PerceptionVR.Portal
             if (transform.hasChanged)
                 portalPlane.SetNormalAndPosition(transform.forward, transform.position);
         }
-        
-        private IEnumerator VicimityTracking()
+
+        public void Teleport(NearbyObject nearbyObject)
         {
-            while (true)
-            {
-                foreach (var vicimityObject in portalVicimity)
-                {
-                    var currentDot = PortalDot(vicimityObject.transform);
+            Debug.Log($"{nearbyObject.transform.name} passed through {transform.name}");
+            
+            var pairPose = PairPose(new Pose(nearbyObject.transform.position, nearbyObject.transform.rotation), out var portalRotationDelta);
 
-                    // Object passed through portal
-                    if (currentDot < 0 && vicimityObject.dot > 0)
-                        Teleport(vicimityObject.transform);
-
-                    vicimityObject.dot = currentDot;  
-                }
-                yield return null;
-            }
-        }
-        
-        private void Teleport(Transform teleportTransform)
-        {
-            Debug.Log($"{teleportTransform.name} passed through {transform.name}");
-
-            Quaternion portalRotationDelta;
-            var pairPose = CalculatePairPose(new Pose(teleportTransform.position, teleportTransform.rotation), out portalRotationDelta);
-
-            teleportTransform.position = pairPose.position;
-            teleportTransform.rotation = pairPose.rotation;
+            nearbyObject.transform.position = pairPose.position;
+            nearbyObject.transform.rotation = pairPose.rotation;
 
             // Notify teleported object
-            if(OnTeleport.ContainsKey(teleportTransform))
-                OnTeleport[teleportTransform]?.Invoke(portalRotationDelta);
+            nearbyObject.teleportable.OnTeleport(new TeleportData(portalRotationDelta));
         }
 
         
-        public Pose CalculatePairPose(Pose pose) => CalculatePairPose(pose, out _);
+        public virtual Pose PairPose(Pose pose) => PairPose(pose, out _);
 
-        public Pose CalculatePairPose(Pose pose, out Quaternion portalRotationDelta)
+        public virtual Pose PairPose(Pose pose, out Quaternion portalRotationDelta)
         {
             Pose resultPose;
             portalRotationDelta = portalPair.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
@@ -90,38 +61,7 @@ namespace PerceptionVR.Portal
             return resultPose;
         }
 
-
-
-        private void OnTriggerEnter(Collider other)
-        {
-            // Portable object nearby
-            if(MultiTag.ObjectHasTag(other, Tag.Teleportable))
-            {
-                // Start tracking
-                Debug.Log($"{other.name} entered {transform.name} vicimity.");
-                portalVicimity.Add(new VicimityObject(other.transform, PortalDot(other.transform)));
-
-                // Set clip plane
-                var objectRend = other.GetComponent<Renderer>();
-                if (objectRend != null && objectRend.material.HasProperty("_ClipPlane"))
-                    objectRend.material.SetVector("_ClipPlane", new Vector4(portalPlane.normal.x,
-                                                                            portalPlane.normal.y,
-                                                                            portalPlane.normal.z,
-                                                                            portalPlane.distance));
-            }
-        }
-        
-        private void OnTriggerExit(Collider other)
-        {
-            // Portable object left the vicimity / got teleported
-            if (MultiTag.ObjectHasTag(other, Tag.Teleportable))
-            {
-                Debug.Log($"{other.name} left {transform.name} vicimity.");
-                portalVicimity.RemoveAll(x => x.transform == other.transform);
-            }
-        }
-
-        private float PortalDot(Transform vicimityObject) => Vector3.Dot(transform.forward, transform.position - vicimityObject.position);
+        public float PortalDot(Transform nearbyObject) => Vector3.Dot(transform.forward, transform.position - nearbyObject.position);
     }
 }
 

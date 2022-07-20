@@ -6,7 +6,7 @@ using PerceptionVR.Portal;
 
 namespace PerceptionVR.Player
 {
-    public class KBMPlayer : PlayerBase
+    public class KBMPlayer : PlayerBase, ITeleportable
     {
         [Range(0, 10)]
         public float moveSpeed;
@@ -27,17 +27,18 @@ namespace PerceptionVR.Player
             var playerInputAction = new PlayerInputAction();
             playerInputAction.Enable();
             this.playerActions = playerInputAction.KBMPlayer;
-            PortalBase.OnTeleport.Add(transform, OnTeleport);
         }
 
-        private void OnTeleport(Quaternion portalDelta) => worldRotation = portalDelta * worldRotation;
+        public void OnTeleport(TeleportData teleportData) => worldRotation = teleportData.portalDelta * worldRotation;
         
 
         protected virtual void Update()
         {
+            InputSystem.Update();
+            
             // Controls
             if(!playerActions.ControlBlock.IsPressed())
-            {                                                 // Sprint
+            {
                 Move(playerActions.Move.ReadValue<Vector3>(), playerActions.Sprint.IsPressed());
                 Look(playerActions.Look.ReadValue<Vector2>());
             }

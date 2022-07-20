@@ -8,36 +8,34 @@ using System.Linq;
 
 namespace PerceptionVR.Portal
 {
-    [RequireComponent(typeof(PortalBase))]
     public class PortalRenderer : MonoBehaviour
     {
+        // References
+        private IPortal portal;
+        
+        [SerializeField] private Camera portalCamera;
+        
+        [SerializeField] private Renderer portalRend;
+
+        [SerializeField] public Collider portalCollider;
+        
         private const int recurssionLimit = 3;
 
         private RenderTexture[] RTArray = new RenderTexture[recurssionLimit + 1];
         private Stack<int> RTArrayIndexStack = new Stack<int>(recurssionLimit);
         private bool RTArrayAlocated = false;
 
-        [SerializeField]
-        private Renderer portalRend;
+        private static List<PortalRenderer> allPortalRenderers = new List<PortalRenderer>();
 
-        public Collider portalCollider;
-
-        private PortalRenderer[] allPortalRenderers;
-
-        private PortalBase portalBase;
-        
-        private Camera portalCamera;
-
-        
         private void Start()
         {
             // Get references
-            portalBase = GetComponent<PortalBase>();
-            portalCamera = GetComponentInChildren<Camera>();
-            portalCollider = GetComponentInChildren<Collider>();
-            allPortalRenderers = FindObjectsOfType<PortalRenderer>();
+            portal ??= GetComponentInParent<IPortal>();
+            portalCamera ??= GetComponentInChildren<Camera>();
+            portalCollider ??= GetComponentInChildren<Collider>();
 
-            // Register to events
+            // Register self and to events
+            allPortalRenderers.Add(this);
             PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
             RenderingManagment.OnResolutionChange += AllocateRTArray;
         }
@@ -46,12 +44,12 @@ namespace PerceptionVR.Portal
         {
             // Free old RTs
             if (RTArrayAlocated)
-                for (int i = 0; i <= recurssionLimit; i++)
+                for (var i = 0; i <= recurssionLimit; i++)
                         RTArray[i].Release();
 
             // Allocate
             RTArrayAlocated = true;
-            for (int i = 0; i <= recurssionLimit; i++)
+            for (var i = 0; i <= recurssionLimit; i++)
                 RTArray[i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.ARGB32);
         }
 
@@ -78,15 +76,15 @@ namespace PerceptionVR.Portal
 
         }
 
-        // Recursivly renders portals
-        public void RenderPortal(Pose fromPose, Rect visibleArea, float fov, int recurssionDepth)
+        // Recursively renders portals
+        public void RenderPortal(Pose fromPose, Rect visibleArea, float fov, int recursionDepth)
         {
             // Calculate visible area
             portalCamera.transform.SetPositionAndRotation(fromPose.position, fromPose.rotation);
             visibleArea = visibleArea.IntersectionWith(portalCamera.WorldToScreenBounds(portalCollider.bounds));
 
             // Position camera & calculate frustum
-            var pairPose = portalBase.CalculatePairPose(fromPose);
+            var pairPose = portal.PairPose(fromPose);
             portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             portalCamera.fieldOfView = fov;
             var portalCameraFrustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
@@ -94,22 +92,22 @@ namespace PerceptionVR.Portal
 
             // Get all visible portals
             var visiblePortalRenderers = new List<PortalRenderer>();
-            if (recurssionDepth < recurssionLimit)
+            if (recursionDepth < recurssionLimit)
                 visiblePortalRenderers.AddRange(allPortalRenderers.Where(pr => pr.IsVisibleFromCamera(portalCamera, portalCameraFrustum, visibleArea)));
 
             // Render others
-            visiblePortalRenderers.ForEach(pr => pr.RenderPortal(pairPose, visibleArea, fov, recurssionDepth + 1));
+            visiblePortalRenderers.ForEach(pr => pr.RenderPortal(pairPose, visibleArea, fov, recursionDepth + 1));
 
             // Render self
             portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
-            portalCamera.targetTexture = RTArray[recurssionDepth];
+            portalCamera.targetTexture = RTArray[recursionDepth];
             portalCamera.Render();
 
             // Notify others after render
             visiblePortalRenderers.ForEach(pr => pr.OnAfterPortalRenderCallback());
 
             // Set rendered texture and push it to stack
-            RTArrayIndexStack.Push(recurssionDepth);
+            RTArrayIndexStack.Push(recursionDepth);
             portalRend.material.mainTexture = portalCamera.targetTexture;
         }
 

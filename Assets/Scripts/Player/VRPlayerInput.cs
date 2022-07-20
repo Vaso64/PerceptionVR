@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class VRPlayerInput : MonoBehaviour
 {
@@ -40,6 +41,8 @@ public class VRPlayerInput : MonoBehaviour
 
     private void FetchRealInput()
     {
+        InputSystem.Update();
+        
         Vector3 tempPosition; 
         Quaternion tempRotation;
         
