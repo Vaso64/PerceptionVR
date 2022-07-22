@@ -22,6 +22,10 @@ namespace PerceptionVR.Player
         // Input readings
         [HideInInspector] public Pose hmdPose;
         [HideInInspector] public Pose hmdDeltaPose;
+        [HideInInspector] public Pose leftEyePose;
+        [HideInInspector] public Pose leftEyeDeltaPose;
+        [HideInInspector] public Pose rightEyePose;
+        [HideInInspector] public Pose rightEyeDeltaPose;
         [HideInInspector] public Pose leftControllerPose;
         [HideInInspector] public Pose leftControllerDeltaPose;
         [HideInInspector] public Pose rightControllerPose;
@@ -60,7 +64,7 @@ namespace PerceptionVR.Player
             Vector3 tempPosition; 
             Quaternion tempRotation;
 
-            // HMD positionprivate VRPlayerpr
+            // HMD position
             tempPosition = playerActions.HMDPosition.ReadValue<Vector3>();
             hmdDeltaPose.position = tempPosition - hmdPose.position;
             hmdPose.position = tempPosition;
@@ -69,7 +73,27 @@ namespace PerceptionVR.Player
             tempRotation = playerActions.HMDRotation.ReadValue<Quaternion>();
             hmdDeltaPose.rotation = tempRotation * Quaternion.Inverse(hmdPose.rotation);
             hmdPose.rotation = tempRotation;
-        
+            
+            // Left eye position
+            tempPosition = playerActions.LeftEyePosition.ReadValue<Vector3>();
+            leftEyeDeltaPose.position = tempPosition - leftEyePose.position;
+            leftEyePose.position = tempPosition;
+            
+            // Left eye rotation
+            tempRotation = playerActions.LeftEyeRotation.ReadValue<Quaternion>();
+            leftEyeDeltaPose.rotation = tempRotation * Quaternion.Inverse(leftEyePose.rotation);
+            leftEyePose.rotation = tempRotation;
+            
+            // Right eye position
+            tempPosition = playerActions.RightEyePosition.ReadValue<Vector3>();
+            rightEyeDeltaPose.position = tempPosition - rightEyePose.position;
+            rightEyePose.position = tempPosition;
+            
+            // Right eye rotation
+            tempRotation = playerActions.RightEyeRotation.ReadValue<Quaternion>();
+            rightEyeDeltaPose.rotation = tempRotation * Quaternion.Inverse(rightEyePose.rotation);
+            rightEyePose.rotation = tempRotation;
+
             // Left controller position
             tempPosition = playerActions.LeftControllerPosition.ReadValue<Vector3>();
             leftControllerDeltaPose.position = tempPosition - leftControllerPose.position;

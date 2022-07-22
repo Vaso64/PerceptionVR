@@ -270,6 +270,42 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LeftEyePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""01fe97be-5531-4f65-928d-d27709ccaef3"",
+                    ""expectedControlType"": ""Vector3"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightEyePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""0b59d937-14a0-498f-b8f1-be8ae7b8f4e7"",
+                    ""expectedControlType"": ""Vector3"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LeftEyeRotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""b56703c0-1733-40a4-97e8-ffeccd29c9a3"",
+                    ""expectedControlType"": ""Quaternion"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightEyeRotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""c3207273-1016-4f05-9ad3-111dd8ce5062"",
+                    ""expectedControlType"": ""Quaternion"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -382,6 +418,50 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""action"": ""RightControllerGrab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""87e6bb35-e155-44e8-9923-9b60adc359b9"",
+                    ""path"": ""<XRHMD>/leftEyePosition"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftEyePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""867c8c18-981f-438f-bb49-34040372588c"",
+                    ""path"": ""<XRHMD>/rightEyePosition"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightEyePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""daf2a955-af4d-4341-87a7-afd6c22e838f"",
+                    ""path"": ""<XRHMD>/leftEyeRotation"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftEyeRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf48124c-ab0e-4e7a-be8e-f192caa99c18"",
+                    ""path"": ""<XRHMD>/rightEyeRotation"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightEyeRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -444,6 +524,10 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_VRPlayer_Rotate = m_VRPlayer.FindAction("Rotate", throwIfNotFound: true);
         m_VRPlayer_RightControllerGrab = m_VRPlayer.FindAction("RightControllerGrab", throwIfNotFound: true);
         m_VRPlayer_LeftControllerGrab = m_VRPlayer.FindAction("LeftControllerGrab", throwIfNotFound: true);
+        m_VRPlayer_LeftEyePosition = m_VRPlayer.FindAction("LeftEyePosition", throwIfNotFound: true);
+        m_VRPlayer_RightEyePosition = m_VRPlayer.FindAction("RightEyePosition", throwIfNotFound: true);
+        m_VRPlayer_LeftEyeRotation = m_VRPlayer.FindAction("LeftEyeRotation", throwIfNotFound: true);
+        m_VRPlayer_RightEyeRotation = m_VRPlayer.FindAction("RightEyeRotation", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -570,6 +654,10 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_VRPlayer_Rotate;
     private readonly InputAction m_VRPlayer_RightControllerGrab;
     private readonly InputAction m_VRPlayer_LeftControllerGrab;
+    private readonly InputAction m_VRPlayer_LeftEyePosition;
+    private readonly InputAction m_VRPlayer_RightEyePosition;
+    private readonly InputAction m_VRPlayer_LeftEyeRotation;
+    private readonly InputAction m_VRPlayer_RightEyeRotation;
     public struct VRPlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -584,6 +672,10 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         public InputAction @Rotate => m_Wrapper.m_VRPlayer_Rotate;
         public InputAction @RightControllerGrab => m_Wrapper.m_VRPlayer_RightControllerGrab;
         public InputAction @LeftControllerGrab => m_Wrapper.m_VRPlayer_LeftControllerGrab;
+        public InputAction @LeftEyePosition => m_Wrapper.m_VRPlayer_LeftEyePosition;
+        public InputAction @RightEyePosition => m_Wrapper.m_VRPlayer_RightEyePosition;
+        public InputAction @LeftEyeRotation => m_Wrapper.m_VRPlayer_LeftEyeRotation;
+        public InputAction @RightEyeRotation => m_Wrapper.m_VRPlayer_RightEyeRotation;
         public InputActionMap Get() { return m_Wrapper.m_VRPlayer; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -623,6 +715,18 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @LeftControllerGrab.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerGrab;
                 @LeftControllerGrab.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerGrab;
                 @LeftControllerGrab.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerGrab;
+                @LeftEyePosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyePosition;
+                @LeftEyePosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyePosition;
+                @LeftEyePosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyePosition;
+                @RightEyePosition.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyePosition;
+                @RightEyePosition.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyePosition;
+                @RightEyePosition.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyePosition;
+                @LeftEyeRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyeRotation;
+                @LeftEyeRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyeRotation;
+                @LeftEyeRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftEyeRotation;
+                @RightEyeRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
+                @RightEyeRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
+                @RightEyeRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
             }
             m_Wrapper.m_VRPlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -657,6 +761,18 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @LeftControllerGrab.started += instance.OnLeftControllerGrab;
                 @LeftControllerGrab.performed += instance.OnLeftControllerGrab;
                 @LeftControllerGrab.canceled += instance.OnLeftControllerGrab;
+                @LeftEyePosition.started += instance.OnLeftEyePosition;
+                @LeftEyePosition.performed += instance.OnLeftEyePosition;
+                @LeftEyePosition.canceled += instance.OnLeftEyePosition;
+                @RightEyePosition.started += instance.OnRightEyePosition;
+                @RightEyePosition.performed += instance.OnRightEyePosition;
+                @RightEyePosition.canceled += instance.OnRightEyePosition;
+                @LeftEyeRotation.started += instance.OnLeftEyeRotation;
+                @LeftEyeRotation.performed += instance.OnLeftEyeRotation;
+                @LeftEyeRotation.canceled += instance.OnLeftEyeRotation;
+                @RightEyeRotation.started += instance.OnRightEyeRotation;
+                @RightEyeRotation.performed += instance.OnRightEyeRotation;
+                @RightEyeRotation.canceled += instance.OnRightEyeRotation;
             }
         }
     }
@@ -698,5 +814,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         void OnRotate(InputAction.CallbackContext context);
         void OnRightControllerGrab(InputAction.CallbackContext context);
         void OnLeftControllerGrab(InputAction.CallbackContext context);
+        void OnLeftEyePosition(InputAction.CallbackContext context);
+        void OnRightEyePosition(InputAction.CallbackContext context);
+        void OnLeftEyeRotation(InputAction.CallbackContext context);
+        void OnRightEyeRotation(InputAction.CallbackContext context);
     }
 }

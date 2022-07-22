@@ -248,6 +248,42 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "LeftEyePosition",
+                    "type": "Value",
+                    "id": "01fe97be-5531-4f65-928d-d27709ccaef3",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RightEyePosition",
+                    "type": "Value",
+                    "id": "0b59d937-14a0-498f-b8f1-be8ae7b8f4e7",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "LeftEyeRotation",
+                    "type": "Value",
+                    "id": "b56703c0-1733-40a4-97e8-ffeccd29c9a3",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RightEyeRotation",
+                    "type": "Value",
+                    "id": "c3207273-1016-4f05-9ad3-111dd8ce5062",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -358,6 +394,50 @@
                     "processors": "",
                     "groups": "VR",
                     "action": "RightControllerGrab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "87e6bb35-e155-44e8-9923-9b60adc359b9",
+                    "path": "<XRHMD>/leftEyePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftEyePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "867c8c18-981f-438f-bb49-34040372588c",
+                    "path": "<XRHMD>/rightEyePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightEyePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "daf2a955-af4d-4341-87a7-afd6c22e838f",
+                    "path": "<XRHMD>/leftEyeRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftEyeRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bf48124c-ab0e-4e7a-be8e-f192caa99c18",
+                    "path": "<XRHMD>/rightEyeRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightEyeRotation",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

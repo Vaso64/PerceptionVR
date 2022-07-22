@@ -8,8 +8,13 @@ namespace PerceptionVR.Player
     public class VRPlayer : PlayerBase
     {
         private VRPlayerInput vrInput;
+
+        [SerializeField] private bool customIpdEnabled = false;
+        [SerializeField] [Range(0, 1f)] private float customIpd;
         
         [Header("References")]
+        [SerializeField] private Transform leftEye;
+        [SerializeField] private Transform rightEye;
         [SerializeField] private Rigidbody head;
         [SerializeField] private ConfigurableJoint leftHand;
         [SerializeField] private ConfigurableJoint rightHand;
@@ -60,6 +65,11 @@ namespace PerceptionVR.Player
             body.MoveRotation(body.rotation * Quaternion.Euler(new Vector3(0, vrInput.rotate.x * joystickRotateSpeed * Time.fixedDeltaTime, 0)));
             head.transform.localRotation = vrInput.hmdPose.rotation;
             
+            // Eyes
+            var ipd = Vector3.Distance(vrInput.leftEyePose.position, vrInput.rightEyePose.position);
+            leftEye.transform.localPosition = new Vector3(-(customIpdEnabled ?  customIpd : ipd) / 2, 0, 0);
+            rightEye.transform.localPosition = new Vector3((customIpdEnabled ? customIpd : ipd) / 2, 0, 0);
+
             // Hands
             var jointRoot = new Vector3(vrInput.hmdPose.position.x, 0, vrInput.hmdPose.position.z);
             leftHand.targetPosition = vrInput.leftControllerPose.position - jointRoot;
