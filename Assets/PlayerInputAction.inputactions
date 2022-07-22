@@ -230,6 +230,24 @@
                     "processors": "StickDeadzone",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "RightControllerGrab",
+                    "type": "Button",
+                    "id": "5d7cac44-7d5d-48f4-b0bf-7ccb7967bd9e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "LeftControllerGrab",
+                    "type": "Button",
+                    "id": "5a4d11e6-67d6-4755-9555-732a38035797",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -318,6 +336,28 @@
                     "processors": "",
                     "groups": "VR",
                     "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1fe5a410-5756-462b-beb4-01f8d7455f3d",
+                    "path": "<XRController>{LeftHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "VR",
+                    "action": "LeftControllerGrab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "202bbb90-eb1a-4cb8-a5c4-8d9d7f33f2a6",
+                    "path": "<XRController>{RightHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "VR",
+                    "action": "RightControllerGrab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

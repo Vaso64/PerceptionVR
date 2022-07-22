@@ -24,7 +24,7 @@ namespace PerceptionVR.Portal
             {
                 foreach (var nearbyObject in portalVicimity)
                 {
-                    var currentDot = portal.PortalDot(nearbyObject.transform);
+                    var currentDot = portal.PortalDot(nearbyObject.teleportable.transform);
 
                     // Object passed through portal
                     if (currentDot < 0 && nearbyObject.portalDot > 0)
@@ -64,7 +64,7 @@ namespace PerceptionVR.Portal
             if (other.GetComponent<ITeleportable>() != null)
             {
                 Debug.Log($"{other.name} left {transform.name} vicimity.");
-                portalVicimity.RemoveAll(x => x.transform == other.transform);
+                portalVicimity.RemoveAll(x => x.teleportable.transform == other.transform);
             }
         }
     }

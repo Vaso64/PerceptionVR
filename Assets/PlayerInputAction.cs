@@ -252,6 +252,24 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": ""StickDeadzone"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""RightControllerGrab"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d7cac44-7d5d-48f4-b0bf-7ccb7967bd9e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""LeftControllerGrab"",
+                    ""type"": ""Button"",
+                    ""id"": ""5a4d11e6-67d6-4755-9555-732a38035797"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -342,6 +360,28 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1fe5a410-5756-462b-beb4-01f8d7455f3d"",
+                    ""path"": ""<XRController>{LeftHand}/gripPressed"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""VR"",
+                    ""action"": ""LeftControllerGrab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""202bbb90-eb1a-4cb8-a5c4-8d9d7f33f2a6"",
+                    ""path"": ""<XRController>{RightHand}/gripPressed"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""VR"",
+                    ""action"": ""RightControllerGrab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -402,6 +442,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_VRPlayer_HMDRotation = m_VRPlayer.FindAction("HMDRotation", throwIfNotFound: true);
         m_VRPlayer_Move = m_VRPlayer.FindAction("Move", throwIfNotFound: true);
         m_VRPlayer_Rotate = m_VRPlayer.FindAction("Rotate", throwIfNotFound: true);
+        m_VRPlayer_RightControllerGrab = m_VRPlayer.FindAction("RightControllerGrab", throwIfNotFound: true);
+        m_VRPlayer_LeftControllerGrab = m_VRPlayer.FindAction("LeftControllerGrab", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -526,6 +568,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_VRPlayer_HMDRotation;
     private readonly InputAction m_VRPlayer_Move;
     private readonly InputAction m_VRPlayer_Rotate;
+    private readonly InputAction m_VRPlayer_RightControllerGrab;
+    private readonly InputAction m_VRPlayer_LeftControllerGrab;
     public struct VRPlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -538,6 +582,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         public InputAction @HMDRotation => m_Wrapper.m_VRPlayer_HMDRotation;
         public InputAction @Move => m_Wrapper.m_VRPlayer_Move;
         public InputAction @Rotate => m_Wrapper.m_VRPlayer_Rotate;
+        public InputAction @RightControllerGrab => m_Wrapper.m_VRPlayer_RightControllerGrab;
+        public InputAction @LeftControllerGrab => m_Wrapper.m_VRPlayer_LeftControllerGrab;
         public InputActionMap Get() { return m_Wrapper.m_VRPlayer; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -571,6 +617,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Rotate.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRotate;
                 @Rotate.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRotate;
                 @Rotate.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRotate;
+                @RightControllerGrab.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerGrab;
+                @RightControllerGrab.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerGrab;
+                @RightControllerGrab.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightControllerGrab;
+                @LeftControllerGrab.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerGrab;
+                @LeftControllerGrab.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerGrab;
+                @LeftControllerGrab.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnLeftControllerGrab;
             }
             m_Wrapper.m_VRPlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -599,6 +651,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Rotate.started += instance.OnRotate;
                 @Rotate.performed += instance.OnRotate;
                 @Rotate.canceled += instance.OnRotate;
+                @RightControllerGrab.started += instance.OnRightControllerGrab;
+                @RightControllerGrab.performed += instance.OnRightControllerGrab;
+                @RightControllerGrab.canceled += instance.OnRightControllerGrab;
+                @LeftControllerGrab.started += instance.OnLeftControllerGrab;
+                @LeftControllerGrab.performed += instance.OnLeftControllerGrab;
+                @LeftControllerGrab.canceled += instance.OnLeftControllerGrab;
             }
         }
     }
@@ -638,5 +696,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         void OnHMDRotation(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
         void OnRotate(InputAction.CallbackContext context);
+        void OnRightControllerGrab(InputAction.CallbackContext context);
+        void OnLeftControllerGrab(InputAction.CallbackContext context);
     }
 }

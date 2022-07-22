@@ -50,12 +50,9 @@ namespace PerceptionVR.Player
 
         private void FixedUpdate()
         {
-            // Fetch input
-            vrInput.Fetch();
-
             // Joystick & HMD movement
             var joystickMove = Quaternion.Euler(new Vector3(0, head.rotation.eulerAngles.y, 0)) * (joystickMoveSpeed * new Vector3(vrInput.move.x, 0, vrInput.move.y));
-            var hmdMove      = body.rotation * new Vector3(vrInput.hmdDeltaPose.position.x, 0, vrInput.hmdDeltaPose.position.z);
+            var hmdMove      = body.rotation * new Vector3(vrInput.hmdDeltaPose.position.x, 0, vrInput.hmdDeltaPose.position.z) / Time.fixedDeltaTime;
             body.AddForce((joystickMove + hmdMove - new Vector3(body.velocity.x, 0, body.velocity.z)), ForceMode.VelocityChange);
             head.VelocityMove(new Vector3(0, vrInput.hmdPose.position.y, 0), true);
             

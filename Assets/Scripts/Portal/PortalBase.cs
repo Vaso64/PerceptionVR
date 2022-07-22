@@ -33,14 +33,19 @@ namespace PerceptionVR.Portal
 
         public void Teleport(NearbyObject nearbyObject)
         {
-            Debug.Log($"{nearbyObject.transform.name} passed through {transform.name}");
+            Debug.Log($"{nearbyObject.teleportable.transform.name} passed through {transform.name}");
             
-            var pairPose = PairPose(new Pose(nearbyObject.transform.position, nearbyObject.transform.rotation), out var portalRotationDelta);
+            var pairPose = PairPose(new Pose(nearbyObject.teleportable.transform.position, nearbyObject.teleportable.transform.rotation), out var portalRotationDelta);
 
-            nearbyObject.transform.position = pairPose.position;
-            nearbyObject.transform.rotation = pairPose.rotation;
+            // Teleport the object
+            nearbyObject.teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
+            
+            // Translate velocity
+            var nearbyObjectRB = nearbyObject.teleportable.transform.GetComponent<Rigidbody>();
+            if (nearbyObjectRB != null)
+                nearbyObjectRB.velocity = portalRotationDelta * nearbyObjectRB.velocity;
 
-            // Notify teleported object
+                // Notify teleported object
             nearbyObject.teleportable.OnTeleport(new TeleportData(portalRotationDelta));
         }
 
