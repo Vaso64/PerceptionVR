@@ -1,6 +1,7 @@
 using UnityEngine;
 using PerceptionVR.Extensions;
 using UnityEngine.ProBuilder;
+using UnityEngine.Serialization;
 
 namespace PerceptionVR.Player
 {
@@ -9,8 +10,8 @@ namespace PerceptionVR.Player
     {
         private VRPlayerInput vrInput;
 
-        [SerializeField] private bool customIpdEnabled = false;
-        [SerializeField] [Range(0, 1f)] private float customIpd;
+        [SerializeField] private bool customIpd = false;
+        [SerializeField] [Range(0, 1f)] private float ipd;
         
         [Header("References")]
         [SerializeField] private Transform leftEye;
@@ -66,9 +67,10 @@ namespace PerceptionVR.Player
             head.transform.localRotation = vrInput.hmdPose.rotation;
             
             // Eyes
-            var ipd = Vector3.Distance(vrInput.leftEyePose.position, vrInput.rightEyePose.position);
-            leftEye.transform.localPosition = new Vector3(-(customIpdEnabled ?  customIpd : ipd) / 2, 0, 0);
-            rightEye.transform.localPosition = new Vector3((customIpdEnabled ? customIpd : ipd) / 2, 0, 0);
+            if(!customIpd) 
+                ipd = Vector3.Distance(vrInput.leftEyePose.position, vrInput.rightEyePose.position);
+            leftEye.transform.localPosition = new Vector3(-ipd / 2, 0, 0);
+            rightEye.transform.localPosition = new Vector3(ipd / 2, 0, 0);
 
             // Hands
             var jointRoot = new Vector3(vrInput.hmdPose.position.x, 0, vrInput.hmdPose.position.z);

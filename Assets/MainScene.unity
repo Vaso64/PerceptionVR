@@ -2271,6 +2271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7997e0b2be50224d859eed6563d163e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  overrideViewAndProjectMatrix: 0
 --- !u!20 &159741925
 Camera:
   m_ObjectHideFlags: 0
@@ -6656,14 +6657,13 @@ GameObject:
   m_Component:
   - component: {fileID: 609509619}
   - component: {fileID: 609509621}
-  - component: {fileID: 609509620}
   m_Layer: 3
   m_Name: CenterCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &609509619
 Transform:
   m_ObjectHideFlags: 0
@@ -6679,18 +6679,6 @@ Transform:
   m_Father: {fileID: 1045977127}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &609509620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 609509618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7997e0b2be50224d859eed6563d163e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!20 &609509621
 Camera:
   m_ObjectHideFlags: 0
@@ -19235,7 +19223,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh19668
+  m_Name: pb_Mesh19720
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -19610,7 +19598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1043306637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19739,6 +19727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7997e0b2be50224d859eed6563d163e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  overrideViewAndProjectMatrix: 0
 --- !u!1 &1045977126
 GameObject:
   m_ObjectHideFlags: 0
@@ -20548,6 +20537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7997e0b2be50224d859eed6563d163e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  overrideViewAndProjectMatrix: 0
 --- !u!43 &1252907471
 Mesh:
   m_ObjectHideFlags: 0
@@ -24472,7 +24462,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1543241126
 Transform:
   m_ObjectHideFlags: 0
@@ -24529,7 +24519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286eb8c7fc30fd24cb3b495268714f8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMode: 0
+  debugMode: 1
   debugHmd: {fileID: 1004499334}
   debugLeftController: {fileID: 1497725820}
   debugRightController: {fileID: 259490836}
@@ -25978,7 +25968,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-4198
+  m_Name: pb_Mesh19848
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

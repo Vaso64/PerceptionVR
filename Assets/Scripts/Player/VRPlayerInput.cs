@@ -61,6 +61,8 @@ namespace PerceptionVR.Player
 
         private void FetchRealInput()
         {
+            InputSystem.Update();
+            
             Vector3 tempPosition; 
             Quaternion tempRotation;
 

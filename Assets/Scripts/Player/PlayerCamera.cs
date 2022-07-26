@@ -32,9 +32,12 @@ namespace PerceptionVR.Player
 
         private void OnPreRender()
         {
-            playerCamera.projectionMatrix = this.currentProjectionMatrix;
-            playerCamera.worldToCameraMatrix = this.currentViewMatrix;
-            
+            if(playerCamera.stereoEnabled)
+            {
+                playerCamera.projectionMatrix = this.currentProjectionMatrix;
+                playerCamera.worldToCameraMatrix = this.currentViewMatrix;
+            }
+
             /*var eye = playerCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
             Debug.Log($"({Time.time}) ({eye} SPM):\n {this.playerCamera.GetStereoProjectionMatrix(eye)}");
             Debug.Log($"({Time.time}) ({eye} SVM):\n {this.playerCamera.GetStereoViewMatrix(eye)}");

@@ -32,10 +32,10 @@ namespace PerceptionVR.Player
         public void OnTeleport(TeleportData teleportData) => worldRotation = teleportData.portalDelta * worldRotation;
         
 
-        protected virtual void Update()
+        protected virtual void FixedUpdate()
         {
             InputSystem.Update();
-            
+
             // Controls
             if(!playerActions.ControlBlock.IsPressed())
             {
