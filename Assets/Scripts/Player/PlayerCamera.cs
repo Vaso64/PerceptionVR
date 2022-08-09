@@ -1,13 +1,14 @@
 using System;
+using System.Collections.Generic;
+using PerceptionVR.Portal;
 using UnityEngine;
 
 namespace PerceptionVR.Player
 {
-    [RequireComponent(typeof (Camera))]
-    public class PlayerCamera : MonoBehaviour
+    public class PlayerCamera : MonoBehaviour, ISubTeleportable
     {
         public static event Camera.CameraCallback OnBeforePlayerCameraRender;
-
+        
         private Camera playerCamera;
         
         private Matrix4x4 currentViewMatrix;
@@ -18,6 +19,22 @@ namespace PerceptionVR.Player
             playerCamera = GetComponent<Camera>();
             playerCamera.nearClipPlane = 0.00001f;
         }
+        
+        
+
+        public void OnCreateClone(GameObject clone) => clone.GetComponent<Camera>().enabled = false;
+        
+        public void TransferBehaviour(ISubTeleportable from, ISubTeleportable to)
+        {
+            var fromCamera = from.transform.GetComponent<Camera>();
+            var toCamera = to.transform.GetComponent<Camera>();
+
+            fromCamera.enabled = false;
+            toCamera.enabled = true;
+        }
+
+        public IEnumerable<Type> GetPreservedComponents() => new[] { typeof(Camera), typeof(PlayerCamera) };
+
 
         private void Update()
         {

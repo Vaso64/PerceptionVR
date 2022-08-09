@@ -17,7 +17,7 @@ namespace PerceptionVR.Portal
         
         [SerializeField] private Renderer portalRend;
 
-        [SerializeField] public Collider portalCollider;
+        [SerializeField] public Collider portalCollider; // Can be replaced with portalRend.Bounds
         
         private const int recurssionLimit = 3;
 

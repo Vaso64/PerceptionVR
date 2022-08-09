@@ -4,12 +4,16 @@ namespace PerceptionVR.Portal
 {
     public interface IPortal
     {
-        float PortalDot(Transform transform);
+        Transform transform { get; }
         
+        IPortal portalPair { get; }
+
         Pose PairPose(Pose pose);
+        
+        Bounds teleportableBounds { get; }
         
         Plane portalPlane { get; }
         
-        void Teleport(NearbyObject teleportable);
+        void Teleport(ITeleportable teleportable);
     }
 }

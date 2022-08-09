@@ -10,8 +10,8 @@ namespace PerceptionVR.Props
         
         Rigidbody rigidbody { get; }
         
-        void OnRelease();
+        void OnRelease() {}
 
-        void OnGrab();
+        void OnGrab() {}
     }
 }
