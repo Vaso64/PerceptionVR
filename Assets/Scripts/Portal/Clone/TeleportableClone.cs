@@ -12,6 +12,11 @@ namespace PerceptionVR.Portal
     {
         private ITeleportable targetTeleportable;
 
+        private void Awake()
+        {
+            base.OnEnterPortal += OnEnterPortalCallback;
+        }
+
         // Start tracking coroutine
         public void Track(ITeleportable teleportable, IPortal portal)
         {
@@ -26,8 +31,6 @@ namespace PerceptionVR.Portal
             foreach (var subTeleportable in teleportable.transform.GetComponentsInChildren<ISubTeleportable>())
                 transform.Find(subTeleportable.transform.GetPath(relativeTo: teleportable.transform)).gameObject
                     .GetComponent<SubTeleportableClone>().Track(subTeleportable, portal);
-
-            base.OnEnterPortal += OnEnterPortalCallback;
         }
 
         private void OnEnterPortalCallback()

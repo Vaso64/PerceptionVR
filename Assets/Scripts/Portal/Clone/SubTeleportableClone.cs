@@ -10,6 +10,20 @@ namespace PerceptionVR.Portal
         
         private bool hasBehaviour = false;
 
+        private void Awake()
+        {
+            base.OnEnterPortal += () =>
+            {
+                hasBehaviour = true;
+                targetSubTeleportable.TransferBehaviour(targetSubTeleportable, this);
+            };
+            base.OnExitPortal += () =>
+            {
+                hasBehaviour = false;
+                targetSubTeleportable.TransferBehaviour(this, targetSubTeleportable);
+            };
+        }
+
         public void SwapBehaviour()
         {
             if (hasBehaviour) TransferBehaviour(this, targetSubTeleportable);
@@ -32,17 +46,6 @@ namespace PerceptionVR.Portal
             targetSubTeleportable = subTeleportable;
             
             base.Track(targetSubTeleportable, portal);
-
-            base.OnEnterPortal += () =>
-            {
-                hasBehaviour = true;
-                targetSubTeleportable.TransferBehaviour(targetSubTeleportable, this);
-            };
-            base.OnExitPortal += () =>
-            {
-                hasBehaviour = false;
-                targetSubTeleportable.TransferBehaviour(this, targetSubTeleportable);
-            };
         }
     }
 }
