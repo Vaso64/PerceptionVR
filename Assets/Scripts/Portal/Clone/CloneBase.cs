@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Instrumentation;
 using PerceptionVR.Extensions;
 
@@ -25,6 +26,7 @@ namespace PerceptionVR.Portal
         private Coroutine trackingCoroutine;
         
         private bool previousPortalSide;
+        private Vector3 previousPosition;
         
 
         // Set tracking target
@@ -57,29 +59,41 @@ namespace PerceptionVR.Portal
         // Track target position
         private void Update()
         {
-            var currentPortalSide = targetPortal.portalPlane.GetSide(targetTeleportableBase.transform.position);
-            
-            
+            var currentPosition = targetTeleportableBase.transform.position;
+            var currentPortalSide = targetPortal.portalPlane.GetSide(currentPosition);
 
             // Target entered the portal
-            if (currentPortalSide && !previousPortalSide && targetPortal.teleportableBounds.Contains(targetTeleportableBase.transform.position))
+            if (currentPortalSide && !previousPortalSide && PassedThroughPortal(previousPosition, currentPosition))
                 OnEnterPortal?.Invoke();
             
             // Target exited the portal
-            else if (!currentPortalSide && previousPortalSide && targetPortal.teleportableBounds.Contains(targetTeleportableBase.transform.position))
+            else if (!currentPortalSide && previousPortalSide && PassedThroughPortal(previousPosition, currentPosition))
                 OnExitPortal?.Invoke();
             
             previousPortalSide = currentPortalSide;
+            previousPosition = currentPosition;
         }
         
-        
+        // Check if raycast between old and new position intersects portal collider
+        private bool PassedThroughPortal(Vector3 oldPosition, Vector3 newPosition)
+        {
+            var ray = new Ray(oldPosition, newPosition - oldPosition);
+            var hits = Physics.RaycastAll(ray, Vector3.Distance(oldPosition, newPosition));
+            return hits.Any(x => targetPortal.portalCollider == x.collider);
+        } 
+
+
+
         // Mimic target movement by rigidbody
         private IEnumerator TrackingCoroutine(Rigidbody trackedRigidbody, IPortal portal)
         {
             var cloneRigidbody = GetComponent<Rigidbody>();
             while (true)
             {
-                cloneRigidbody.VelocityPosition(portal.PairPose(trackedRigidbody.transform.GetPose()));
+                var pose = trackedRigidbody.transform.GetPose();
+                pose.position += trackedRigidbody.velocity * Time.fixedDeltaTime;
+                pose.rotation *= Quaternion.Euler(trackedRigidbody.angularVelocity * Time.fixedDeltaTime);
+                cloneRigidbody.VelocityPosition(portal.PairPose(pose));
                 yield return new WaitForFixedUpdate();
             }
         }

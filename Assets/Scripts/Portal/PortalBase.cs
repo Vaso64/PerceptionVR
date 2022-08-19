@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using PerceptionVR.Common;
 using PerceptionVR.Extensions;
+using UnityEngine.Serialization;
 
 namespace PerceptionVR.Portal
 {
@@ -12,15 +13,17 @@ namespace PerceptionVR.Portal
     {
         [SerializeField] private PortalBase _portalPair;
         
-        [SerializeField] private Collider teleportableArea;
+        [SerializeField] private Collider _portalCollider;
+        
         
         public IPortal portalPair => _portalPair as IPortal;
 
         public Action<ITeleportable> OnTeleport;
+        
+        public Collider portalCollider => _portalCollider;
 
         public Plane portalPlane => new Plane(transform.forward, transform.position);
-
-        public Bounds teleportableBounds => teleportableArea.bounds;
+        
 
         private void Awake()
         {
@@ -29,6 +32,10 @@ namespace PerceptionVR.Portal
                 Debug.LogError("PortalBase: No portal pair assigned");
             if (_portalPair.transform == transform)
                 Debug.LogError("PortalBase: Portal pair cannot be self");
+            
+            // Get portal collider
+            if(_portalCollider == null)
+                _portalCollider = GetComponent<Collider>();
         }
 
         public void Teleport(ITeleportable teleportable)

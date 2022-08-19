@@ -35,7 +35,7 @@ namespace PerceptionVR.Portal
         {
             if (hasBehaviour)
             {
-                Debug.LogWarning($"Clone {transform.name} has behaviour, but it's being destroyed (something is not right). Swapping...");
+                Debug.LogWarning($"Clone {transform.name} has behaviour, but it's being destroyed.");
                 //TransferBehaviour(this, targetSubTeleportable);
             }
         }

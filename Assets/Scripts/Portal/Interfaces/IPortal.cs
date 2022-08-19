@@ -10,7 +10,7 @@ namespace PerceptionVR.Portal
 
         Pose PairPose(Pose pose);
         
-        Bounds teleportableBounds { get; }
+        Collider portalCollider { get; }
         
         Plane portalPlane { get; }
         
