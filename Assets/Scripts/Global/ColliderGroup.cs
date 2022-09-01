@@ -1,67 +1,100 @@
-using System.Collections;
-using System.Collections.ObjectModel;
+using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 
 namespace PerceptionVR.Global
 {
-    public record ColliderGroup
+    public class ColliderGroup : ObservableCollection<Collider>
     {
-        public readonly ObservableCollection<Collider> colliders;
-        
-        private ICollection<ColliderGroup> ignoredGroups;
-
-        public ColliderGroup()
+        public enum FilterMode
         {
-            colliders = new ObservableCollection<Collider>();
-            colliders.CollectionChanged += OnCollectionChanged;
+            Include, // Only collide with specified groups
+            Exclude  // Collide with all groups except specified groups
         }
         
-        ~ColliderGroup()
+        public static ColliderGroup everything = default;
+
+        private readonly List<Collider> ignoredColliders = default;
+        private FilterMode filterMode;
+        
+
+        public void SetFilter(FilterMode mode, ColliderGroup group) => SetFilter(mode, new[] { group });
+        
+        public void SetFilter(FilterMode mode, ColliderGroup[] groups)
         {
-            // Un-ignore and remove self from all ignored groups
-            foreach (var ignoredGroup in ignoredGroups)
+            switch (mode)
             {
-                foreach (var ignoredCollider in ignoredGroup.colliders)
-                    foreach (var collider in colliders)
-                        Physics.IgnoreCollision(collider, ignoredCollider, false);
-                ignoredGroup.ignoredGroups.Remove(this);
+                case FilterMode.Exclude:
+                    // Ignore all collider from all groups
+                    IgnoreColliders(groups.SelectMany(x => x).Distinct());
+
+                    // Register CollectionChanged callback to each group
+                    foreach (var group in groups)
+                    {
+                        group.CollectionChanged += (sender, args) =>
+                        {
+                            IgnoreColliders(args.NewItems.Cast<Collider>(), true);
+                            IgnoreColliders(args.OldItems.Cast<Collider>(), false);
+                        };
+                    }
+                    
+                    break;
+                    
+                case FilterMode.Include:
+                    // Take everything except the groups
+                    var combinedGroups = groups.SelectMany(x => x).Distinct();
+                    IgnoreColliders(everything.Where(x => !combinedGroups.Contains(x)));
+                    
+                    // Register CollectionChanged callback to each group
+                    foreach (var group in groups)
+                    {
+                        group.CollectionChanged += (sender, args) =>
+                        {
+                            IgnoreColliders(args.NewItems.Cast<Collider>(), false);
+                            IgnoreColliders(args.OldItems.Cast<Collider>(), true);
+                        };
+                    }
+                    
+                    // And ignore any future colliders
+                    everything.CollectionChanged += (sender, args) => IgnoreColliders(args.NewItems.Cast<Collider>());
+
+                    break;
             }
         }
+        
 
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public new void Add(Collider item)
         {
-            // Ignore all new collider with all ignored groups
-            foreach (Collider newCollider in e.NewItems)
-                foreach (var ignoredGroup in ignoredGroups)
-                    foreach (var ignoredCollider in ignoredGroup.colliders)
-                        Physics.IgnoreCollision(newCollider, ignoredCollider);
-
-            // Un-ignore all removed colliders with all ignored groups
-            foreach (Collider oldCollider in e.OldItems)
-                foreach (var ignoredGroup in ignoredGroups)
-                    foreach (var ignoredCollider in ignoredGroup.colliders)
-                        Physics.IgnoreCollision(oldCollider, ignoredCollider, ignore: false);
+            ignoredColliders.ForEach(x => Physics.IgnoreCollision(item, x, true));
+            base.Add(item);
+        }
+        
+        public new bool Remove(Collider item)
+        {
+            ignoredColliders.ForEach(x => Physics.IgnoreCollision(item, x, false));
+            return base.Remove(item);
         }
 
-        // Ignore all colliders in this group with all colliders in the other group
-        public void IgnoreCollisionsWith(ColliderGroup otherGroup, bool ignore = true)
+        public new void Clear()
         {
-            if(ignore)
+            foreach (var collider in this)
+                Remove(collider);
+        }
+
+        
+        private void IgnoreColliders(IEnumerable<Collider> colliders, bool ignore = true)
+        {
+            //                                 Maybe dont check when un-ignoring???
+            foreach (var collider in colliders.Where(x => !this.Contains(x)))
             {
-                ignoredGroups.Add(otherGroup);
-                otherGroup.ignoredGroups.Add(this);
+                if (ignore) ignoredColliders.Add(collider);
+                else        ignoredColliders.Remove(collider);
+                
+                foreach (var thisCollider in this)
+                    Physics.IgnoreCollision(collider, thisCollider, ignore);
             }
-            else
-            {
-                ignoredGroups.Remove(otherGroup);
-                otherGroup.ignoredGroups.Remove(this);
-            }
-            
-            foreach (var collider in colliders)
-                foreach (var otherCollider in otherGroup.colliders)
-                    Physics.IgnoreCollision(collider, otherCollider, ignore);
         }
     }
 }
