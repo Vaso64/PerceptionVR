@@ -15,7 +15,6 @@ namespace PerceptionVR.Portal
         public ITeleportable teleportable;
         public readonly TeleportableClone clone;
         public readonly ICollection<Collider> associatedColliders;
-        public Action transferCallback;
     }
 
 }

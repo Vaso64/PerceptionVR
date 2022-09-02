@@ -14,11 +14,11 @@ namespace PerceptionVR.Global
             Exclude  // Collide with all groups except specified groups
         }
         
-        public static ColliderGroup everything = default;
+        public static ColliderGroup everything = new ColliderGroup();
 
-        private readonly List<Collider> ignoredColliders = default;
+        private readonly List<Collider> ignoredColliders = new List<Collider>();
         private FilterMode filterMode;
-        
+
 
         public void SetFilter(FilterMode mode, ColliderGroup group) => SetFilter(mode, new[] { group });
         
@@ -35,8 +35,8 @@ namespace PerceptionVR.Global
                     {
                         group.CollectionChanged += (sender, args) =>
                         {
-                            IgnoreColliders(args.NewItems.Cast<Collider>(), true);
-                            IgnoreColliders(args.OldItems.Cast<Collider>(), false);
+                            if(args.NewItems != null) IgnoreColliders(args.NewItems.Cast<Collider>(), true);
+                            if(args.OldItems != null) IgnoreColliders(args.OldItems.Cast<Collider>(), false);
                         };
                     }
                     
@@ -52,16 +52,29 @@ namespace PerceptionVR.Global
                     {
                         group.CollectionChanged += (sender, args) =>
                         {
-                            IgnoreColliders(args.NewItems.Cast<Collider>(), false);
-                            IgnoreColliders(args.OldItems.Cast<Collider>(), true);
+                            if(args.NewItems != null) IgnoreColliders(args.NewItems.Cast<Collider>(), false);
+                            if(args.OldItems != null) IgnoreColliders(args.OldItems.Cast<Collider>(), true);
                         };
                     }
                     
                     // And ignore any future colliders
-                    everything.CollectionChanged += (sender, args) => IgnoreColliders(args.NewItems.Cast<Collider>());
-
+                    everything.CollectionChanged += (sender, args) =>
+                    {
+                        if (args.NewItems != null) IgnoreColliders(args.NewItems.Cast<Collider>());
+                    };
                     break;
             }
+            
+            everything.CollectionChanged += (sender, args) =>
+            {
+                if (args.OldItems == null)
+                    return;
+                foreach (Collider destroyedCollider in args.OldItems)
+                {
+                    base.Remove(destroyedCollider);
+                    ignoredColliders.Remove(destroyedCollider);
+                }
+            };
         }
         
 

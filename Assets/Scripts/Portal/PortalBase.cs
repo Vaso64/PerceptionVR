@@ -15,10 +15,9 @@ namespace PerceptionVR.Portal
         
         [SerializeField] private Collider _portalCollider;
         
-        
         public IPortal portalPair => _portalPair as IPortal;
 
-        public Action<ITeleportable> OnTeleport;
+        public Action<ITeleportable> OnTeleport { get; set; }
         
         public Collider portalCollider => _portalCollider;
 

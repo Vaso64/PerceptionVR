@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace PerceptionVR.Portal
 {
@@ -13,6 +14,8 @@ namespace PerceptionVR.Portal
         Collider portalCollider { get; }
         
         Plane portalPlane { get; }
+
+        Action<ITeleportable> OnTeleport { get; set; }
         
         void Teleport(ITeleportable teleportable);
     }

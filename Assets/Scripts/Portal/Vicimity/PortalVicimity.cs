@@ -1,111 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
-using PerceptionVR.Extensions;
+using System.Linq;
+using PerceptionVR.Global;
 using UnityEngine;
 
 namespace PerceptionVR.Portal
 {
-    [RequireComponent(typeof(Collider))]
     public class PortalVicimity : MonoBehaviour
     {
+        [SerializeField] private SubscribableCollider frontArea;
+        [SerializeField] private SubscribableCollider passingArea;
+        [SerializeField] private SubscribableCollider backArea;
+        
+        private readonly ColliderGroup passingGroup = new ColliderGroup();
+        private readonly ColliderGroup backGroup = new ColliderGroup();
+        private readonly ColliderGroup backCloneGroup = new ColliderGroup();
+
         private IPortal portal;
         
-        private PortalVicimity portalPairVicimity;
+        private Dictionary<ITeleportable, NearbyTeleportable> pairVicimity;
         
         private readonly Dictionary<ITeleportable, NearbyTeleportable> vicimity = new();
         
         private void Start()
         {
             portal = GetComponentInParent<IPortal>();
-            portalPairVicimity = portal.portalPair.transform.GetComponentInChildren<PortalVicimity>();
+            portal.OnTeleport += OnTeleportCallback;
+            pairVicimity = portal.portalPair.transform.GetComponentInChildren<PortalVicimity>().vicimity;
+
+            // Object passing through portals ignores things behind the portal
+            passingGroup.SetFilter(ColliderGroup.FilterMode.Exclude, backGroup);
+
+            // Cloned objects interact with only passing objects
+            backCloneGroup.SetFilter(ColliderGroup.FilterMode.Include, passingGroup);
+            passingGroup.Add(passingArea.collider);
+
+            frontArea.onTriggerEnter += OnFrontAreaEnter;
+            frontArea.onTriggerExit += OnFrontAreaExit;
+            passingArea.onTriggerEnter += OnPassingAreaEnter;
+            passingArea.onTriggerExit += OnPassingAreaExit;
+            backArea.onTriggerEnter += OnBackAreaEnter;
+            backArea.onTriggerExit += OnBackAreaExit;
         }
 
-        private void OnTriggerEnter(Collider other)
+
+        private void OnFrontAreaEnter(Collider other)
         {
-            // Set clip plane
-            var objectRend = other.GetComponent<Renderer>();
-            if (objectRend != null && objectRend.material.HasProperty("_ClipPlane"))
-                objectRend.material.SetVector("_ClipPlane", portal.portalPlane.ToVector4());
-            
-            // Get teleportable (ignore if non-teleportable)
+            // Get teleportable (ignore if non-teleportable or clone)
             var teleportable = other.GetComponentInParent<ITeleportable>();
-            if(teleportable == null) 
+            if(teleportable == null || teleportable.transform.GetComponent<CloneBase>() != null) 
                 return;
-            
-            // Ignore if teleportable clone
-            if(teleportable.transform.GetComponent<CloneBase>() != null)
-                return;
-            
+
             // If not in vicimity yet
             if (!vicimity.ContainsKey(teleportable))
             {
-                // Create clone on other side of portal
+                // Create clone on other side of portal and add to vicinity
                 var clone = TeleportableClone.CreateClone(teleportable, portal);
-                var nearbyTeleportable = new NearbyTeleportable(teleportable, clone);
-                nearbyTeleportable.transferCallback = () =>
-                {
-                    TransferNearbyTeleportable(nearbyTeleportable);
-                };
-                
-                // Transfer nearbyTeleportable to other portal vicimity when it teleports
-                clone.OnEnterPortal += nearbyTeleportable.transferCallback;
-                
-                // Add to vicimity
-                vicimity.Add(teleportable, nearbyTeleportable);
+                vicimity.Add(teleportable, new NearbyTeleportable(teleportable, clone));
             }
 
             // Associate collider with teleportable
             var associatedColliders = vicimity[teleportable].associatedColliders;
             if (!associatedColliders.Contains(other))
-                // Add collider to list
                 associatedColliders.Add(other);
         }
 
-        private void OnTriggerExit(Collider other)
+        private void OnFrontAreaExit(Collider other)
         {
-            // Unset clip plane
-            var objectRend = other.GetComponent<Renderer>();
-            if (objectRend != null && objectRend.material.HasProperty("_ClipPlane"))
-                objectRend.material.SetVector("_ClipPlane", Vector4.zero);
-            
-            // Get teleportable or ignore
+            // Get teleportable (ignore if non-teleportable, clone or not in vicimity (after teleport))
             var teleportable = other.GetComponentInParent<ITeleportable>();
-            if(teleportable == null) 
+            if(teleportable == null || teleportable.transform.GetComponent<CloneBase>() != null || !vicimity.ContainsKey(teleportable)) 
                 return;
             
-            // Ignore if teleportable clone
-            if(teleportable.transform.GetComponent<CloneBase>() != null)
-                return;
-            
-            // Match with vicimity object
-            NearbyTeleportable nearbyTeleportable;
-            if (vicimity.ContainsKey(teleportable))
-                nearbyTeleportable = vicimity[teleportable];
-            else // Not in vicimity (eg. after teleport)
-                return;
-
-            // Remove collider from list
+            // Match with vicimity object and remove collider from it's list
+            NearbyTeleportable nearbyTeleportable = vicimity[teleportable];
             nearbyTeleportable.associatedColliders.Remove(other);
             
-            // If no colliders remain, remove vicimity entry
+            // If no colliders remains, remove vicimity entry
             if (nearbyTeleportable.associatedColliders.Count == 0)
             {
                 Destroy(nearbyTeleportable.clone.gameObject);
                 vicimity.Remove(teleportable);
             }
         }
-
-        private void TransferNearbyTeleportable(NearbyTeleportable nearbyTeleportable)
+        
+        private void OnPassingAreaEnter(Collider other)
         {
+            backGroup.Remove(other);
+            backCloneGroup.Remove(other);
+            passingGroup.Add(other);
+        }
+        
+        private void OnPassingAreaExit(Collider other)
+        {
+            passingGroup.Remove(other);
+            
+            // If exited from front side
+            if (frontArea.Contains(other))
+                return;
+            
+            // other Should be a clone at this point
+            if(other.GetComponentInParent<TeleportableClone>() != null)  
+                backCloneGroup.Add(other);
+        }
+        
+        private void OnBackAreaEnter(Collider other)
+        {
+            if(!passingGroup.Contains(other))
+                backGroup.Add(other);
+        }
+        
+        private void OnBackAreaExit(Collider other)
+        {
+            backGroup.Remove(other);
+        }
+
+        private void OnTeleportCallback(ITeleportable teleportable)
+        {
+            var nearbyTeleportable = vicimity[teleportable];
             nearbyTeleportable.associatedColliders.Clear();
-            portalPairVicimity.vicimity.Add(nearbyTeleportable.teleportable, nearbyTeleportable);
-            vicimity.Remove(nearbyTeleportable.teleportable);
-            nearbyTeleportable.clone.OnEnterPortal -= nearbyTeleportable.transferCallback;
-            nearbyTeleportable.transferCallback = () =>
-            {
-                portalPairVicimity.TransferNearbyTeleportable(nearbyTeleportable); 
-            };
-            nearbyTeleportable.clone.OnEnterPortal += nearbyTeleportable.transferCallback;
+            pairVicimity.Add(teleportable, nearbyTeleportable);
+            vicimity.Remove(teleportable);
         }
     }
 }
