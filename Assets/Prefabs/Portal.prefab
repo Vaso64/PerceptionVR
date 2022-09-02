@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 7403984405037810095}
   - component: {fileID: 6316986076754937605}
   m_Layer: 0
-  m_Name: PortalVicimity
+  m_Name: PortalVicinity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

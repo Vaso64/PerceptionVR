@@ -62,7 +62,7 @@ namespace PerceptionVR.Player
                 return;
             
             grabbableItems.Add(grabbable);
-            Debug.Log(other.transform.name + "(grabbable) entered " + handSide + " hand vicimity");
+            Debug.Log(other.transform.name + "(grabbable) entered " + handSide + " hand vicinity");
         }
         
         private void OnTriggerExit(Collider other)
