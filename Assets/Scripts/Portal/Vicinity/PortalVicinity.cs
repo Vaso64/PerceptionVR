@@ -79,7 +79,7 @@ namespace PerceptionVR.Portal
             // If no colliders remains, remove vicinity entry
             if (nearbyTeleportable.associatedColliders.Count == 0)
             {
-                Destroy(nearbyTeleportable.clone.gameObject);
+                GameObjectUtility.DestroyNotify(nearbyTeleportable.clone.gameObject);
                 vicinity.Remove(teleportable);
             }
         }

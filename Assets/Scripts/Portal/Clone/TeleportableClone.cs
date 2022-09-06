@@ -1,9 +1,9 @@
 using UnityEngine;
 using PerceptionVR.Extensions;
+using PerceptionVR.Global;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq.Extensions;
-
 using System;
 
 namespace PerceptionVR.Portal
@@ -43,8 +43,8 @@ namespace PerceptionVR.Portal
         public static TeleportableClone CreateClone(ITeleportable original, IPortal portal)
         {
             // Clone original and create nearby teleportable entity
-            var clone = Instantiate(original.transform.gameObject);
-            
+            var clone = GameObjectUtility.InstantiateNotify(original.transform.gameObject);
+
             // Strip clone from unnecessary components
             var defaultPreserveComponents = new List<Type> { typeof(Rigidbody), typeof(Collider), typeof(MeshRenderer), typeof(MeshFilter), 
                                                              typeof(Transform), typeof(TeleportableClone), typeof(SubTeleportableClone) };
@@ -54,14 +54,14 @@ namespace PerceptionVR.Portal
                 child.GetComponents(typeof(Component))
                     .Where(comp => !preserveComponents
                         .Any(preserveComp => comp.GetType() == preserveComp || comp.GetType().IsSubclassOf(preserveComp)))
-                    .ForEach(x => Destroy(x));
+                    .ForEach(x => child.gameObject.RemoveComponentNotify(x));
             }
 
             // Setup tracking
             var teleportableClone = clone.AddComponent<TeleportableClone>();
             foreach (var subOriginal in original.transform.GetComponentsInChildren<ISubTeleportable>())
                 clone.transform.Find(subOriginal.transform.GetPath(relativeTo: original.transform)).gameObject
-                    .AddComponent<SubTeleportableClone>();
+                    .AddComponentNotify<SubTeleportableClone>();
             
             // Start tracking
             teleportableClone.Track(original, portal);  

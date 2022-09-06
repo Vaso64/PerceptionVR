@@ -5,6 +5,7 @@ using UnityEngine;
 using PerceptionVR.Extensions;
 using UnityEngine.ProBuilder;
 using MoreLinq.Extensions;
+using PerceptionVR.Global;
 using PerceptionVR.Portal;
 using PerceptionVR.Props;
 
@@ -85,7 +86,7 @@ namespace PerceptionVR.Player
 
             // Create fixed grab joint to hold item
             Debug.Log(holdingItem.transform.name + " grabbed by " + handSide + " hand");
-            grabJoint = gameObject.AddComponent<FixedJoint>();
+            grabJoint = gameObject.AddComponentNotify<FixedJoint>();
             grabJoint.connectedBody = holdingItem.rigidbody;
             
         }
@@ -97,7 +98,7 @@ namespace PerceptionVR.Player
 
             // Destroy grab joint
             Debug.Log(holdingItem.transform.name + " released by " + handSide + " hand");
-            Destroy(grabJoint);
+            gameObject.RemoveComponentNotify(grabJoint);
             holdingItem = null;
         }
     }

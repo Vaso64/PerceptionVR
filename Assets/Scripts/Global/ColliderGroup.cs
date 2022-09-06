@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MoreLinq;
 using UnityEngine;
 
 namespace PerceptionVR.Global
@@ -14,11 +15,11 @@ namespace PerceptionVR.Global
             Exclude  // Collide with all groups except specified groups
         }
         
-        public static ColliderGroup everything = new ColliderGroup();
+        private static ColliderGroup everything = new ColliderGroupEverything();
+        private IEnumerable<Collider> destroyedColliders;
 
         private readonly List<Collider> ignoredColliders = new List<Collider>();
         private FilterMode filterMode;
-
 
         public void SetFilter(FilterMode mode, ColliderGroup group) => SetFilter(mode, new[] { group });
         
@@ -32,14 +33,12 @@ namespace PerceptionVR.Global
 
                     // Register CollectionChanged callback to each group
                     foreach (var group in groups)
-                    {
                         group.CollectionChanged += (sender, args) =>
                         {
                             if(args.NewItems != null) IgnoreColliders(args.NewItems.Cast<Collider>(), true);
                             if(args.OldItems != null) IgnoreColliders(args.OldItems.Cast<Collider>(), false);
                         };
-                    }
-                    
+
                     break;
                     
                 case FilterMode.Include:
@@ -49,31 +48,31 @@ namespace PerceptionVR.Global
                     
                     // Register CollectionChanged callback to each group
                     foreach (var group in groups)
-                    {
                         group.CollectionChanged += (sender, args) =>
                         {
                             if(args.NewItems != null) IgnoreColliders(args.NewItems.Cast<Collider>(), false);
                             if(args.OldItems != null) IgnoreColliders(args.OldItems.Cast<Collider>(), true);
                         };
-                    }
-                    
+
                     // And ignore any future colliders
                     everything.CollectionChanged += (sender, args) =>
                     {
                         if (args.NewItems != null) IgnoreColliders(args.NewItems.Cast<Collider>());
                     };
                     break;
+                
+                default:
+                    return;
             }
             
             everything.CollectionChanged += (sender, args) =>
             {
-                if (args.OldItems == null)
-                    return;
-                foreach (Collider destroyedCollider in args.OldItems)
-                {
-                    base.Remove(destroyedCollider);
-                    ignoredColliders.Remove(destroyedCollider);
-                }
+                if (args.OldItems != null)
+                    foreach (var destroyedCollider in args.OldItems.Cast<Collider>())
+                    {
+                        ignoredColliders.Remove(destroyedCollider);
+                        base.Items.Remove(destroyedCollider);
+                    }
             };
         }
         
@@ -99,8 +98,7 @@ namespace PerceptionVR.Global
         
         private void IgnoreColliders(IEnumerable<Collider> colliders, bool ignore = true)
         {
-            //                                 Maybe dont check when un-ignoring???
-            foreach (var collider in colliders.Where(x => !this.Contains(x)))
+            foreach (var collider in colliders)
             {
                 if (ignore) ignoredColliders.Add(collider);
                 else        ignoredColliders.Remove(collider);

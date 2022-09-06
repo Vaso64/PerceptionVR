@@ -1,4 +1,5 @@
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace PerceptionVR.Global
 {
@@ -10,7 +11,7 @@ namespace PerceptionVR.Global
         
         
         // Instantiate and invoke OnAfterInstantiate in GlobalEvents
-        public static Object InstantiateNotify(GameObject original)
+        public static GameObject InstantiateNotify(GameObject original)
         {
             var instance = Object.Instantiate(original);
             GlobalEvents.OnAfterInstantiate?.Invoke(instance);
