@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using PerceptionVR.Extensions;
@@ -25,16 +26,19 @@ namespace PerceptionVR.Portal
 
         private static List<PortalRenderer> allPortalRenderers = new List<PortalRenderer>();
 
+        private void Awake()
+        {
+            // Register self and to events
+            allPortalRenderers.Add(this);
+            PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
+            RenderingManagment.OnResolutionChange += AllocateRTArray;
+        }
+
         private void Start()
         {
             // Get references
             portal ??= GetComponentInParent<IPortal>();
             portalCamera ??= GetComponentInChildren<Camera>();
-
-            // Register self and to events
-            allPortalRenderers.Add(this);
-            PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
-            RenderingManagment.OnResolutionChange += AllocateRTArray;
         }
 
         private void AllocateRTArray(Vector2Int resolution)
