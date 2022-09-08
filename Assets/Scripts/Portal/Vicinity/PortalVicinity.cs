@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreLinq.Extensions;
 using PerceptionVR.Global;
 using UnityEngine;
 
@@ -12,13 +13,13 @@ namespace PerceptionVR.Portal
         [SerializeField] private SubscribableCollider passingArea;
         [SerializeField] private SubscribableCollider backArea;
         
-        private readonly ColliderGroup passingGroup = new ColliderGroup();
-        private readonly ColliderGroup backGroup = new ColliderGroup();
-        private readonly ColliderGroup backCloneGroup = new ColliderGroup();
+        private readonly ColliderGroup passingGroup = new();
+        private readonly ColliderGroup backGroup = new();
+        private readonly ColliderGroup cloneGroup = new();
 
         private IPortal portal;
         
-        private Dictionary<ITeleportable, NearbyTeleportable> pairVicinity;
+        private PortalVicinity pairVicinity;
         
         private readonly Dictionary<ITeleportable, NearbyTeleportable> vicinity = new();
         
@@ -26,13 +27,13 @@ namespace PerceptionVR.Portal
         {
             portal = GetComponentInParent<IPortal>();
             portal.OnTeleport += OnTeleportCallback;
-            pairVicinity = portal.portalPair.transform.GetComponentInChildren<PortalVicinity>().vicinity;
+            pairVicinity = portal.portalPair.transform.GetComponentInChildren<PortalVicinity>();
 
             // Object passing through portals ignores things behind the portal
             passingGroup.SetFilter(ColliderGroup.FilterMode.Exclude, backGroup);
 
             // Cloned objects interact with only passing objects
-            backCloneGroup.SetFilter(ColliderGroup.FilterMode.Include, passingGroup);
+            cloneGroup.SetFilter(ColliderGroup.FilterMode.Include, passingGroup);
             passingGroup.Add(passingArea.collider);
 
             frontArea.onTriggerEnter += OnFrontAreaEnter;
@@ -54,8 +55,11 @@ namespace PerceptionVR.Portal
             // If not in vicinity yet
             if (!vicinity.ContainsKey(teleportable))
             {
-                // Create clone on other side of portal and add to vicinity
+                // Create clone on other side of portal
                 var clone = TeleportableClone.CreateClone(teleportable, portal);
+                
+                // Add clone's colliders to pair's clone group
+                clone.GetComponentsInChildren<Collider>().ForEach(x => cloneGroup.Add(x));
                 vicinity.Add(teleportable, new NearbyTeleportable(teleportable, clone));
             }
 
@@ -73,7 +77,7 @@ namespace PerceptionVR.Portal
                 return;
             
             // Match with vicinity object and remove collider from it's list
-            NearbyTeleportable nearbyTeleportable = vicinity[teleportable];
+            var nearbyTeleportable = vicinity[teleportable];
             nearbyTeleportable.associatedColliders.Remove(other);
             
             // If no colliders remains, remove vicinity entry
@@ -87,7 +91,7 @@ namespace PerceptionVR.Portal
         private void OnPassingAreaEnter(Collider other)
         {
             backGroup.Remove(other);
-            backCloneGroup.Remove(other);
+            cloneGroup.Remove(other);
             passingGroup.Add(other);
         }
         
@@ -95,18 +99,14 @@ namespace PerceptionVR.Portal
         {
             passingGroup.Remove(other);
             
-            // If exited from front side
-            if (frontArea.Contains(other))
-                return;
-            
-            // other Should be a clone at this point
-            if(other.GetComponentInParent<TeleportableClone>() != null)  
-                backCloneGroup.Add(other);
+            // If exited from back side, add to clone group
+            if (backArea.Contains(other))
+                cloneGroup.Add(other);
         }
         
         private void OnBackAreaEnter(Collider other)
         {
-            if(!passingGroup.Contains(other))
+            if(!passingGroup.Contains(other) && !cloneGroup.Contains(other))
                 backGroup.Add(other);
         }
         
@@ -119,7 +119,7 @@ namespace PerceptionVR.Portal
         {
             var nearbyTeleportable = vicinity[teleportable];
             nearbyTeleportable.associatedColliders.Clear();
-            pairVicinity.Add(teleportable, nearbyTeleportable);
+            pairVicinity.vicinity.Add(teleportable, nearbyTeleportable);
             vicinity.Remove(teleportable);
         }
     }
