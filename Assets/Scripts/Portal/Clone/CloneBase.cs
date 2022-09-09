@@ -77,9 +77,11 @@ namespace PerceptionVR.Portal
         // Check if raycast between old and new position intersects portal collider
         private bool PassedThroughPortal(Vector3 oldPosition, Vector3 newPosition)
         {
-            var ray = new Ray(oldPosition, newPosition - oldPosition);
-            var hits = Physics.RaycastAll(ray, Vector3.Distance(oldPosition, newPosition));
-            return hits.Any(x => targetPortal.portalCollider == x.collider);
+            var direction = newPosition - oldPosition;
+            var origin = oldPosition - direction.normalized;
+            var ray = new Ray(origin, direction);
+            var hits = Physics.RaycastAll(ray, Vector3.Distance(origin, newPosition));
+            return hits.Any(hit => hit.collider == targetPortal.portalCollider);
         } 
 
 

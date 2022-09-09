@@ -16,20 +16,18 @@ namespace PerceptionVR.Global
         }
         
         private static ColliderGroup everything = new ColliderGroupEverything();
-        private IEnumerable<Collider> destroyedColliders;
 
         private readonly List<Collider> ignoredColliders = new List<Collider>();
         private FilterMode filterMode;
 
-        public void SetFilter(FilterMode mode, ColliderGroup group) => SetFilter(mode, new[] { group });
-        
-        public void SetFilter(FilterMode mode, ColliderGroup[] groups)
+        public void SetFilter(FilterMode mode, IEnumerable<ColliderGroup> groups)
         {
+            var combinedGroups = groups.SelectMany(g => g).Distinct();
             switch (mode)
             {
                 case FilterMode.Exclude:
                     // Ignore all collider from all groups
-                    IgnoreColliders(groups.SelectMany(x => x).Distinct());
+                    IgnoreColliders(combinedGroups);
 
                     // Register CollectionChanged callback to each group
                     foreach (var group in groups)
@@ -43,7 +41,6 @@ namespace PerceptionVR.Global
                     
                 case FilterMode.Include:
                     // Take everything except the groups
-                    var combinedGroups = groups.SelectMany(x => x).Distinct();
                     IgnoreColliders(everything.Where(x => !combinedGroups.Contains(x)));
                     
                     // Register CollectionChanged callback to each group

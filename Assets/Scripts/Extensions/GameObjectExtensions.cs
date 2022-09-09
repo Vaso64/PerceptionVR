@@ -1,3 +1,4 @@
+using MoreLinq.Extensions;
 using UnityEngine;
 using PerceptionVR.Global;
 
@@ -8,6 +9,8 @@ namespace PerceptionVR.Extensions
         // Remove components from a gameObject
         public static void RemoveComponent(this GameObject gameObject, Component component) => Object.Destroy(component);
         
+        public static void RemoveComponent<T>(this GameObject gameObject) where T : Component => gameObject.GetComponents<T>().ForEach(x => Object.Destroy(x));
+
         
         // Add component to a gameObject and invoke OnAfterAddComponent in GlobalEvents
         public static T AddComponentNotify<T>(this GameObject gameObject) where T : Component
@@ -24,5 +27,7 @@ namespace PerceptionVR.Extensions
             GlobalEvents.OnBeforeRemoveComponent?.Invoke(component);
             gameObject.RemoveComponent(component);
         }
+        
+        public static void RemoveComponentNotify<T>(this GameObject gameObject) where T : Component => gameObject.GetComponents<T>().ForEach(gameObject.RemoveComponentNotify);
     }
 }
