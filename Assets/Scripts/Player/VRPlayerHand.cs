@@ -4,35 +4,38 @@ using System.Linq;
 using UnityEngine;
 using PerceptionVR.Extensions;
 using UnityEngine.ProBuilder;
+using PerceptionVR.Common;
 using MoreLinq.Extensions;
 using PerceptionVR.Global;
 using PerceptionVR.Portal;
-using PerceptionVR.Props;
+using PerceptionVR.Debug;
 
 
 namespace PerceptionVR.Player
 {
-    public class VRPlayerHand : MonoBehaviour, ISubTeleportable
+    public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
         private VRPlayerInput playerInput;
         
         [SerializeField] private VRPlayerHandSide handSide;
 
-        private List<IGrabbable> grabbableItems = new List<IGrabbable>();
+        private List<IGrabbable> grabbableItems = new();
         
         private IGrabbable holdingItem = null;
 
         private FixedJoint grabJoint;
 
-        public void OnCreateClone(GameObject clone)
+        public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
         {
+            preservedComponents = Enumerable.Empty<Type>();
             clone.GetComponent<Renderer>().material.color = Color.gray;
         }
 
-        public void TransferBehaviour(ISubTeleportable from, ISubTeleportable to)
+        public void TransferBehaviour(GameObject from, GameObject to)
         {
-            from.transform.GetComponent<Renderer>().material.color = Color.gray;
-            to.transform.GetComponent<Renderer>().material.color = Color.red;
+            // TODO: Transfer behaviour
+            from.GetComponent<Renderer>().material.color = Color.gray;
+            to.GetComponent<Renderer>().material.color = Color.red;
         }
 
         private void Awake()
@@ -63,7 +66,7 @@ namespace PerceptionVR.Player
                 return;
             
             grabbableItems.Add(grabbable);
-            Debug.Log(other.transform.name + "(grabbable) entered " + handSide + " hand vicinity");
+            Debugger.LogInfo(other.transform.name + "(grabbable) entered " + handSide + " hand vicinity");
         }
         
         private void OnTriggerExit(Collider other)
@@ -73,7 +76,7 @@ namespace PerceptionVR.Player
                 return;
             
             grabbableItems.Remove(grabbable);
-            Debug.Log(other.transform.name + "(grabbable) exited " + handSide + " hand vicinity");
+            Debugger.LogInfo(other.transform.name + "(grabbable) exited " + handSide + " hand vicinity");
         }
 
         private void OnGrab()
@@ -85,7 +88,7 @@ namespace PerceptionVR.Player
             holdingItem = grabbableItems.MinBy(item => Vector3.Distance(item.collider.ClosestPoint(transform.position), transform.position)).First();
 
             // Create fixed grab joint to hold item
-            Debug.Log(holdingItem.transform.name + " grabbed by " + handSide + " hand");
+            Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
             grabJoint = gameObject.AddComponentNotify<FixedJoint>();
             grabJoint.connectedBody = holdingItem.rigidbody;
             
@@ -97,7 +100,7 @@ namespace PerceptionVR.Player
                 return;
 
             // Destroy grab joint
-            Debug.Log(holdingItem.transform.name + " released by " + handSide + " hand");
+            Debugger.LogInfo(holdingItem.transform.name + " released by " + handSide + " hand");
             gameObject.RemoveComponentNotify(grabJoint);
             holdingItem = null;
         }

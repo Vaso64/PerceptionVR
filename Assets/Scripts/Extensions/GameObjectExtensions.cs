@@ -1,4 +1,5 @@
-using MoreLinq.Extensions;
+
+using MoreLinq;
 using UnityEngine;
 using PerceptionVR.Global;
 
@@ -15,7 +16,7 @@ namespace PerceptionVR.Extensions
         // Add component to a gameObject and invoke OnAfterAddComponent in GlobalEvents
         public static T AddComponentNotify<T>(this GameObject gameObject) where T : Component
         {
-            var instance = gameObject.AddComponent<T>();
+            var instance = gameObject.AddComponent<T>() as T;
             GlobalEvents.OnAfterAddComponent?.Invoke(instance);
             return instance;
         }

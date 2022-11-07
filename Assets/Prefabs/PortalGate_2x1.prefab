@@ -98,7 +98,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 836
+  m_VersionIndex: 842
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -110,7 +110,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 925885611977993706}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -894,7 +894,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1177
+  m_VersionIndex: 1183
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1052,6 +1052,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3138777714870243395, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3519204814406711909, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: m_Name
       value: Portal
@@ -1071,6 +1075,22 @@ PrefabInstance:
     - target: {fileID: 7952509846400796195, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: m_Center.z
       value: -0.0125
+      objectReference: {fileID: 0}
+    - target: {fileID: 8102850664857949170, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: m_Size.x
+      value: 1.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8102850664857949170, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: m_Size.y
+      value: 1.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8102850664857949170, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: m_Size.z
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 8102850664857949170, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: m_Center.z
+      value: -0.01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}

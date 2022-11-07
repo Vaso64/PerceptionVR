@@ -1,12 +1,11 @@
 ﻿using System;
+using PerceptionVR.Common;
 using UnityEngine;
 
 namespace PerceptionVR.Portal
 {
-    public interface IPortal
+    public interface IPortal : IMonoBehaviour
     {
-        Transform transform { get; }
-        
         IPortal portalPair { get; }
 
         Pose PairPose(Pose pose);

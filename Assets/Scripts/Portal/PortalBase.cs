@@ -6,6 +6,8 @@ using System.Linq;
 using PerceptionVR.Common;
 using PerceptionVR.Extensions;
 using UnityEngine.Serialization;
+using PerceptionVR.Debug;
+
 
 namespace PerceptionVR.Portal
 {
@@ -28,9 +30,9 @@ namespace PerceptionVR.Portal
         {
             // Portal pair checks
             if (portalPair == null) 
-                Debug.LogError("PortalBase: No portal pair assigned");
+                Debugger.LogError("PortalBase: No portal pair assigned");
             if (_portalPair.transform == transform)
-                Debug.LogError("PortalBase: Portal pair cannot be self");
+                Debugger.LogError("PortalBase: Portal pair cannot be self");
             
             // Get portal collider
             if(_portalCollider == null)
@@ -39,7 +41,7 @@ namespace PerceptionVR.Portal
 
         public void Teleport(ITeleportable teleportable)
         {
-            //Debug.Log($"{teleportable.transform.name} passed through {transform.name}");
+            //Dbg.LogInfo($"{teleportable.transform.name} passed through {transform.name}");
             
             var pairPose = PairPose(teleportable.transform.GetPose(), out var portalRotationDelta);
 
