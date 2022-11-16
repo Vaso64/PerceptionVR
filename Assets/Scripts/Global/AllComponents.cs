@@ -4,6 +4,6 @@ namespace PerceptionVR.Global
 {
     public static class ComponentTracking
     {
-        public static ComponentTracker<Collider> colliders = new();
+        public static ComponentTracker<Collider> allColliders = new();
     }
 }

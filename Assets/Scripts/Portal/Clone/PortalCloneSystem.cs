@@ -1,3 +1,4 @@
+using System;
 using MoreLinq.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace PerceptionVR.Portal
         private void OnVicinityEnter(Collider other)
         {
             // If its clone
-            var nearbyCloneObject = pairCloneSystem.vicinity.FirstOrDefault(x => x.associatedColliders.Contains(other));
+            var nearbyCloneObject = pairCloneSystem.vicinity.FirstOrDefault(x => x.associatedCloneColliders.Contains(other));
             if (nearbyCloneObject != null)
             {
                 Debugger.LogInfo($"Clone {other} entered {this} vicinity");
@@ -37,14 +38,24 @@ namespace PerceptionVR.Portal
             // If its original
             Debugger.LogInfo($"{other} entered {this} vicinity");
             var nearbyObject = vicinity.FirstOrDefault(x => x.associatedColliders.Contains(other));
-            nearbyObject ??= RegisterTeleportable(other.GetComponentInParent<ITeleportable>());
+            if (nearbyObject == null)
+            {
+                var teleportable = other.GetComponentInParent<ITeleportable>();
+                if (teleportable == null)
+                {
+                    Debugger.LogError($"{other} entered {this} vicinity but it is not teleportable");
+                    return;
+                }
+
+                nearbyObject = RegisterTeleportable(teleportable);
+            }
             nearbyObject.collidersInVicinity.Add(other);
         }
     
         private void OnVicinityExit(Collider other)
         {
             // If its clone
-            var nearbyCloneObject = pairCloneSystem.vicinity.FirstOrDefault(x => x.associatedColliders.Contains(other));
+            var nearbyCloneObject = pairCloneSystem.vicinity.FirstOrDefault(x => x.associatedCloneColliders.Contains(other));
             if (nearbyCloneObject != null)
             {
                 Debugger.LogInfo($"Clone {other} exited {this} vicinity");
@@ -54,7 +65,12 @@ namespace PerceptionVR.Portal
             
             // If its original
             Debugger.LogInfo($"{other} exited {this} vicinity");
-            var nearbyObject = vicinity.First(x => x.associatedColliders.Contains(other));
+            var nearbyObject = vicinity.FirstOrDefault(x => x.associatedColliders.Contains(other));
+            if (nearbyObject == null)
+            {
+                Debugger.LogError($"{other} exited vicinity but is not registered in {this}.");
+                return;
+            }
             nearbyObject.collidersInVicinity.Remove(other);
             if (nearbyObject.collidersInVicinity.Count == 0)
                 UnregisterTeleportable(nearbyObject);
@@ -64,6 +80,7 @@ namespace PerceptionVR.Portal
         {
             var nearbyObject = new NearbyObject(teleportable, TeleportableClone.CreateClone(teleportable));
             nearbyObject.clone.Track(teleportable, portal);
+            // TODO register clone to pair clone system
             nearbyObject.associatedCloneColliders.ForEach(x => pairCloneSystem.cloneGroup.Add(x));
             nearbyObject.cloneCollidersInVicinity.AddRange(nearbyObject.associatedCloneColliders);
             vicinity.Add(nearbyObject);
@@ -75,7 +92,7 @@ namespace PerceptionVR.Portal
         {
             vicinity.Remove(nearbyObject);
             GameObjectUtility.DestroyNotify(nearbyObject.clone.gameObject);
-            Debugger.LogInfo($"Unregistered {nearbyObject.teleportable} in {this}");
+            Debugger.LogInfo($"Unregistered {nearbyObject.teleportable} from {this}");
         }
 
         private void OnTeleport(ITeleportable teleportable)

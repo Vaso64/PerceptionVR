@@ -26,20 +26,22 @@ namespace PerceptionVR.Common.Generic
         
         public bool Remove(T item)
         {
+            var res = collection.Remove(item);
             OnRemoved?.Invoke(new []{item});
-            return collection.Remove(item);
+            return res;
         }
         
-        public bool RemoveRange(IEnumerable<T> items)
+        public void RemoveRange(IEnumerable<T> items)
         {
+            var res = collection.RemoveAll(items.Contains) > 0;
             OnRemoved?.Invoke(items);
-            return collection.RemoveAll(items.Contains) > 0;
         }
         
         public void Clear()
         {
-            OnRemoved?.Invoke(collection);
+            var items = collection.ToList();
             collection.Clear();
+            OnRemoved?.Invoke(items);
         }
 
         // Rest of the implementation (default)

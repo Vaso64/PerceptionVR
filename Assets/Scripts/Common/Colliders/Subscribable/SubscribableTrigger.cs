@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class SubscribableTrigger : ColliderBase, IEnumerable<Collider>
 {
-    public IEnumerator<Collider> GetEnumerator() => triggerArea.GetEnumerator();
+    public IEnumerator<Collider> GetEnumerator() => collidersInside.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    private readonly ICollection<Collider> triggerArea = new List<Collider>();
+    private readonly ICollection<Collider> collidersInside = new List<Collider>();
 
     private readonly Queue<Collider> onTriggerEnterQueue = new();
     public event Action<Collider> onTriggerEnter;
@@ -20,7 +20,7 @@ public class SubscribableTrigger : ColliderBase, IEnumerable<Collider>
     { 
         base.Awake();
         collider.isTrigger = true;
-        StartCoroutine(ProcessQueue());
+        //StartCoroutine(ProcessQueue());
     }
 
     private IEnumerator ProcessQueue()
@@ -46,15 +46,33 @@ public class SubscribableTrigger : ColliderBase, IEnumerable<Collider>
         }
     }
 
+    private void FixedUpdate()
+    {
+        while (onTriggerEnterQueue.Count > 0)
+        {
+            var col = onTriggerEnterQueue.Dequeue();
+            //Dbg.LogInfo($"[SubscribableTrigger] OnTriggerEnter {col} in {name}");
+            onTriggerEnter?.Invoke(col);
+        }
+
+
+        while (onTriggerExitQueue.Count > 0)
+        {
+            var col = onTriggerExitQueue.Dequeue();
+            //Dbg.LogInfo($"[SubscribableTrigger] OnTriggerExit {col} in {name}");
+            onTriggerExit?.Invoke(col);
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        triggerArea.Add(other);
+        collidersInside.Add(other);
         onTriggerEnterQueue.Enqueue(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        triggerArea.Remove(other);
+        collidersInside.Remove(other);
         onTriggerExitQueue.Enqueue(other);
     }
 }
