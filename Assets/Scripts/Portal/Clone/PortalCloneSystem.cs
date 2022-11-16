@@ -3,6 +3,7 @@ using MoreLinq.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using PerceptionVR.Global;
+using PerceptionVR.Extensions;
 using UnityEngine;
 using PerceptionVR.Debug;
 
@@ -78,7 +79,7 @@ namespace PerceptionVR.Portal
         
         private NearbyObject RegisterTeleportable(ITeleportable teleportable)
         {
-            var nearbyObject = new NearbyObject(teleportable, TeleportableClone.CreateClone(teleportable));
+            var nearbyObject = new NearbyObject(teleportable, CreateClone(teleportable));
             nearbyObject.clone.Track(teleportable, portal);
             // TODO register clone to pair clone system
             nearbyObject.associatedCloneColliders.ForEach(x => pairCloneSystem.cloneGroup.Add(x));
@@ -95,10 +96,10 @@ namespace PerceptionVR.Portal
             Debugger.LogInfo($"Unregistered {nearbyObject.teleportable} from {this}");
         }
 
-        private void OnTeleport(ITeleportable teleportable)
+        private void OnTeleport(TeleportData teleportData)
         {
             // Get NearbyObject
-            var nearbyObject = vicinity.First(x => x.teleportable == teleportable);
+            var nearbyObject = vicinity.First(x => x.teleportable == teleportData.teleportable);
             
             // Swap vicinity colliders
             nearbyObject.collidersInVicinity = nearbyObject.pairLookup
@@ -115,6 +116,56 @@ namespace PerceptionVR.Portal
             pairCloneSystem.vicinity.Add(nearbyObject);
             
             base.OnTeleport(nearbyObject);
+        }
+        
+        
+        private static TeleportableClone CreateClone(ITeleportable original)
+        {
+            // Clone original
+            var clone = GameObjectUtility.InstantiateNotify(original.gameObject);
+
+            IEnumerable<Type> defaultPreservedComponents = new [] { typeof(Rigidbody), typeof(Collider), typeof(MeshRenderer), 
+                                                                    typeof(MeshFilter), typeof(Transform) };
+
+            // Iterate through all children
+            foreach (var child in clone.GetComponentsInChildren<Transform>())
+            {
+                var childComponents = child.GetComponents<Component>().ToList();
+                var preservedComponents = defaultPreservedComponents;
+                
+                // Try get TeleportableBehaviour
+                var tb = childComponents.OfType<ITeleportableBehaviour>().FirstOrDefault();
+                if (tb != null)
+                {
+                    // Notify teleportableBehaviour
+                    tb.OnCreateClone(child.gameObject, out var extraPreservedComponents);
+                    preservedComponents = preservedComponents.Concat(extraPreservedComponents);
+                }
+                
+                // Strip unneeded components
+                foreach (var component in childComponents.ToArray())
+                {
+                    var componentType = component.GetType();
+                    if (!preservedComponents.Any(preserveComp => preserveComp == componentType || componentType.IsSubclassOf(preserveComp)))
+                    {
+                        GameObjectUtility.DestroyComponentNotify(component);
+                        childComponents.Remove(component);
+                    }
+                }
+                
+                // Set-up Movement clone
+                child.gameObject.AddComponentNotify<MovementClone>();
+                
+                // Set-up TeleportableBehaviour clone
+                if(tb != null)
+                    child.gameObject.AddComponentNotify<TeleportableBehaviourClone>();
+                
+                child.name += "(Clone)";
+            }
+            
+            Debugger.LogInfo($"{original.transform} was cloned.");
+            
+            return clone.AddComponentNotify<TeleportableClone>();
         }
     }
     

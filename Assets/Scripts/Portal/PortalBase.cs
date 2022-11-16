@@ -7,6 +7,7 @@ using PerceptionVR.Common;
 using PerceptionVR.Extensions;
 using UnityEngine.Serialization;
 using PerceptionVR.Debug;
+using PerceptionVR.Global;
 
 
 namespace PerceptionVR.Portal
@@ -19,7 +20,7 @@ namespace PerceptionVR.Portal
         
         public IPortal portalPair => _portalPair as IPortal;
 
-        public Action<ITeleportable> OnTeleport { get; set; }
+        public event Action<TeleportData> OnTeleport;
         
         public Collider portalCollider => _portalCollider;
 
@@ -39,23 +40,24 @@ namespace PerceptionVR.Portal
                 _portalCollider = GetComponent<Collider>();
         }
 
-        public void Teleport(ITeleportable teleportable)
+        public void Teleport(TeleportData teleportData)
         {
             //Dbg.LogInfo($"{teleportable.transform.name} passed through {transform.name}");
             
-            var pairPose = PairPose(teleportable.transform.GetPose(), out var portalRotationDelta);
+            var pairPose = PairPose(teleportData.teleportable.transform.GetPose(), out teleportData.portalDelta);
 
             // Teleport the object
-            teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
+            teleportData.teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             
             // Translate velocity
-            var nearbyObjectRB = teleportable.transform.GetComponent<Rigidbody>();
+            var nearbyObjectRB = teleportData.teleportable.transform.GetComponent<Rigidbody>();
             if (nearbyObjectRB != null)
-                nearbyObjectRB.velocity = portalRotationDelta * nearbyObjectRB.velocity;
+                nearbyObjectRB.velocity = teleportData.portalDelta * nearbyObjectRB.velocity;
             
-            // Notify teleported object
-            teleportable.OnTeleport(new TeleportData(portalRotationDelta));
-            OnTeleport?.Invoke(teleportable);
+            // Notify
+            GlobalEvents.OnTeleport?.Invoke(teleportData);
+            teleportData.teleportable.OnTeleport(teleportData);
+            OnTeleport?.Invoke(teleportData);
         }
 
         

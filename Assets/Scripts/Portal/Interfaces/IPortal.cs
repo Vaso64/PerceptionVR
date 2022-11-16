@@ -14,8 +14,8 @@ namespace PerceptionVR.Portal
         
         Plane portalPlane { get; }
 
-        Action<ITeleportable> OnTeleport { get; set; }
+        event Action<TeleportData> OnTeleport;
         
-        void Teleport(ITeleportable teleportable);
+        void Teleport(TeleportData teleportable);
     }
 }
