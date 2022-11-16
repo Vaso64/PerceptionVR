@@ -4,26 +4,45 @@ using System.Linq;
 using UnityEngine;
 using PerceptionVR.Extensions;
 using UnityEngine.ProBuilder;
+using PerceptionVR.Common;
 using MoreLinq.Extensions;
-using PerceptionVR.Props;
+using PerceptionVR.Global;
+using PerceptionVR.Portal;
+using PerceptionVR.Debug;
 
 
 namespace PerceptionVR.Player
 {
-    public class VRPlayerHand : MonoBehaviour
+    public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
         private VRPlayerInput playerInput;
         
         [SerializeField] private VRPlayerHandSide handSide;
 
-        private List<IGrabbable> grabbableItems = new List<IGrabbable>();
+        private List<IGrabbable> grabbableItems = new();
         
         private IGrabbable holdingItem = null;
-        
-        
+
+        private FixedJoint grabJoint;
+
+        public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
+        {
+            preservedComponents = Enumerable.Empty<Type>();
+            clone.GetComponent<Renderer>().material.color = Color.gray;
+        }
+
+        public void TransferBehaviour(GameObject from, GameObject to)
+        {
+            // TODO: Transfer behaviour
+            from.GetComponent<Renderer>().material.color = Color.gray;
+            to.GetComponent<Renderer>().material.color = Color.red;
+        }
 
         private void Awake()
         {
+            GetComponent<Renderer>().material.color = Color.red;
+            
+            
             this.playerInput = GetComponentInParent<VRPlayerInput>();
 
             // Register hand to player input events
@@ -43,21 +62,21 @@ namespace PerceptionVR.Player
         private void OnTriggerEnter(Collider other)
         {
             var grabbable = other.GetComponent<IGrabbable>();
-            Debug.Log(other.transform.name + " entered " + handSide + " hand vicimity");
-            if (grabbable != null)
-            {
-                grabbableItems.Add(grabbable);
-                Debug.Log(other.transform.name + " is grabbable");
-            }
-                
+            if (grabbable == null || grabbableItems.Contains(grabbable))
+                return;
+            
+            grabbableItems.Add(grabbable);
+            Debugger.LogInfo(other.transform.name + "(grabbable) entered " + handSide + " hand vicinity");
         }
         
         private void OnTriggerExit(Collider other)
         {
             var grabbable = other.GetComponent<IGrabbable>();
-            Debug.Log(other.transform.name + " exited " + handSide + " hand vicinity");
-            if (grabbable != null)
-                grabbableItems.Remove(grabbable);
+            if (grabbable == null)
+                return;
+            
+            grabbableItems.Remove(grabbable);
+            Debugger.LogInfo(other.transform.name + "(grabbable) exited " + handSide + " hand vicinity");
         }
 
         private void OnGrab()
@@ -67,9 +86,12 @@ namespace PerceptionVR.Player
             
             // Get nearest grabbable item
             holdingItem = grabbableItems.MinBy(item => Vector3.Distance(item.collider.ClosestPoint(transform.position), transform.position)).First();
-            var joint = holdingItem.transform.gameObject.AddComponent<FixedJoint>();
-            joint.connectedBody = GetComponent<Rigidbody>();
-            Debug.Log(holdingItem.transform.name + " grabbed by " + handSide + " hand");
+
+            // Create fixed grab joint to hold item
+            Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
+            grabJoint = gameObject.AddComponentNotify<FixedJoint>();
+            grabJoint.connectedBody = holdingItem.rigidbody;
+            
         }
         
         private void OnRelease()
@@ -77,9 +99,9 @@ namespace PerceptionVR.Player
             if (holdingItem == null)
                 return;
 
-            // Destory joint
-            Destroy(holdingItem.transform.GetComponent<FixedJoint>());
-            Debug.Log(holdingItem.transform.name + " released by " + handSide + " hand");
+            // Destroy grab joint
+            Debugger.LogInfo(holdingItem.transform.name + " released by " + handSide + " hand");
+            gameObject.RemoveComponentNotify(grabJoint);
             holdingItem = null;
         }
     }

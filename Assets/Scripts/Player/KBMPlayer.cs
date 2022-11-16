@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using PerceptionVR.Portal;
+using PerceptionVR.Debug;
 
 namespace PerceptionVR.Player
 {
@@ -42,8 +43,6 @@ namespace PerceptionVR.Player
                 Move(playerActions.Move.ReadValue<Vector3>(), playerActions.Sprint.IsPressed());
                 Look(playerActions.Look.ReadValue<Vector2>());
             }
-
-            Debug.DrawRay(transform.position, this.worldRotation * Vector3.up, Color.red);
         }
 
         public void Move(Vector3 direction, bool sprint)

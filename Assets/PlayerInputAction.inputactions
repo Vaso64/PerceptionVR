@@ -33,6 +33,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Walk",
+                    "type": "Button",
+                    "id": "6328675d-736a-4662-960e-1c0ed131dad9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "ControlBlock",
                     "type": "Button",
                     "id": "3ad87865-5527-4b1f-a363-5e9d098dccf5",
@@ -68,7 +77,7 @@
                 {
                     "name": "up",
                     "id": "2431d46f-3bcd-4804-b88a-8e254bb16eeb",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -79,7 +88,7 @@
                 {
                     "name": "down",
                     "id": "e821f2b0-c0dc-4e4d-b7ce-e1dbdd0936c1",
-                    "path": "<Keyboard>/leftCtrl",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -150,6 +159,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "ControlBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6a3e284f-7480-4ffb-9180-31f219baa6c1",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Walk",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

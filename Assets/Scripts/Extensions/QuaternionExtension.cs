@@ -18,5 +18,7 @@ namespace PerceptionVR.Extensions
                 euler.z > 180 ? euler.z - 360 : euler.z
             );
         }
+        
+        public static bool IsNaN(this Quaternion quaternion) => quaternion.x == 0 && quaternion.y == 0 && quaternion.z == 0 && quaternion.w == 0;
     }
 }

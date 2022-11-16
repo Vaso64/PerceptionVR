@@ -1,52 +1,61 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using PerceptionVR.Common;
+using PerceptionVR.Extensions;
+using UnityEngine.Serialization;
+using PerceptionVR.Debug;
+
 
 namespace PerceptionVR.Portal
 {
     public class PortalBase : MonoBehaviour
     {
-        public delegate void OnTeleportDelegate(Quaternion portalDelta);
+        [SerializeField] private PortalBase _portalPair;
         
+        [SerializeField] private Collider _portalCollider;
+        
+        public IPortal portalPair => _portalPair as IPortal;
 
-        public Transform portalPair;
+        public Action<ITeleportable> OnTeleport { get; set; }
+        
+        public Collider portalCollider => _portalCollider;
 
-
-        public Plane portalPlane { get; protected set; }
+        public Plane portalPlane => new Plane(transform.forward, transform.position);
+        
 
         private void Awake()
         {
             // Portal pair checks
             if (portalPair == null) 
-                Debug.LogError("PortalBase: No portal pair assigned");
-            if (portalPair == transform)
-                Debug.LogError("PortalBase: Portal pair cannot be self");
-        }
-
-        protected virtual void Update()
-        {
-            if (transform.hasChanged)
-                portalPlane.SetNormalAndPosition(transform.forward, transform.position);
-        }
-
-        public void Teleport(NearbyObject nearbyObject)
-        {
-            Debug.Log($"{nearbyObject.teleportable.transform.name} passed through {transform.name}");
+                Debugger.LogError("PortalBase: No portal pair assigned");
+            if (_portalPair.transform == transform)
+                Debugger.LogError("PortalBase: Portal pair cannot be self");
             
-            var pairPose = PairPose(new Pose(nearbyObject.teleportable.transform.position, nearbyObject.teleportable.transform.rotation), out var portalRotationDelta);
+            // Get portal collider
+            if(_portalCollider == null)
+                _portalCollider = GetComponent<Collider>();
+        }
+
+        public void Teleport(ITeleportable teleportable)
+        {
+            //Dbg.LogInfo($"{teleportable.transform.name} passed through {transform.name}");
+            
+            var pairPose = PairPose(teleportable.transform.GetPose(), out var portalRotationDelta);
 
             // Teleport the object
-            nearbyObject.teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
+            teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             
             // Translate velocity
-            var nearbyObjectRB = nearbyObject.teleportable.transform.GetComponent<Rigidbody>();
+            var nearbyObjectRB = teleportable.transform.GetComponent<Rigidbody>();
             if (nearbyObjectRB != null)
                 nearbyObjectRB.velocity = portalRotationDelta * nearbyObjectRB.velocity;
-
-                // Notify teleported object
-            nearbyObject.teleportable.OnTeleport(new TeleportData(portalRotationDelta));
+            
+            // Notify teleported object
+            teleportable.OnTeleport(new TeleportData(portalRotationDelta));
+            OnTeleport?.Invoke(teleportable);
         }
 
         
@@ -55,18 +64,16 @@ namespace PerceptionVR.Portal
         public virtual Pose PairPose(Pose pose, out Quaternion portalRotationDelta)
         {
             Pose resultPose;
-            portalRotationDelta = portalPair.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
+            portalRotationDelta = portalPair.transform.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
 
             // Calculate position
-            resultPose.position = portalPair.position + portalRotationDelta * (pose.position - transform.position);
+            resultPose.position = portalPair.transform.position + portalRotationDelta * (pose.position - transform.position);
 
             // Rotation rotation
             resultPose.rotation = portalRotationDelta * pose.rotation;
 
             return resultPose;
         }
-
-        public float PortalDot(Transform nearbyObject) => Vector3.Dot(transform.forward, transform.position - nearbyObject.position);
     }
 }
 

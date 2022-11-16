@@ -55,6 +55,15 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""Walk"",
+                    ""type"": ""Button"",
+                    ""id"": ""6328675d-736a-4662-960e-1c0ed131dad9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""ControlBlock"",
                     ""type"": ""Button"",
                     ""id"": ""3ad87865-5527-4b1f-a363-5e9d098dccf5"",
@@ -90,7 +99,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""2431d46f-3bcd-4804-b88a-8e254bb16eeb"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -101,7 +110,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""e821f2b0-c0dc-4e4d-b7ce-e1dbdd0936c1"",
-                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -172,6 +181,17 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ControlBlock"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6a3e284f-7480-4ffb-9180-31f219baa6c1"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Walk"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -511,6 +531,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_KBMPlayer_Look = m_KBMPlayer.FindAction("Look", throwIfNotFound: true);
         m_KBMPlayer_Move = m_KBMPlayer.FindAction("Move", throwIfNotFound: true);
         m_KBMPlayer_Sprint = m_KBMPlayer.FindAction("Sprint", throwIfNotFound: true);
+        m_KBMPlayer_Walk = m_KBMPlayer.FindAction("Walk", throwIfNotFound: true);
         m_KBMPlayer_ControlBlock = m_KBMPlayer.FindAction("ControlBlock", throwIfNotFound: true);
         // VRPlayer
         m_VRPlayer = asset.FindActionMap("VRPlayer", throwIfNotFound: true);
@@ -590,6 +611,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_KBMPlayer_Look;
     private readonly InputAction m_KBMPlayer_Move;
     private readonly InputAction m_KBMPlayer_Sprint;
+    private readonly InputAction m_KBMPlayer_Walk;
     private readonly InputAction m_KBMPlayer_ControlBlock;
     public struct KBMPlayerActions
     {
@@ -598,6 +620,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_KBMPlayer_Look;
         public InputAction @Move => m_Wrapper.m_KBMPlayer_Move;
         public InputAction @Sprint => m_Wrapper.m_KBMPlayer_Sprint;
+        public InputAction @Walk => m_Wrapper.m_KBMPlayer_Walk;
         public InputAction @ControlBlock => m_Wrapper.m_KBMPlayer_ControlBlock;
         public InputActionMap Get() { return m_Wrapper.m_KBMPlayer; }
         public void Enable() { Get().Enable(); }
@@ -617,6 +640,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Sprint.started -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnSprint;
+                @Walk.started -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnWalk;
+                @Walk.performed -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnWalk;
+                @Walk.canceled -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnWalk;
                 @ControlBlock.started -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnControlBlock;
                 @ControlBlock.performed -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnControlBlock;
                 @ControlBlock.canceled -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnControlBlock;
@@ -633,6 +659,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
+                @Walk.started += instance.OnWalk;
+                @Walk.performed += instance.OnWalk;
+                @Walk.canceled += instance.OnWalk;
                 @ControlBlock.started += instance.OnControlBlock;
                 @ControlBlock.performed += instance.OnControlBlock;
                 @ControlBlock.canceled += instance.OnControlBlock;
@@ -800,6 +829,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnWalk(InputAction.CallbackContext context);
         void OnControlBlock(InputAction.CallbackContext context);
     }
     public interface IVRPlayerActions

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using PerceptionVR.Extensions;
@@ -17,8 +18,6 @@ namespace PerceptionVR.Portal
         
         [SerializeField] private Renderer portalRend;
 
-        [SerializeField] public Collider portalCollider;
-        
         private const int recurssionLimit = 3;
 
         private RenderTexture[] RTArray = new RenderTexture[recurssionLimit + 1];
@@ -27,17 +26,19 @@ namespace PerceptionVR.Portal
 
         private static List<PortalRenderer> allPortalRenderers = new List<PortalRenderer>();
 
+        private void Awake()
+        {
+            // Register self and to events
+            allPortalRenderers.Add(this);
+            PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
+            RenderingManagment.OnResolutionChange += AllocateRTArray;
+        }
+
         private void Start()
         {
             // Get references
             portal ??= GetComponentInParent<IPortal>();
             portalCamera ??= GetComponentInChildren<Camera>();
-            portalCollider ??= GetComponentInChildren<Collider>();
-
-            // Register self and to events
-            allPortalRenderers.Add(this);
-            PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
-            RenderingManagment.OnResolutionChange += AllocateRTArray;
         }
 
         private void AllocateRTArray(Vector2Int resolution)
@@ -81,7 +82,7 @@ namespace PerceptionVR.Portal
         {
             // Calculate visible area
             portalCamera.transform.SetPositionAndRotation(fromPose.position, fromPose.rotation);
-            visibleArea = visibleArea.IntersectionWith(portalCamera.WorldToScreenBounds(portalCollider.bounds));
+            visibleArea = visibleArea.IntersectionWith(portalCamera.WorldToScreenBounds(portal.portalCollider.bounds));
 
             // Position camera & calculate frustum
             var pairPose = portal.PairPose(fromPose);
@@ -120,11 +121,11 @@ namespace PerceptionVR.Portal
                 return false;
 
             // AABB frustum check (is portal in fov of the camera?)
-            if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portalCollider.bounds))
+            if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portal.portalCollider.bounds))
                 return false;
 
             // Overlap check (can portal be seen through another portal?)
-            var portalRect = camera.WorldToScreenBounds(portalCollider.bounds);
+            var portalRect = camera.WorldToScreenBounds(portal.portalCollider.bounds);
             visibleArea.IntersectionWith(portalRect);
             if(!visibleArea.Overlaps(portalRect))
                 return false;

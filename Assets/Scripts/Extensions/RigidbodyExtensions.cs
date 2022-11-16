@@ -18,17 +18,18 @@ namespace PerceptionVR.Extensions
             // Rotates rigidbody towards rotation sing angular velocity
             public static void VelocityRotate(this Rigidbody rb, Quaternion rotation, bool isLocalRotation = false)
             {
-                rb.angularVelocity = (rotation * Quaternion.Inverse(isLocalRotation ? rb.transform.localRotation : rb.transform.rotation))
-                                     .GetClampedEulerAngles()
-                                     .Deg2Rad()
-                                     / Time.fixedDeltaTime;
+                var result = (rotation * Quaternion.Inverse(isLocalRotation ? rb.transform.localRotation : rb.transform.rotation))
+                             .GetClampedEulerAngles()
+                             .Deg2Rad()
+                             / Time.fixedDeltaTime;
+                rb.angularVelocity = result;
             }
 
             // Positions rigidbody towards pose using velocity and angular velocity
-            public  static void VelocityPosition(this Rigidbody rb, Pose pose, bool isLocalPose = false)
+            public static void VelocityPosition(this Rigidbody rb, Pose pose, bool isLocalPose = false)
             {
                 rb.VelocityMove(pose.position, isLocalPose);
                 rb.VelocityRotate(pose.rotation, isLocalPose);
             }
-    }
+        }
 }
