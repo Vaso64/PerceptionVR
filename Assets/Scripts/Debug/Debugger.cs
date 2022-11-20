@@ -7,13 +7,26 @@ namespace PerceptionVR.Debug
 {
     public static class Debugger
     {
-        public static void LogInfo(string message)    => UnityEngine.Debug.Log       ($"{Header()} {message}");
-        public static void LogWarning(string message) => UnityEngine.Debug.LogWarning($"{Header()} {message}");
-        public static void LogError(string message)   => UnityEngine.Debug.LogError  ($"{Header()} {message}");
-        
+        private const bool LogEnabled = true;
+
+        public static void LogInfo(string message) {
+            if(LogEnabled)
+                UnityEngine.Debug.Log($"{Header()} {message}");
+        } 
+        public static void LogWarning(string message)
+        { 
+            if(LogEnabled)
+                UnityEngine.Debug.LogWarning($"{Header()} {message}");
+        }
+        public static void LogError(string message)
+        {
+            if(LogEnabled)
+                UnityEngine.Debug.LogError($"{Header()} {message}");
+        }
+
         private static string Header()
         {
-            string header = "";
+            var header = "";
             
             // Frame count
             header += $"[{Time.frameCount:D5}]";
@@ -22,7 +35,7 @@ namespace PerceptionVR.Debug
             var stack = new StackTrace();
             var frame = stack.GetFrame(2);
             var method = frame.GetMethod();
-            var name = new Regex("[a-zA-Z.]+\\.([a-zA-Z]+).*").Match(method.DeclaringType.FullName).Groups[1].Value;
+            var name = new Regex("(([a-zA-Z]+\\.)*)([a-zA-Z]+).*").Match(method.DeclaringType.FullName).Groups[3].Value;
             header += $" [{name}]";
             
             // Padding

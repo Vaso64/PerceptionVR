@@ -30,7 +30,7 @@ namespace PerceptionVR.Player
             this.playerActions = playerInputAction.KBMPlayer;
         }
 
-        public void OnTeleport(TeleportData teleportData) => worldRotation = teleportData.portalDelta * worldRotation;
+        public void OnTeleport(TeleportData teleportData) => worldRotation = teleportData.rotationDelta * worldRotation;
         
 
         protected virtual void FixedUpdate()

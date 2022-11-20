@@ -44,7 +44,7 @@ namespace PerceptionVR.Portal
         {
             //Dbg.LogInfo($"{teleportable.transform.name} passed through {transform.name}");
             
-            var pairPose = PairPose(teleportData.teleportable.transform.GetPose(), out teleportData.portalDelta);
+            var pairPose = PairPose(teleportData.teleportable.transform.GetPose(), out teleportData.rotationDelta);
 
             // Teleport the object
             teleportData.teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
@@ -52,7 +52,7 @@ namespace PerceptionVR.Portal
             // Translate velocity
             var nearbyObjectRB = teleportData.teleportable.transform.GetComponent<Rigidbody>();
             if (nearbyObjectRB != null)
-                nearbyObjectRB.velocity = teleportData.portalDelta * nearbyObjectRB.velocity;
+                nearbyObjectRB.velocity = teleportData.rotationDelta * nearbyObjectRB.velocity;
             
             // Notify
             GlobalEvents.OnTeleport?.Invoke(teleportData);

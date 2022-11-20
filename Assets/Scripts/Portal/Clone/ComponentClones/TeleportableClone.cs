@@ -10,7 +10,7 @@ using PerceptionVR.Debug;
 
 namespace PerceptionVR.Portal
 {
-    public class TeleportableClone : TrackedCloneBase<Transform>
+    public class TeleportableClone : TrackedCloneBase<Transform>, ITeleportable
     {
 
         private ITeleportable targetTeleportable;
@@ -39,8 +39,8 @@ namespace PerceptionVR.Portal
         
         private void OnEnterPortalCallback()
         {
-            Debugger.LogInfo($"{this} ENTERED PORTAL!");
-            var teleportData = new TeleportData { teleportable = targetTeleportable, clone = this };
+            Debugger.LogInfo($"{targetTeleportable} ENTERED PORTAL!");
+            var teleportData = new TeleportData(targetTeleportable, this, throughPortal);
             throughPortal.Teleport(teleportData);
             Track(targetTeleportable, throughPortal.portalPair);
         }

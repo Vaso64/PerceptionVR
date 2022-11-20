@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9124065452613208399}
   - component: {fileID: 7110540751293533719}
-  - component: {fileID: 3743351354502911889}
+  - component: {fileID: 1771062401579951804}
   m_Layer: 7
-  m_Name: SubscribableArea
+  m_Name: SubscribableTriggerArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3743351354502911889
+--- !u!114 &1771062401579951804
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,6 +55,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8502453139188183620}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10eba33b2859438387eee82624019132, type: 3}
+  m_Script: {fileID: 11500000, guid: ad3d4c5d8ebe44309ee9d6e7e8b70211, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  collider: {fileID: 0}

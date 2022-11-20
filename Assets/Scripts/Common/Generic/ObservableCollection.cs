@@ -1,13 +1,15 @@
 using System;
 using System.Linq;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace PerceptionVR.Common.Generic
 {
+    [System.Serializable]
     public class ObservableCollection<T> : ICollection<T>, INotifyCollectionChanged<T>
     {
-        private readonly List<T> collection = new ();
+        [SerializeField] private List<T> collection = new();
         
         public event Action<IEnumerable<T>> OnAdded;
         public event Action<IEnumerable<T>> OnRemoved;
