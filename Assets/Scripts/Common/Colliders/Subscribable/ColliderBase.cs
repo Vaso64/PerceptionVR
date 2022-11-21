@@ -7,6 +7,6 @@ namespace PerceptionVR.Common
     {
         [HideInInspector] public new Collider collider;
         
-        public virtual void Awake() => collider = GetComponent<Collider>();
+        protected virtual void Awake() => collider = GetComponent<Collider>();
     }
 }

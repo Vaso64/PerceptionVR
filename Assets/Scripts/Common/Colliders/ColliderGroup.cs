@@ -5,33 +5,31 @@ using PerceptionVR.Global;
 using UnityEngine;
 using PerceptionVR.Common.Generic;
 using PerceptionVR.Debug;
+using PerceptionVR.Portal;
 
 namespace PerceptionVR.Common
 {
+    [System.Serializable] 
     public class ColliderGroup : ObservableCollection<Collider>
     {
         public enum FilterMode { Include, Exclude }
-        
-        private string debugName;
 
-        public ColliderGroup(string debugName)
-        {
-            this.debugName = debugName;
-            if (debugName != "")
-            {
-                OnAdded   += (colliders) => colliders.ForEach(c => Debugger.LogInfo($"{c} added to {debugName}"));
-                OnRemoved += (colliders) => colliders.ForEach(c => Debugger.LogInfo($"{c} removed from {debugName}"));
-            }
-            
-            // Remove destroyed colliders
-            ComponentTracking.allColliders.OnRemoved += (colliders) => RemoveRange(colliders);
-            
-            // Un-ignore added colliders with rest of this group
-            this.OnAdded += (colliders) => CollisionMatrix.SetCollisions(this, colliders, true);
-        }
+        [HideInInspector] public string debugName = "";
 
         public void SetFilter(FilterMode mode, IEnumerable<ColliderGroup> filterGroups)
         {
+            OnAdded += (colliders) => colliders.ForEach(c => Debugger.LogInfo($"{c} added to {debugName}"));
+            OnRemoved += (colliders) => colliders.ForEach(c => Debugger.LogInfo($"{c} removed from {debugName}"));
+
+            // Remove destroyed colliders
+            ComponentTracking.allColliders.OnRemoved += RemoveRange;
+            
+            // Swap colliders on swap event
+            GlobalEvents.OnTeleport += (teleportData) => SwapUtility.PerformSwap(this, teleportData.swapData.colliderSwaps);
+            
+            // Un-ignore added colliders with rest of this group
+            OnAdded += (colliders) => CollisionMatrix.SetCollisions(this, colliders, true);
+            
             switch (mode)
             {
                 case FilterMode.Exclude:
@@ -45,6 +43,7 @@ namespace PerceptionVR.Common
                         group.OnRemoved += colliders => CollisionMatrix.SetCollisions(this, colliders, true);
                     }
                     break;
+                
                 case FilterMode.Include:
                     // Ignore with colliders not in filterGroups
                     CollisionMatrix.SetCollisions(this, ComponentTracking.allColliders.Where(x => filterGroups.SelectMany(g => g).Distinct().Contains(x)), false);
@@ -53,7 +52,8 @@ namespace PerceptionVR.Common
                     ComponentTracking.allColliders.OnAdded += colliders => CollisionMatrix.SetCollisions(this, colliders, false);
                     
                     // Ignore future added colliders with colliders not in the filterGroups
-                    this.OnAdded += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g)), false);
+                    OnAdded += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g)), false);
+                    OnRemoved += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders, true);
                     
                     // Un-ignore and ignore colliders added / removed from the filterGroups
                     foreach (var group in filterGroups)
@@ -63,6 +63,18 @@ namespace PerceptionVR.Common
                     }
                     break;
             }
+        }
+        
+        // Duplicate protection
+        public new void AddRange(IEnumerable<Collider> colliders)
+        {
+            base.AddRange(colliders.Where(x => !Contains(x)));
+        }
+
+        public new void Add(Collider collider)
+        {
+            if (!Contains(collider))
+                base.Add(collider);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using PerceptionVR.Debug;
 using UnityEngine;
 using PerceptionVR.Extensions;
 
@@ -37,6 +38,8 @@ namespace PerceptionVR.Portal
             pose.rotation *= Quaternion.Euler(rbTarget.angularVelocity * Time.fixedDeltaTime);
             
             rb.VelocityPosition(throughPortal.PairPose(pose));
+            
+            //Debugger.LogInfo($"{this}: tracked {target} by rigidbody");
         }
         
         private void Update()
@@ -48,10 +51,12 @@ namespace PerceptionVR.Portal
             {
                 case TrackingType.TrackByTransform:
                     transform.SetPose(throughPortal.PairPose(target.GetPose()));
+                    //Debugger.LogInfo($"{this}: tracked {target} by transform");
                     break;
                 
                 case TrackingType.TrackByLocalTransform:
                     transform.SetLocalPose(target.GetLocalPose());
+                    //Debugger.LogInfo($"{this}: tracked {target} by local transform");
                     break;
             }
         }

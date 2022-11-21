@@ -1,5 +1,6 @@
 using System;
 using PerceptionVR.Extensions;
+using PerceptionVR.Portal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -18,5 +19,8 @@ namespace PerceptionVR.Global
         
         // Invoked by DestroyNotify() in ObjectExtensions
         public static Action<GameObject> OnBeforeDestroy;
+        
+        // Invoked by Teleport() in PortalBase
+        public static Action<TeleportData> OnTeleport;
     }
 }

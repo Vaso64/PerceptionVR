@@ -18,7 +18,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2681402343907231728
 Transform:
@@ -185,7 +185,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1599874333669038235
 Transform:
@@ -1004,6 +1004,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4891877610941198988}
     m_Modifications:
+    - target: {fileID: 1403407781936878572, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: passingGroup.collection.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403407781936878572, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: passingGroup.collection.Array.data[0]
+      value: 
+      objectReference: {fileID: 3482982159901408895}
+    - target: {fileID: 1403407781936878572, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
+      propertyPath: passingGroup.collection.Array.data[1]
+      value: 
+      objectReference: {fileID: 5953411748525366576}
     - target: {fileID: 2492407617453771005, guid: b81e9b3be25465443bdd07aa4d3583e8, type: 3}
       propertyPath: m_RootOrder
       value: 2
