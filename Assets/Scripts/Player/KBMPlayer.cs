@@ -7,7 +7,7 @@ using PerceptionVR.Debug;
 
 namespace PerceptionVR.Player
 {
-    public class KBMPlayer : PlayerBase, ITeleportable
+    public class KBMPlayer : PlayerBase
     {
         [Range(0, 10)]
         public float moveSpeed;
@@ -17,21 +17,17 @@ namespace PerceptionVR.Player
 
         [Range(0, 1)]
         public float lookSpeed;
-
-        private Quaternion worldRotation;
+        
 
         private PlayerInputAction.KBMPlayerActions playerActions;
 
-        private void Awake()
+        protected override void Awake()
         {
-            this.worldRotation = Quaternion.identity;
+            base.Awake();
             var playerInputAction = new PlayerInputAction();
             playerInputAction.Enable();
             this.playerActions = playerInputAction.KBMPlayer;
         }
-
-        public void OnTeleport(TeleportData teleportData) => worldRotation = teleportData.rotationDelta * worldRotation;
-        
 
         protected virtual void FixedUpdate()
         {
@@ -45,7 +41,7 @@ namespace PerceptionVR.Player
             }
         }
 
-        public void Move(Vector3 direction, bool sprint)
+        private void Move(Vector3 direction, bool sprint)
         {
             direction *= Time.deltaTime * moveSpeed * (sprint ? sprintMultiplier : 1);
 
@@ -53,19 +49,19 @@ namespace PerceptionVR.Player
             transform.position += transform.forward * direction.z;
 
             // Up & Down
-            transform.position += this.worldRotation * Vector3.up * direction.y;
+            transform.position += gravityDirection * Vector3.up * direction.y;
 
             // Left & Right
             transform.position += transform.right * direction.x;
         }
 
 
-        public void Look(Vector2 direction)
+        private void Look(Vector2 direction)
         {
             direction *= lookSpeed;
 
             // Pitch
-            transform.RotateAround(transform.position, this.worldRotation * Vector3.up, direction.x);
+            transform.RotateAround(transform.position, gravityDirection * Vector3.up, direction.x);
 
             // Yaw      
             transform.RotateAround(transform.position, transform.right, direction.y * -1);

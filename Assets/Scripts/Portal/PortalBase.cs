@@ -8,6 +8,7 @@ using PerceptionVR.Extensions;
 using UnityEngine.Serialization;
 using PerceptionVR.Debug;
 using PerceptionVR.Global;
+using PerceptionVR.Global.Gravity;
 
 
 namespace PerceptionVR.Portal
@@ -50,10 +51,14 @@ namespace PerceptionVR.Portal
             teleportData.teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             
             // Translate velocity
-            var nearbyObjectRB = teleportData.teleportable.transform.GetComponent<Rigidbody>();
-            if (nearbyObjectRB != null)
-                nearbyObjectRB.velocity = teleportData.rotationDelta * nearbyObjectRB.velocity;
-            
+            foreach (var teleportedRB in teleportData.teleportable.transform.GetComponentsInChildren<Rigidbody>())
+                teleportedRB.velocity = teleportData.rotationDelta * teleportedRB.velocity;
+
+
+            // Reorient the object
+            foreach (var gravityObject in teleportData.teleportable.transform.GetComponentsInChildren<IGravityObject>())
+                gravityObject.gravityDirection = teleportData.rotationDelta * gravityObject.gravityDirection;
+
             // Notify
             GlobalEvents.OnTeleport?.Invoke(teleportData);
             teleportData.teleportable.OnTeleport(teleportData);

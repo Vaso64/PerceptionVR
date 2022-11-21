@@ -15,6 +15,12 @@ namespace PerceptionVR.Player
 {
     public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
+        public enum VRPlayerHandSide
+        {
+            Left,
+            Right
+        }
+        
         private VRPlayerInput playerInput;
         
         [SerializeField] private VRPlayerHandSide handSide;

@@ -2,10 +2,8 @@ using UnityEngine;
 
 namespace PerceptionVR.Common
 {
-    public interface IGrabbable
+    public interface IGrabbable : IMonoBehaviour
     {
-        Transform transform { get; }
-        
         Collider collider { get; }
         
         Rigidbody rigidbody { get; }
