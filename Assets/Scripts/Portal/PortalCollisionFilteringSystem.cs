@@ -184,15 +184,9 @@ namespace PerceptionVR.Portal
                 return;
             
             // Object exited through passing area (exiting portal)
-            /*
-            if (passingArea.Contains(other))
-            {
-                cloneGroup.Remove(other);
-                passingGroup.Add(other);
+            if (passingGroup.Contains(other))
                 return;
-            }
-            */
-            
+
             // Object behind the portal exited
             if (backGroup.Contains(other))
             {

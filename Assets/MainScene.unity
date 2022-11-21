@@ -26699,7 +26699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 671bc9a7e46349b3bd5eabdceb0a98a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logEnabled: 0
+  logEnabled: 1
 --- !u!43 &459378693
 Mesh:
   m_ObjectHideFlags: 0
