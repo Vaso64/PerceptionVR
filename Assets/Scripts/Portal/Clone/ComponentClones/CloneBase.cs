@@ -6,7 +6,7 @@ namespace PerceptionVR.Portal
 {
     public abstract class CloneBase<T> : MonoBehaviour where T : Component
     {
-        protected T target;
+        [SerializeField] protected T target;
         protected IPortal throughPortal;
 
         protected bool targetSet;

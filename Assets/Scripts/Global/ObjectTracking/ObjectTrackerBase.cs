@@ -10,39 +10,35 @@ using PerceptionVR.Common.Generic;
 
 namespace PerceptionVR.Global
 {
-    public class ComponentTracker<T> : INotifyCollectionChanged<T>, IEnumerable<T> where T : Component
+    public abstract class ObjectTrackerBase<T> : INotifyCollectionChanged<T>, IEnumerable<T>
     {
         public event Action<IEnumerable<T>> OnAdded;
         public event Action<IEnumerable<T>> OnRemoved;
-        public IEnumerator<T> GetEnumerator() => allComponents.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => allObjects.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private readonly List<T> allComponents = new ();
+        protected readonly List<T> allObjects = new ();
 
-        public ComponentTracker()
+        public ObjectTrackerBase()
         {
             // Register events
             GlobalEvents.OnAfterInstantiate += OnAfterInstantiateCallback;
             GlobalEvents.OnBeforeDestroy += OnBeforeDestroyCallback;
             GlobalEvents.OnAfterAddComponent += OnAfterAddComponentCallback;
             GlobalEvents.OnBeforeRemoveComponent += OnBeforeRemoveComponentCallback;
-            
-            // Store all components T in scene
-            var components = Object.FindObjectsOfType<T>();
-            allComponents.AddRange(components);
         }
 
         private void OnAfterInstantiateCallback(GameObject gameObject)
         {
             var components = gameObject.GetComponentsInChildren<T>();
-            allComponents.AddRange(components);
+            allObjects.AddRange(components);
             OnAdded?.Invoke(components);
         }
 
         private void OnBeforeDestroyCallback(GameObject gameObject)
         {
             var components = gameObject.GetComponentsInChildren<T>();
-            allComponents.RemoveAll(c => components.Contains(c));
+            allObjects.RemoveAll(c => components.Contains(c));
             OnRemoved?.Invoke(components);
         }
 
@@ -50,7 +46,7 @@ namespace PerceptionVR.Global
         {
             if (component is not T t) 
                 return;
-            allComponents.Add(t);
+            allObjects.Add(t);
             OnAdded?.Invoke(new[] {t});
         }
 
@@ -58,7 +54,7 @@ namespace PerceptionVR.Global
         {
             if (component is not T t) 
                 return;
-            allComponents.Remove(t);
+            allObjects.Remove(t);
             OnRemoved?.Invoke(new[] {t});
         }
     }

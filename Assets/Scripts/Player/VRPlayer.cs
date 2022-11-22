@@ -1,3 +1,4 @@
+using PerceptionVR.Debug;
 using UnityEngine;
 using PerceptionVR.Extensions;
 using PerceptionVR.Portal;
@@ -7,7 +8,7 @@ using UnityEngine.Serialization;
 namespace PerceptionVR.Player
 {
     [RequireComponent(typeof(VRPlayerInput))]
-    public class VRPlayer : PlayerBase, ITeleportable
+    public class VRPlayer : PlayerBase
     {
         private VRPlayerInput vrInput;
 
@@ -34,7 +35,7 @@ namespace PerceptionVR.Player
         public float handAngularSpringStrength;
         public float handAngularSpringDamper;
 
-        protected override void Start()
+        protected void Start()
         {
             vrInput = GetComponent<VRPlayerInput>();
         }
@@ -47,7 +48,6 @@ namespace PerceptionVR.Player
             ConfigurableJoint[] joints = {leftHand, rightHand, head}; 
             foreach (var joint in joints)
             {
-
                 joint.xDrive = linearJointDrive;
                 joint.yDrive = linearJointDrive;
                 joint.zDrive = linearJointDrive;
@@ -59,13 +59,16 @@ namespace PerceptionVR.Player
         private void FixedUpdate()
         {
             // Joystick & HMD movement
-            var joystickMove = Quaternion.Euler(new Vector3(0, headPivot.transform.rotation.eulerAngles.y, 0)) * (joystickMoveSpeed * new Vector3(vrInput.move.x, 0, vrInput.move.y));
-            var hmdMove      = body.rotation * new Vector3(vrInput.hmdDeltaPose.position.x, 0, vrInput.hmdDeltaPose.position.z) / Time.fixedDeltaTime;
-            body.AddForce(joystickMove + hmdMove - new Vector3(body.velocity.x, 0, body.velocity.z), ForceMode.VelocityChange);
-            head.targetPosition = new Vector3(0, vrInput.hmdPose.position.y, 0);
+            var headY = Quaternion.Euler((Quaternion.Inverse(gravityDirection) * headPivot.rotation).eulerAngles._0y0());
+            var joystickMove = gravityDirection * (headY * vrInput.move.x0y() * joystickMoveSpeed * Time.fixedDeltaTime);
+            var hmdMove = body.rotation * vrInput.hmdDeltaPose.position.x0z();
+            
+            // Joystick & HMD position
+            body.MovePosition(body.position + (joystickMove + hmdMove));
+            head.targetPosition = vrInput.hmdPose.position._0y0();
             
             // Joystick & HMD rotation
-            body.MoveRotation(body.rotation * Quaternion.Euler(new Vector3(0, vrInput.rotate.x * joystickRotateSpeed * Time.fixedDeltaTime, 0)));
+            body.MoveRotation(body.rotation * Quaternion.Euler(joystickRotateSpeed * Time.fixedDeltaTime * vrInput.rotate._0x0()));
             headPivot.transform.localRotation = vrInput.hmdPose.rotation;
             
             // Eyes
@@ -75,7 +78,7 @@ namespace PerceptionVR.Player
             rightEye.transform.localPosition = new Vector3(ipd / 2, 0, 0);
 
             // Hands
-            var jointRoot = new Vector3(vrInput.hmdPose.position.x, 0, vrInput.hmdPose.position.z);
+            var jointRoot = vrInput.hmdPose.position.x0z();
             leftHand.targetPosition = vrInput.leftControllerPose.position - jointRoot;
             if(!vrInput.leftControllerPose.rotation.IsNaN())
                 leftHand.targetRotation = vrInput.leftControllerPose.rotation;

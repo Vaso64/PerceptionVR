@@ -5,22 +5,24 @@ using System.Text.RegularExpressions;
 
 namespace PerceptionVR.Debug
 {
-    public static class Debugger
+    public class Debugger : MonoBehaviour
     {
-        private const bool LogEnabled = true;
+        [SerializeField] private bool logEnabled;
+        private void Update() => _logEnabled = logEnabled;
+        private static bool _logEnabled = true;
 
         public static void LogInfo(string message) {
-            if(LogEnabled)
+            if(_logEnabled)
                 UnityEngine.Debug.Log($"{Header()} {message}");
         } 
         public static void LogWarning(string message)
         { 
-            if(LogEnabled)
+            if(_logEnabled)
                 UnityEngine.Debug.LogWarning($"{Header()} {message}");
         }
         public static void LogError(string message)
         {
-            if(LogEnabled)
+            if(_logEnabled)
                 UnityEngine.Debug.LogError($"{Header()} {message}");
         }
 
