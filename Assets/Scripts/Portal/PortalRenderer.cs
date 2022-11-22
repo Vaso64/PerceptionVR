@@ -102,7 +102,10 @@ namespace PerceptionVR.Portal
             // Render self
             portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             portalCamera.targetTexture = RTArray[recursionDepth];
+            var oldProjection = portalCamera.projectionMatrix;
+            portalCamera.projectionMatrix = ClipNearPlane(portalCamera, portal.portalPair);
             portalCamera.Render();
+            //portalCamera.projectionMatrix = oldProjection;
 
             // Notify others after render
             visiblePortalRenderers.ForEach(pr => pr.OnAfterPortalRenderCallback());
@@ -121,8 +124,8 @@ namespace PerceptionVR.Portal
                 return false;
 
             // AABB frustum check (is portal in fov of the camera?)
-            if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portal.portalCollider.bounds))
-                return false;
+            //if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portal.portalCollider.bounds))
+            //    return false;
 
             // Overlap check (can portal be seen through another portal?)
             var portalRect = camera.WorldToScreenBounds(portal.portalCollider.bounds);
@@ -131,6 +134,15 @@ namespace PerceptionVR.Portal
                 return false;
 
             return true;
+        }
+
+        private static Matrix4x4 ClipNearPlane(Camera camera, IPortal portal)
+        {
+            float signDotProduct = Mathf.Sign(Vector3.Dot(portal.portalPlane.normal, portal.transform.position - camera.transform.position));
+            Vector3 cameraSpacePos = camera.worldToCameraMatrix.MultiplyPoint(portal.transform.position);
+            Vector3 cameraSpaceNormal = camera.worldToCameraMatrix.MultiplyVector(portal.portalPlane.normal) * signDotProduct;
+            float cameraSpaceDistance = -Vector3.Dot(cameraSpacePos, cameraSpaceNormal) + 0.01f;
+            return camera.CalculateObliqueMatrix(new Vector4(cameraSpaceNormal.x, cameraSpaceNormal.y, cameraSpaceNormal.z, cameraSpaceDistance));
         }
     }
 }
