@@ -13,6 +13,7 @@ using PerceptionVR.Debug;
 
 namespace PerceptionVR.Player
 {
+    [RequireComponent(typeof(ConfigurableJoint))]
     public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
         public enum VRPlayerHandSide
@@ -24,11 +25,12 @@ namespace PerceptionVR.Player
         private VRPlayerInput playerInput;
         
         [SerializeField] private VRPlayerHandSide handSide;
-
-        private List<IGrabbable> grabbableItems = new();
         
+        private ConfigurableJoint bodyJoint;
+        
+        // Grabbing
+        private List<IGrabbable> grabbableItems = new();
         private IGrabbable holdingItem = null;
-
         private FixedJoint grabJoint;
 
         public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
@@ -47,10 +49,14 @@ namespace PerceptionVR.Player
         private void Awake()
         {
             GetComponent<Renderer>().material.color = Color.red;
-            
+        }
+
+        private void Start()
+        {
+            this.bodyJoint = GetComponent<ConfigurableJoint>();
             
             this.playerInput = GetComponentInParent<VRPlayerInput>();
-
+            
             // Register hand to player input events
             switch (handSide)
             {
@@ -63,6 +69,30 @@ namespace PerceptionVR.Player
                     playerInput.OnRightControllerReleased += OnRelease;
                     break;
             }
+        }
+
+
+        private void FixedUpdate()
+        {
+            // Get controller pose
+            Pose controllerPose;
+            switch (handSide)
+            {
+                case VRPlayerHandSide.Left:
+                    controllerPose = playerInput.leftControllerPose;
+                    break;
+                case VRPlayerHandSide.Right:
+                    controllerPose = playerInput.rightControllerPose;
+                    break;
+                default:
+                    controllerPose = new Pose();
+                    break;
+            }
+            
+            // Move hand
+            bodyJoint.targetPosition = controllerPose.position - playerInput.hmdPose.position.x0z();
+            if(!controllerPose.rotation.IsNaN())
+                bodyJoint.targetRotation = controllerPose.rotation;
         }
 
         private void OnTriggerEnter(Collider other)

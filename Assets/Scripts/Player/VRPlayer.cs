@@ -79,14 +79,7 @@ namespace PerceptionVR.Player
             leftEye.transform.localPosition = new Vector3(-ipd / 2, 0, 0);
             rightEye.transform.localPosition = new Vector3(ipd / 2, 0, 0);
 
-            // Hands
-            var jointRoot = vrInput.hmdPose.position.x0z();
-            leftHand.targetPosition = vrInput.leftControllerPose.position - jointRoot;
-            if(!vrInput.leftControllerPose.rotation.IsNaN())
-                leftHand.targetRotation = vrInput.leftControllerPose.rotation;
-            rightHand.targetPosition = vrInput.rightControllerPose.position - jointRoot;
-            if(!vrInput.rightControllerPose.rotation.IsNaN())
-                rightHand.targetRotation = vrInput.rightControllerPose.rotation;
+
         }
         
         private void Jump()
