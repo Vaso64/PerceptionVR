@@ -124,8 +124,8 @@ namespace PerceptionVR.Portal
                 return false;
 
             // AABB frustum check (is portal in fov of the camera?)
-            //if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portal.portalCollider.bounds))
-            //    return false;
+            if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portal.portalCollider.bounds))
+                return false;
 
             // Overlap check (can portal be seen through another portal?)
             var portalRect = camera.WorldToScreenBounds(portal.portalCollider.bounds);

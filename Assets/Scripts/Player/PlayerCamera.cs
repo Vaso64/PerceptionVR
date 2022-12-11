@@ -17,7 +17,7 @@ namespace PerceptionVR.Player
         private void Start()
         {
             playerCamera = GetComponent<Camera>();
-            playerCamera.nearClipPlane = 0.00001f;
+            playerCamera.nearClipPlane = 0.001f;
         }
         
 

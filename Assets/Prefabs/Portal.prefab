@@ -126,6 +126,19 @@ MonoBehaviour:
   frontArea: {fileID: 6960794002571406191}
   passingArea: {fileID: 741615381161327449}
   backArea: {fileID: 6181675200283337793}
+  frontGroup:
+    collection: []
+    debugName: 
+  passingGroup:
+    collection: []
+    debugName: 
+  backGroup:
+    collection: []
+    debugName: 
+  cloneGroup:
+    collection: []
+    debugName: 
+  vicinity: []
 --- !u!1 &3519204814406711909
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,7 +229,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4316051025611887685}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.0001}
+  m_LocalPosition: {x: 0, y: 0, z: 0.0015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
