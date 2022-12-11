@@ -32,10 +32,11 @@ namespace PerceptionVR.Player
         [HideInInspector] public Pose rightControllerDeltaPose;
         [HideInInspector] public Vector2 move;
         [HideInInspector] public Vector2 rotate;
-        public Action rightControllerGrabbed;
-        public Action rightControllerReleased;
-        public Action leftControllerGrabbed;
-        public Action leftControllerReleased;
+        public event Action OnRightControllerGrabbed;
+        public event Action OnRightControllerReleased;
+        public event Action OnLeftControllerGrabbed;
+        public event Action OnLeftControllerReleased;
+        public event Action OnJump;
     
         private void Awake()
         {
@@ -47,10 +48,11 @@ namespace PerceptionVR.Player
 
         private void Start()
         {
-            playerActions.RightControllerGrab.started += ctx => rightControllerGrabbed?.Invoke();
-            playerActions.RightControllerGrab.canceled += ctx => rightControllerReleased?.Invoke();
-            playerActions.LeftControllerGrab.started += ctx => leftControllerGrabbed?.Invoke();
-            playerActions.LeftControllerGrab.canceled += ctx => leftControllerReleased?.Invoke();
+            playerActions.RightControllerGrab.started += ctx => OnRightControllerGrabbed?.Invoke();
+            playerActions.RightControllerGrab.canceled += ctx => OnRightControllerReleased?.Invoke();
+            playerActions.LeftControllerGrab.started += ctx => OnLeftControllerGrabbed?.Invoke();
+            playerActions.LeftControllerGrab.canceled += ctx => OnLeftControllerReleased?.Invoke();
+            playerActions.Jump.started += ctx => OnJump?.Invoke();
         }
 
         public void FixedUpdate()
@@ -119,20 +121,6 @@ namespace PerceptionVR.Player
             // Joysticks
             move = playerActions.Move.ReadValue<Vector2>();
             rotate = playerActions.Rotate.ReadValue<Vector2>();
-        
-            /*
-            // Left grab / release
-            if (playerActions.LeftControllerGrab.WasPressedThisFrame())
-                leftControllerGrabbed?.Invoke();
-            if(playerActions.LeftControllerGrab.WasReleasedThisFrame()) 
-                leftControllerReleased?.Invoke();
-            
-            // Right grab / release
-            if (playerActions.RightControllerGrab.WasPressedThisFrame())
-                rightControllerGrabbed?.Invoke();
-            if(playerActions.RightControllerGrab.WasReleasedThisFrame()) 
-                rightControllerReleased?.Invoke();
-            */
         }
 
         private void FetchDebugInput()

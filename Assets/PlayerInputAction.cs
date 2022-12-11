@@ -326,6 +326,15 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""6de81e36-86d7-4cec-b651-393996a45d22"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -482,6 +491,17 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""action"": ""RightEyeRotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e92b9eb9-3a33-41c3-bf77-07aeba9e60bc"",
+                    ""path"": ""<WMRSpatialController>/touchpadClicked"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -549,6 +569,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_VRPlayer_RightEyePosition = m_VRPlayer.FindAction("RightEyePosition", throwIfNotFound: true);
         m_VRPlayer_LeftEyeRotation = m_VRPlayer.FindAction("LeftEyeRotation", throwIfNotFound: true);
         m_VRPlayer_RightEyeRotation = m_VRPlayer.FindAction("RightEyeRotation", throwIfNotFound: true);
+        m_VRPlayer_Jump = m_VRPlayer.FindAction("Jump", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -687,6 +708,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_VRPlayer_RightEyePosition;
     private readonly InputAction m_VRPlayer_LeftEyeRotation;
     private readonly InputAction m_VRPlayer_RightEyeRotation;
+    private readonly InputAction m_VRPlayer_Jump;
     public struct VRPlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -705,6 +727,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         public InputAction @RightEyePosition => m_Wrapper.m_VRPlayer_RightEyePosition;
         public InputAction @LeftEyeRotation => m_Wrapper.m_VRPlayer_LeftEyeRotation;
         public InputAction @RightEyeRotation => m_Wrapper.m_VRPlayer_RightEyeRotation;
+        public InputAction @Jump => m_Wrapper.m_VRPlayer_Jump;
         public InputActionMap Get() { return m_Wrapper.m_VRPlayer; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -756,6 +779,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @RightEyeRotation.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
                 @RightEyeRotation.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
                 @RightEyeRotation.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnRightEyeRotation;
+                @Jump.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnJump;
+                @Jump.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnJump;
+                @Jump.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnJump;
             }
             m_Wrapper.m_VRPlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -802,6 +828,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @RightEyeRotation.started += instance.OnRightEyeRotation;
                 @RightEyeRotation.performed += instance.OnRightEyeRotation;
                 @RightEyeRotation.canceled += instance.OnRightEyeRotation;
+                @Jump.started += instance.OnJump;
+                @Jump.performed += instance.OnJump;
+                @Jump.canceled += instance.OnJump;
             }
         }
     }
@@ -848,5 +877,6 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         void OnRightEyePosition(InputAction.CallbackContext context);
         void OnLeftEyeRotation(InputAction.CallbackContext context);
         void OnRightEyeRotation(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
 }

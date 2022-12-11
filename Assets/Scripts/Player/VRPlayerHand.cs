@@ -55,12 +55,12 @@ namespace PerceptionVR.Player
             switch (handSide)
             {
                 case VRPlayerHandSide.Left:
-                    playerInput.leftControllerGrabbed += OnGrab;
-                    playerInput.leftControllerReleased += OnRelease;
+                    playerInput.OnLeftControllerGrabbed += OnGrab;
+                    playerInput.OnLeftControllerReleased += OnRelease;
                     break;
                 case VRPlayerHandSide.Right:
-                    playerInput.rightControllerGrabbed += OnGrab;
-                    playerInput.rightControllerReleased += OnRelease;
+                    playerInput.OnRightControllerGrabbed += OnGrab;
+                    playerInput.OnRightControllerReleased += OnRelease;
                     break;
             }
         }

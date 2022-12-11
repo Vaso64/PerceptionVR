@@ -23,11 +23,11 @@ namespace PerceptionVR.Player
         [SerializeField] private ConfigurableJoint leftHand;
         [SerializeField] private ConfigurableJoint rightHand;
         [SerializeField] private Rigidbody body;
-        
-        [Header("Speeds")]
+
+        [Header("Movement")]
         public float joystickMoveSpeed;    //  m / s
         public float joystickRotateSpeed;  //  deg / s
-
+        public float jumpForce;            
 
         [Header("Hand Physics")]
         public float handLinearSpringStrength;
@@ -38,6 +38,8 @@ namespace PerceptionVR.Player
         protected void Start()
         {
             vrInput = GetComponent<VRPlayerInput>();
+            
+            vrInput.OnJump += Jump;
         }
 
         private void OnValidate()
@@ -85,6 +87,11 @@ namespace PerceptionVR.Player
             rightHand.targetPosition = vrInput.rightControllerPose.position - jointRoot;
             if(!vrInput.rightControllerPose.rotation.IsNaN())
                 rightHand.targetRotation = vrInput.rightControllerPose.rotation;
+        }
+        
+        private void Jump()
+        {
+            body.AddForce(gravityDirection * Vector3.up * jumpForce, ForceMode.Impulse);
         }
 
     }
