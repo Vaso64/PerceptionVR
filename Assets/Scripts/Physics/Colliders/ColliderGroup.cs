@@ -7,7 +7,7 @@ using PerceptionVR.Common.Generic;
 using PerceptionVR.Debug;
 using PerceptionVR.Portal;
 
-namespace PerceptionVR.Common
+namespace PerceptionVR.Physics
 {
     [System.Serializable] 
     public class ColliderGroup : ObservableCollection<Collider>

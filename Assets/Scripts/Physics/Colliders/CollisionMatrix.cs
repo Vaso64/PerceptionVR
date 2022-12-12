@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using System.Configuration;
-using PerceptionVR.Debug;
 using PerceptionVR.Common.Generic;
 using PerceptionVR.Global;
 using System.Linq;
 using UnityEngine;
 
-namespace PerceptionVR.Common
+namespace PerceptionVR.Physics
 {
     public static class CollisionMatrix
     {
@@ -34,7 +32,7 @@ namespace PerceptionVR.Common
             else
                 Matrix.Add((x,y), collide);
             //Debugger.LogInfo($"{x} - {y} => Collide: {collide}");
-            Physics.IgnoreCollision(x, y, !collide);
+            UnityEngine.Physics.IgnoreCollision(x, y, !collide);
         }
 
         public static void SetCollisions(IEnumerable<Collider> xs, IEnumerable<Collider> ys, bool collide)

@@ -1,7 +1,7 @@
 using PerceptionVR.Common;
 using UnityEngine;
 
-namespace PerceptionVR.Global.Gravity
+namespace PerceptionVR.Physics
 {
     public interface IGravityObject : IMonoBehaviour
     {

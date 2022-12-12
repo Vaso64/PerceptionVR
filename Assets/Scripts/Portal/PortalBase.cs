@@ -8,7 +8,7 @@ using PerceptionVR.Extensions;
 using UnityEngine.Serialization;
 using PerceptionVR.Debug;
 using PerceptionVR.Global;
-using PerceptionVR.Global.Gravity;
+using PerceptionVR.Physics;
 
 
 namespace PerceptionVR.Portal

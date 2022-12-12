@@ -2,11 +2,12 @@ using System.Linq;
 using MoreLinq.Extensions;
 using PerceptionVR.Portal;
 using PerceptionVR.Common.Generic;
+using PerceptionVR.Common;
 using PerceptionVR.Debug;
 using PerceptionVR.Global;
 using UnityEngine;
 
-namespace PerceptionVR.Common
+namespace PerceptionVR.Physics
 {
     public class SubscribableSwapTrigger : SubscribableTrigger
     {

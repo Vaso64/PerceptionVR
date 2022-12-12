@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PerceptionVR.Common
+namespace PerceptionVR.Physics
 {
     [RequireComponent(typeof(Collider))]
     public class ColliderBase : MonoBehaviour

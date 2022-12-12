@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using PerceptionVR.Debug;
+using PerceptionVR.Global;
 using UnityEngine;
 
-namespace PerceptionVR.Global
+namespace PerceptionVR.Physics
 {
     public class GravitySystem : MonoBehaviour
     {

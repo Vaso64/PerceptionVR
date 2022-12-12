@@ -63,7 +63,7 @@ namespace PerceptionVR.Portal
             var direction = newPosition - oldPosition;
             var origin = oldPosition - direction.normalized;
             var ray = new Ray(origin, direction);
-            var hits = Physics.RaycastAll(ray, Vector3.Distance(origin, newPosition));
+            var hits = UnityEngine.Physics.RaycastAll(ray, Vector3.Distance(origin, newPosition));
             var result = hits.Any(hit => hit.collider == throughPortal.portalCollider);
             if(!result)
                 Debugger.LogInfo($"{transform} passed through portal failed {oldPosition} -> {newPosition}");

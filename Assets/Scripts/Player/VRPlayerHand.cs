@@ -13,7 +13,7 @@ using PerceptionVR.Debug;
 
 namespace PerceptionVR.Player
 {
-    [RequireComponent(typeof(ConfigurableJoint))]
+    //[RequireComponent(typeof(ConfigurableJoint))]
     public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
         public enum VRPlayerHandSide
