@@ -19,7 +19,7 @@ namespace PerceptionVR.Portal
         
         
         // Set tracking target
-        public override void Track(T target, IPortal throughPortal)
+        public override void Track(T target, Portal throughPortal)
         {
             currentPosition = target.transform.position;
             previousPosition = currentPosition;

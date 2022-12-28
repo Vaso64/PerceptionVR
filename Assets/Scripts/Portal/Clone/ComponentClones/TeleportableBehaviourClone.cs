@@ -33,7 +33,7 @@ namespace PerceptionVR.Portal
         // Swap behaviour on main teleport
         private void Start() => GetComponentInParent<TeleportableClone>().OnEnterPortal += SwapBehaviour;
 
-        public void Track(ITeleportableBehaviour target, IPortal throughPortal)
+        public void Track(ITeleportableBehaviour target, Portal throughPortal)
         {
             this.targetTeleportableBehaviour = target;
             base.Track(target.transform, throughPortal);

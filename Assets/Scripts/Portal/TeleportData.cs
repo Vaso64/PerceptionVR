@@ -6,12 +6,12 @@ namespace PerceptionVR.Portal
     {
         public ITeleportable teleportable;
         public TeleportableClone teleportableClone;
-        public IPortal inPortal;
-        public IPortal outPortal;
+        public Portal inPortal;
+        public Portal outPortal;
         public Quaternion rotationDelta;
         public SwapData swapData;
         
-        public TeleportData(ITeleportable teleportable, TeleportableClone teleportableClone, IPortal inPortal)
+        public TeleportData(ITeleportable teleportable, TeleportableClone teleportableClone, Portal inPortal)
         {
             this.teleportable = teleportable;
             this.teleportableClone = teleportableClone;

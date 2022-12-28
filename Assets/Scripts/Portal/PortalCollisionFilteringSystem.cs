@@ -24,13 +24,15 @@ namespace PerceptionVR.Portal
         protected event Action<Collider> OnEnteredVicinity;
         protected event Action<Collider> OnExitedVicinity;
 
-        protected IPortal portal;
+        protected Portal portal;
 
+        protected virtual void Awake()
+        {
+            portal = GetComponentInParent<Portal>();
+        }
 
         protected virtual void Start()
         {
-            portal = GetComponentInParent<IPortal>();
-
             frontGroup.debugName = $"frontGroup_{portal.transform.name}";
             passingGroup.debugName = $"passingGroup_{portal.transform.name}";
             backGroup.debugName = $"backGroup_{portal.transform.name}";

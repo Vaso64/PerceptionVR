@@ -13,38 +13,31 @@ using PerceptionVR.Physics;
 
 namespace PerceptionVR.Portal
 {
-    public class PortalBase : MonoBehaviour
+    public partial class Portal : MonoBehaviour
     {
-        [SerializeField] private PortalBase _portalPair;
+        [SerializeField] private Portal startingPortalPair;
         
-        [SerializeField] private Collider _portalCollider;
-        
-        public IPortal portalPair => _portalPair as IPortal;
-
         public event Action<TeleportData> OnTeleport;
         
-        public Collider portalCollider => _portalCollider;
+        public Collider portalCollider { get; private set; }
 
-        public Plane portalPlane => new Plane(transform.forward, transform.position);
+        public Plane portalPlane => new(transform.forward, transform.position);
         
 
         private void Awake()
         {
+            portalCollider = GetComponent<Collider>();
+        }
+
+        private void Start()
+        {
             // Portal pair checks
-            if (portalPair == null) 
-                Debugger.LogError("PortalBase: No portal pair assigned");
-            if (_portalPair.transform == transform)
-                Debugger.LogError("PortalBase: Portal pair cannot be self");
-            
-            // Get portal collider
-            if(_portalCollider == null)
-                _portalCollider = GetComponent<Collider>();
+            if (startingPortalPair != null)
+                SetPortalPair(this, startingPortalPair);
         }
 
         public void Teleport(TeleportData teleportData)
         {
-            //Dbg.LogInfo($"{teleportable.transform.name} passed through {transform.name}");
-            
             var pairPose = PairPose(teleportData.teleportable.transform.GetPose(), out teleportData.rotationDelta);
 
             // Teleport the object
@@ -53,7 +46,6 @@ namespace PerceptionVR.Portal
             // Translate velocity
             foreach (var teleportedRB in teleportData.teleportable.transform.GetComponentsInChildren<Rigidbody>())
                 teleportedRB.velocity = teleportData.rotationDelta * teleportedRB.velocity;
-
 
             // Reorient the object
             foreach (var gravityObject in teleportData.teleportable.transform.GetComponentsInChildren<IGravityObject>())

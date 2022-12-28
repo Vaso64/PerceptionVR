@@ -14,7 +14,7 @@ namespace PerceptionVR.Portal
 
         private void Awake() => rb = GetComponent<Rigidbody>();
 
-        public override void Track(Transform target, IPortal throughPortal)
+        public override void Track(Transform target, Portal throughPortal)
         {
             rbTarget = target.GetComponent<Rigidbody>();
             if(rbTarget && !rbTarget.isKinematic)

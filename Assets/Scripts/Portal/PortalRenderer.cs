@@ -12,7 +12,7 @@ namespace PerceptionVR.Portal
     public class PortalRenderer : MonoBehaviour
     {
         // References
-        private IPortal portal;
+        private Portal portal;
         
         [SerializeField] private Camera portalCamera;
         
@@ -24,21 +24,27 @@ namespace PerceptionVR.Portal
         private Stack<int> RTArrayIndexStack = new Stack<int>(recurssionLimit);
         private bool RTArrayAlocated = false;
 
-        private static List<PortalRenderer> allPortalRenderers = new List<PortalRenderer>();
+        private static List<PortalRenderer> allPortalRenderers = new();
 
         private void Awake()
         {
-            // Register self and to events
-            allPortalRenderers.Add(this);
-            PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
             RenderingManagment.OnResolutionChange += AllocateRTArray;
-        }
-
-        private void Start()
-        {
+            
             // Get references
-            portal ??= GetComponentInParent<IPortal>();
+            portal ??= GetComponentInParent<Portal>();
             portalCamera ??= GetComponentInChildren<Camera>();
+
+            portal.OnPortalPairSet += _ =>
+            {
+                allPortalRenderers.Add(this);
+                PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
+            };
+
+            portal.OnPortalPairUnset += () => 
+            {
+                allPortalRenderers.Remove(this);
+                PlayerCamera.OnBeforePlayerCameraRender -= OnBeforePlayerCameraRenderCallback;
+            };
         }
 
         private void AllocateRTArray(Vector2Int resolution)
@@ -136,7 +142,7 @@ namespace PerceptionVR.Portal
             return true;
         }
 
-        private static Matrix4x4 ClipNearPlane(Camera camera, IPortal portal)
+        private static Matrix4x4 ClipNearPlane(Camera camera, Portal portal)
         {
             float signDotProduct = Mathf.Sign(Vector3.Dot(portal.portalPlane.normal, portal.transform.position - camera.transform.position));
             Vector3 cameraSpacePos = camera.worldToCameraMatrix.MultiplyPoint(portal.transform.position);

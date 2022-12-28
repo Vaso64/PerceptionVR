@@ -16,11 +16,21 @@ namespace PerceptionVR.Portal
         [SerializeField] private List<NearbyTeleportable> vicinity = new();
         
         private PortalCloneSystem pairCloneSystem;
-
-        protected override void Start()
+        
+        protected override void Awake()
         {
+            base.Awake();
+            portal.OnPortalPairSet += portalPair =>
+            {
+                pairCloneSystem = portalPair.transform.GetComponentInChildren<PortalCloneSystem>();
+            };
+            portal.OnPortalPairUnset += () =>
+            {
+                vicinity.ForEach(UnregisterTeleportable);
+                pairCloneSystem = null;
+            };
+            
             base.Start();
-            pairCloneSystem = portal.portalPair.transform.GetComponentInChildren<PortalCloneSystem>();
             OnEnteredVicinity += OnVicinityEnter;
             OnExitedVicinity += OnVicinityExit;
             GlobalEvents.OnTeleport += OnTeleportCallback;
@@ -124,7 +134,7 @@ namespace PerceptionVR.Portal
         }
         
         
-        private TeleportableClone CreateClone(ITeleportable original, IPortal trackedPortal)
+        private TeleportableClone CreateClone(ITeleportable original, Portal trackedPortal)
         {
             // Clone original
             var clone = GameObjectUtility.InstantiateNotify(original.gameObject);

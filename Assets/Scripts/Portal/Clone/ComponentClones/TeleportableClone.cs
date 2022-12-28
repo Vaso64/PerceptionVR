@@ -20,7 +20,7 @@ namespace PerceptionVR.Portal
             base.OnEnterPortal += OnEnterPortalCallback;
         }
 
-        public void Track(ITeleportable target, IPortal throughPortal)
+        public void Track(ITeleportable target, Portal throughPortal)
         {
             // Position clone
             transform.SetPose(throughPortal.PairPose(target.transform.GetPose()));
