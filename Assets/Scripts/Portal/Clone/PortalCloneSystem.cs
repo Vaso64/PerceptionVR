@@ -28,7 +28,6 @@ namespace PerceptionVR.Portal
                 pairCloneSystem = null;
             };
             
-            base.Start();
             OnEnteredVicinity += OnVicinityEnter;
             OnExitedVicinity += OnVicinityExit;
             GlobalEvents.OnTeleport += OnTeleportCallback;

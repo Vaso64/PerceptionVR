@@ -38,7 +38,7 @@ namespace PerceptionVR.Physics
         
         protected override void OnTriggerEnter(Collider other)
         {
-            Debugger.LogInfo($"OnTriggerEnter {other} in {this}");
+            //Debugger.LogInfo($"OnTriggerEnter {other} in {this}");
             
             // Confirm swap in
             if(swappedInThisFrame.Contains(other))
@@ -51,7 +51,7 @@ namespace PerceptionVR.Physics
         
         protected override void OnTriggerExit(Collider other)
         {
-            Debugger.LogInfo($"OnTriggerExit {other} from {this}");
+            //Debugger.LogInfo($"OnTriggerExit {other} from {this}");
             
             // Confirm swap out
             if(swappedOutThisFrame.Contains(other))
