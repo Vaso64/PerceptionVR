@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using PerceptionVR.Common;
 using PerceptionVR.Extensions;
-using UnityEngine.Serialization;
-using PerceptionVR.Debug;
 using PerceptionVR.Global;
 using PerceptionVR.Physics;
 

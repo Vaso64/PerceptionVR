@@ -1,4 +1,3 @@
-using System;
 using PerceptionVR.Debug;
 using UnityEngine;
 

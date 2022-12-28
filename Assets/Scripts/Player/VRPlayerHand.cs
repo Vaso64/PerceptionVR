@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using PerceptionVR.Extensions;
-using UnityEngine.ProBuilder;
 using PerceptionVR.Common;
 using MoreLinq.Extensions;
-using PerceptionVR.Global;
 using PerceptionVR.Portal;
 using PerceptionVR.Debug;
 

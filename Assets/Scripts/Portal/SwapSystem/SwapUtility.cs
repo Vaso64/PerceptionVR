@@ -1,8 +1,4 @@
-using System;
 using System.Collections.Generic;
-using PerceptionVR.Common;
-using PerceptionVR.Global;
-using UnityEngine;
 
 namespace PerceptionVR.Portal
 {

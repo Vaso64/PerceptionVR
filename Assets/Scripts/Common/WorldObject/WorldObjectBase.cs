@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using PerceptionVR.Physics;
 using PerceptionVR.Portal;
 using UnityEngine;

@@ -1,10 +1,6 @@
 using UnityEngine;
 using PerceptionVR.Extensions;
 using PerceptionVR.Common;
-using PerceptionVR.Global;
-using System.Collections.Generic;
-using System.Linq;
-using System;
 using PerceptionVR.Debug;
 
 

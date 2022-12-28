@@ -1,8 +1,6 @@
 using System;
-using PerceptionVR.Extensions;
 using PerceptionVR.Portal;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace PerceptionVR.Global
 {

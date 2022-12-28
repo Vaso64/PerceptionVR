@@ -1,8 +1,5 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using System.IO.Pipes;
-using System.Linq;
 
 namespace PerceptionVR.Portal
 {

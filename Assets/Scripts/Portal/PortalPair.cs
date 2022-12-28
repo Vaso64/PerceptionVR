@@ -1,6 +1,5 @@
 using System;
 using PerceptionVR.Debug;
-using UnityEngine;
 
 namespace PerceptionVR.Portal
 {

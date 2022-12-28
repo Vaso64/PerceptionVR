@@ -1,12 +1,9 @@
  using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
+ using System.Linq;
 using UnityEngine;
-using Object = UnityEngine.Object;
-using PerceptionVR.Common.Generic;
+ using PerceptionVR.Common.Generic;
 
 namespace PerceptionVR.Global
 {

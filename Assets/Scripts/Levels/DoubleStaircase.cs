@@ -1,6 +1,4 @@
-using System;
 using PerceptionVR.Physics;
-using PerceptionVR.Portal;
 using UnityEngine;
 
 namespace PerceptionVR.Levels

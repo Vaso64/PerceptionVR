@@ -1,8 +1,6 @@
 using System;
-using MoreLinq.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using PerceptionVR.Debug;
 using PerceptionVR.Global;
 using PerceptionVR.Extensions;

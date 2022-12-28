@@ -1,9 +1,4 @@
-using PerceptionVR.Debug;
 using UnityEngine;
-using PerceptionVR.Extensions;
-using PerceptionVR.Portal;
-using UnityEngine.ProBuilder;
-using UnityEngine.Serialization;
 
 namespace PerceptionVR.Player
 {
