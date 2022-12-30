@@ -1,45 +1,56 @@
 using PerceptionVR.Physics;
+using PerceptionVR.Portal;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PerceptionVR.Levels
 {
     public class DoubleStaircase : LevelBase
-    {
-        [SerializeField] private SubscribableTrigger mainHallwayTrigger;
-        [SerializeField] private SubscribableTrigger blueStaircaseTrigger;
-        [SerializeField] private SubscribableTrigger redStaircaseTrigger;
+    { 
+        [SerializeField] private SubscribableTrigger loopHallwayTrigger;
+        [SerializeField] private SubscribableTrigger blueTrigger;
+        [SerializeField] private SubscribableTrigger redTrigger;
         
-        [SerializeField] private Portal.Portal blueStaircasePortal;
-        [SerializeField] private Portal.Portal redStaircasePortal;
-        [SerializeField] private Portal.Portal mainHallwayPortal;
-        [SerializeField] private Portal.Portal exitPortalInside;
-        [SerializeField] private Portal.Portal exitPortalOutside;
+        [SerializeField] private Portal.Portal bluePortal;
+        [SerializeField] private Portal.Portal redPortal;
+        [SerializeField] private Portal.Portal loopHallwayPortal;
+        
+        [SerializeField] private Portal.Portal gravityFlipEntrancePortal;
+        [SerializeField] private Portal.Portal gravityFlipExitPortal;
+            
+        [SerializeField] private SubscribableTrigger entranceTrigger;
         [SerializeField] private Portal.Portal entrancePortal;
 
         private void Awake()
         {
-            //PortalBase.SetPortalPair(entrancePortal, mainHallwayPortal);
+            //Portal.Portal.SetPortalPair(entrancePortal, loopHallwayPortal);
 
-            blueStaircaseTrigger.onTriggerEnter += (other) =>
+
+            blueTrigger.onTriggerEnter += other =>
             {
-                if(other.transform.name.Contains("Player"))
-                    Portal.Portal.SetPortalPair(mainHallwayPortal, blueStaircasePortal);
+                if (other.transform.name.Contains("Player"))
+                    Portal.Portal.SetPortalPair(loopHallwayPortal, bluePortal);
             };
-            
-            redStaircaseTrigger.onTriggerEnter += (other) =>
+
+            redTrigger.onTriggerEnter += other =>
             {
-                if(other.transform.name.Contains("Player"))
-                    Portal.Portal.SetPortalPair(mainHallwayPortal, redStaircasePortal);
+                if (other.transform.name.Contains("Player"))
+                    Portal.Portal.SetPortalPair(loopHallwayPortal, redPortal);
             };
-            
-            mainHallwayTrigger.onTriggerEnter += (other) =>
+
+            loopHallwayTrigger.onTriggerEnter += other =>
             {
                 if (other.transform.name.Contains("Player"))
                 {
-                    Portal.Portal.SetPortalPair(mainHallwayPortal, exitPortalInside);
-                    Portal.Portal.SetPortalPair(entrancePortal, exitPortalOutside);
-                }
-                    
+                    Portal.Portal.SetPortalPair(loopHallwayPortal, gravityFlipEntrancePortal);
+                    Portal.Portal.SetPortalPair(gravityFlipExitPortal, entrancePortal);
+                }   
+            };
+
+            entranceTrigger.onTriggerEnter += other =>
+            {
+                if (other.transform.name.Contains("Player"))
+                    Portal.Portal.SetPortalPair(entrancePortal, loopHallwayPortal);
             };
         }
     }

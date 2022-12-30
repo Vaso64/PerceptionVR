@@ -24,7 +24,7 @@ namespace PerceptionVR.Portal
             };
             portal.OnPortalPairUnset += () =>
             {
-                vicinity.ForEach(UnregisterTeleportable);
+                vicinity.ToList().ForEach(UnregisterTeleportable);
                 pairCloneSystem = null;
             };
             

@@ -125,7 +125,6 @@ namespace PerceptionVR.Player
             Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
             grabJoint = gameObject.AddComponentNotify<FixedJoint>();
             grabJoint.connectedBody = holdingItem.rigidbody;
-            
         }
         
         private void OnRelease()
