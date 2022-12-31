@@ -402,7 +402,7 @@ MonoBehaviour:
   OnChanged:
     m_PersistentCalls:
       m_Calls: []
-  button: {fileID: 1161926365840093376}
+  button: {fileID: 1161926365840093433}
   buttonHeight: 0.3
   buttonOffset: 0.15
   pressure: 10
@@ -481,8 +481,8 @@ ConfigurableJoint:
     maximumForce: 3.4028233e+38
   m_YDrive:
     serializedVersion: 3
-    positionSpring: 7
-    positionDamper: 1
+    positionSpring: 0
+    positionDamper: 0
     maximumForce: 3.4028233e+38
   m_ZDrive:
     serializedVersion: 3

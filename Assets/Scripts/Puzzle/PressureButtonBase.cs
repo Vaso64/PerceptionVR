@@ -1,3 +1,4 @@
+using PerceptionVR.Common;
 using PerceptionVR.Extensions;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,7 +9,7 @@ namespace PerceptionVR.Puzzle
     [RequireComponent(typeof(ConfigurableJoint))]
     public abstract class PressureButtonBase : ControlBase
     {
-        [SerializeField] private Transform button;
+        [SerializeField] private WorldObjectBase button;
         
         public float buttonHeight = 0.3f;
         public float buttonOffset = 0.15f;
@@ -20,6 +21,7 @@ namespace PerceptionVR.Puzzle
         private void Awake()
         {
             // Setup joint
+            button.gravityDirection = transform.rotation;
             var joint = GetComponent<ConfigurableJoint>();
             joint.anchor = new Vector3(0, buttonHeight, 0);
             joint.linearLimit = new SoftJointLimit { limit = buttonOffset };
@@ -31,7 +33,7 @@ namespace PerceptionVR.Puzzle
         protected virtual void Update()
         {
             wasPressedLastFrame = isPressedThisFrame;
-            isPressedThisFrame = button.localPosition.y < buttonHeight;
+            isPressedThisFrame = button.transform.localPosition.y < buttonHeight;
         }
         
         private void SetButtonColor(bool active) => button.GetComponent<MeshFilter>().mesh.SetVertexColor(active ? Color.green : Color.red);

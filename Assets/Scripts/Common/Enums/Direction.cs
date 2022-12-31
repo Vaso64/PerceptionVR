@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace PerceptionVR.Common
 {
@@ -26,6 +28,20 @@ namespace PerceptionVR.Common
                 case Direction.Backward: return Vector3.back;
                 default:                 return Vector3.zero;
             }
+        }
+
+        public static Direction ToDirection(this Vector3 vector3)
+        {
+            var normalized = vector3.normalized;
+
+            if(normalized == Vector3.up)       return Direction.Up;
+            if(normalized == Vector3.down)     return Direction.Down;
+            if(normalized == Vector3.left)     return Direction.Left;
+            if(normalized == Vector3.right)    return Direction.Right;
+            if(normalized == Vector3.forward)  return Direction.Forward;
+            if(normalized == Vector3.back)     return Direction.Backward;
+
+            throw new ArgumentException("Vector3 is not a direction");
         }
     }
 }

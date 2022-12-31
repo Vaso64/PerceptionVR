@@ -56,9 +56,9 @@ MonoBehaviour:
   OnChanged:
     m_PersistentCalls:
       m_Calls: []
-  plate: {fileID: 1082764334738344525}
-  plateHeight: 0.3
-  plateOffset: 0.15
+  button: {fileID: 1082764334738344564}
+  buttonHeight: 0.3
+  buttonOffset: 0.15
   pressure: 8
 --- !u!54 &1082764334312831273
 Rigidbody:
@@ -85,7 +85,7 @@ ConfigurableJoint:
   m_GameObject: {fileID: 1082764334312831276}
   m_ConnectedBody: {fileID: 1082764334738344523}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0.1, z: 0}
+  m_Anchor: {x: 0, y: 0.05, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
@@ -135,8 +135,8 @@ ConfigurableJoint:
     maximumForce: 3.4028233e+38
   m_YDrive:
     serializedVersion: 3
-    positionSpring: 8
-    positionDamper: 1
+    positionSpring: 0
+    positionDamper: 0
     maximumForce: 3.4028233e+38
   m_ZDrive:
     serializedVersion: 3
