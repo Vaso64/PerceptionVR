@@ -8,6 +8,8 @@ namespace PerceptionVR.Common
     [RequireComponent(typeof(Collider))]
     public class WorldObjectBase : MonoBehaviour, IGrabbable, ITeleportable, IGravityObject
     {
+        [SerializeField] private Direction startingGravityDirection = Direction.Down;
+        
         public new Rigidbody rigidbody {get; private set; }
         public Quaternion gravityDirection { get; set; } = Quaternion.identity;
 
@@ -17,6 +19,7 @@ namespace PerceptionVR.Common
         {
             this.rigidbody = GetComponent<Rigidbody>();
             this.collider = GetComponent<Collider>();
+            this.gravityDirection = Quaternion.FromToRotation(Vector3.down, startingGravityDirection.ToVector3());
         }
     }
 }
