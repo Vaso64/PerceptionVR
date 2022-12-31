@@ -7,49 +7,48 @@ namespace PerceptionVR.Debug
 {
     public class Debugger : MonoBehaviour
     {
-        [SerializeField] private bool logEnabled;
+        [SerializeField] private LogLevel logLevel;
         [SerializeField] private bool frameSplit;
-        private static bool loggedThisFrame;
+        private void Update() => _logLevel = logLevel;
         
+               
+        private static LogLevel _logLevel;
+        private static bool _loggedThisFrame;
 
-        private void Update() => _logEnabled = logEnabled;
-        private static bool _logEnabled = true;
-        
-        
 
-        public static void LogInfo(string message) {
-            if (_logEnabled)
+        public static void LogInfo(string message) 
+        {
+            if (_logLevel >= LogLevel.Info)
             {
-                loggedThisFrame = true;
+                _loggedThisFrame = true;
                 UnityEngine.Debug.Log($"{Header()} {message}");
             }
-                
         } 
+        
         public static void LogWarning(string message)
         {
-            if (_logEnabled)
+            if (_logLevel >= LogLevel.Warning)
             {
-                loggedThisFrame = true;
+                _loggedThisFrame = true;
                 UnityEngine.Debug.LogWarning($"{Header()} {message}");
             }
-                
         }
+        
         public static void LogError(string message)
         {
-            if (_logEnabled)
+            if (_logLevel >= LogLevel.Error)
             {
-                loggedThisFrame = true;
+                _loggedThisFrame = true;
                 UnityEngine.Debug.LogError($"{Header()} {message}");
             }
-                
         }
 
         private void LateUpdate()
         {
-            if (frameSplit && loggedThisFrame)
+            if (frameSplit && _loggedThisFrame)
             {
                 UnityEngine.Debug.Log("= = = = = = = = = = E N D   O F   F R A M E = = = = = = = = = =");
-                loggedThisFrame = false;
+                _loggedThisFrame = false;
             }
         }
 
