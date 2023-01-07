@@ -32,7 +32,7 @@ public class PillarRoom : LevelBase
     
     private IEnumerator CloseDoor()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(7f);
         door.SetActive(true);
     }
 }

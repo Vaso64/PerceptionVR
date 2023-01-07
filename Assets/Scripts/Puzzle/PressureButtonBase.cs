@@ -32,6 +32,9 @@ namespace PerceptionVR.Puzzle
         
         protected virtual void Update()
         {
+            if(Time.time < 1f)
+                return;
+            
             wasPressedLastFrame = isPressedThisFrame;
             isPressedThisFrame = button.transform.localPosition.y < buttonHeight;
         }
