@@ -10,9 +10,7 @@ namespace PerceptionVR.Portal
     public partial class Portal : MonoBehaviour
     {
         [SerializeField] private Portal startingPortalPair;
-        
-        public event Action<TeleportData> OnTeleport;
-        
+
         public Collider portalCollider { get; private set; }
 
         public Plane portalPlane => new(transform.forward, transform.position);
@@ -30,25 +28,32 @@ namespace PerceptionVR.Portal
                 SetPortalPair(this, startingPortalPair);
         }
 
-        public void Teleport(TeleportData teleportData)
+        public void Teleport(ITeleportable teleportable)
         {
-            var pairPose = PairPose(teleportData.teleportable.transform.GetPose(), out teleportData.rotationDelta);
+            var pairPose = PairPose(teleportable.transform.GetPose(), out var rotationDelta);
 
             // Teleport the object
-            teleportData.teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
+            teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             
             // Translate velocity
-            foreach (var teleportedRB in teleportData.teleportable.transform.GetComponentsInChildren<Rigidbody>())
-                teleportedRB.velocity = teleportData.rotationDelta * teleportedRB.velocity;
+            foreach (var teleportedRB in teleportable.transform.GetComponentsInChildren<Rigidbody>())
+                teleportedRB.velocity = rotationDelta * teleportedRB.velocity;
 
             // Reorient the object
-            foreach (var gravityObject in teleportData.teleportable.transform.GetComponentsInChildren<IGravityObject>())
-                gravityObject.gravityDirection = teleportData.rotationDelta * gravityObject.gravityDirection;
+            foreach (var gravityObject in teleportable.transform.GetComponentsInChildren<IGravityObject>())
+                gravityObject.gravityDirection = rotationDelta * gravityObject.gravityDirection;
 
             // Notify
+            var teleportData = new TeleportData
+            {
+                teleportable = teleportable,
+                inPortal = this,
+                outPortal = portalPair,
+                rotationDelta = rotationDelta
+            };
+            
             GlobalEvents.OnTeleport?.Invoke(teleportData);
-            teleportData.teleportable.OnTeleport(teleportData);
-            OnTeleport?.Invoke(teleportData);
+            teleportable.OnTeleport?.Invoke(teleportData);
         }
 
         
@@ -57,6 +62,7 @@ namespace PerceptionVR.Portal
         public virtual Pose PairPose(Pose pose, out Quaternion portalRotationDelta)
         {
             Pose resultPose;
+            
             portalRotationDelta = portalPair.transform.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
 
             // Calculate position

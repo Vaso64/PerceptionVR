@@ -118,6 +118,9 @@ namespace PerceptionVR.Portal
             // Render self
             portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
             portalCamera.targetTexture = RTArray[recursionDepth];
+            portalCamera.usePhysicalProperties = true;
+            portalCamera.fieldOfView = fov;
+            portalCamera.usePhysicalProperties = false;
             var oldProjection = portalCamera.projectionMatrix;
             portalCamera.projectionMatrix = ClipNearPlane(portalCamera, portal.portalPair);
             portalCamera.Render();

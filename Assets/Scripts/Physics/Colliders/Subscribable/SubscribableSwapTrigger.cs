@@ -17,9 +17,9 @@ namespace PerceptionVR.Physics
         protected override void Awake()
         {
             base.Awake();
-            GlobalEvents.OnTeleport += (teleportData) =>
+            GlobalEvents.OnSwap += (swapData) =>
             {
-                var applicableSwaps = SwapUtility.GetApplicableSwaps(collidersInside, teleportData.swapData.colliderSwaps);
+                var applicableSwaps = SwapUtility.GetApplicableSwaps(collidersInside, swapData.colliderSwaps);
                 foreach (var applicableSwap in applicableSwaps)
                 {
                     swappedInThisFrame.Add(applicableSwap.toAdd);

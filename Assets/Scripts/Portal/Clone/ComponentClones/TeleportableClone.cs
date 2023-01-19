@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using PerceptionVR.Extensions;
 using PerceptionVR.Common;
@@ -8,6 +9,8 @@ namespace PerceptionVR.Portal
 {
     public class TeleportableClone : TrackedCloneBase<Transform>, ITeleportable
     {
+        public Action<TeleportData> OnTeleport { get; set; }
+        public bool manualTeleport { get; set; }
 
         private ITeleportable targetTeleportable;
 
@@ -29,16 +32,25 @@ namespace PerceptionVR.Portal
             foreach (var tbPair in ComponentUtility.CreateComponentTuple<ITeleportableBehaviour, TeleportableBehaviourClone>(target.transform, transform))
                 tbPair.clone.Track(tbPair.original, throughPortal);
 
-            this.targetTeleportable = target;
+            if(targetTeleportable != null)
+                targetTeleportable.OnTeleport -= OnTargetTeleportCallback; 
+            targetTeleportable = target;
+            targetTeleportable.OnTeleport += OnTargetTeleportCallback;
             base.Track(target.transform, throughPortal);
         }
         
         private void OnEnterPortalCallback()
         {
+            // Don't teleport if teleportation is controlled manually
+            if(targetTeleportable.manualTeleport)
+                return;
+            
             Debugger.LogInfo($"{targetTeleportable} ENTERED PORTAL!");
-            var teleportData = new TeleportData(targetTeleportable, this, throughPortal);
-            throughPortal.Teleport(teleportData);
-            Track(targetTeleportable, throughPortal.portalPair);
+            throughPortal.Teleport(targetTeleportable);
         }
+        
+        private void OnTargetTeleportCallback(TeleportData data) => Track(data.teleportable, data.outPortal);
+
+        private void OnDestroy() => targetTeleportable.OnTeleport -= OnTargetTeleportCallback;
     }
 }

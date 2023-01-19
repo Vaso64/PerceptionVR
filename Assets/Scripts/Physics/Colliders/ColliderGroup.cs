@@ -25,7 +25,7 @@ namespace PerceptionVR.Physics
             ComponentTracking.allColliders.OnRemoved += RemoveRange;
             
             // Swap colliders on swap event
-            GlobalEvents.OnTeleport += (teleportData) => SwapUtility.PerformSwap(this, teleportData.swapData.colliderSwaps);
+            GlobalEvents.OnSwap += (swapData) => SwapUtility.PerformSwap(this, swapData.colliderSwaps);
             
             // Un-ignore added colliders with rest of this group
             OnAdded += (colliders) => CollisionMatrix.SetCollisions(this, colliders, true);
@@ -46,13 +46,13 @@ namespace PerceptionVR.Physics
                 
                 case FilterMode.Include:
                     // Ignore with colliders not in filterGroups
-                    CollisionMatrix.SetCollisions(this, ComponentTracking.allColliders.Where(x => filterGroups.SelectMany(g => g).Distinct().Contains(x)), false);
+                    CollisionMatrix.SetCollisions(this, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g).Union(this)), false);
                     
                     // Ignore all future colliders
                     ComponentTracking.allColliders.OnAdded += colliders => CollisionMatrix.SetCollisions(this, colliders, false);
                     
                     // Ignore future added colliders with colliders not in the filterGroups
-                    OnAdded += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g)), false);
+                    OnAdded += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g).Union(this)), false);
                     OnRemoved += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders, true);
                     
                     // Un-ignore and ignore colliders added / removed from the filterGroups

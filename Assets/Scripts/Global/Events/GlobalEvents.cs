@@ -20,5 +20,8 @@ namespace PerceptionVR.Global
         
         // Invoked by Teleport() in PortalBase
         public static Action<TeleportData> OnTeleport;
+        
+        // Invoked in PortalCloneSystem
+        public static Action<SwapData> OnSwap;
     }
 }

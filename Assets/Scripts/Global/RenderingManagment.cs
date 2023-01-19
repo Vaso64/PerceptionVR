@@ -20,7 +20,7 @@ namespace PerceptionVR.Global
         IEnumerator ResolutionTracker(){
             while(true){
                 // VR
-                if(XRSettings.enabled){
+                if(XRSettings.enabled && false){
                     if(currentResolution.x != XRSettings.eyeTextureWidth || currentResolution.y !=  XRSettings.eyeTextureHeight){
                         currentResolution = new Vector2Int(XRSettings.eyeTextureWidth, XRSettings.eyeTextureHeight);
                         OnResolutionChange?.Invoke(currentResolution);

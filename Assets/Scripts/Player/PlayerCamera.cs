@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PerceptionVR.Debug;
 using PerceptionVR.Portal;
 using UnityEngine;
 
@@ -60,6 +61,7 @@ namespace PerceptionVR.Player
             Dbg.LogInfo($"({Time.time}) ({eye} VM):\n {this.playerCamera.worldToCameraMatrix}");
             */
 
+            Debugger.LogInfo(Screen.width + " " + Screen.height);
             OnBeforePlayerCameraRender?.Invoke(this.playerCamera);
         } 
     }

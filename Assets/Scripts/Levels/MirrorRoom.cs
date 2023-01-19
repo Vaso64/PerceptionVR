@@ -41,16 +41,15 @@ namespace PerceptionVR.Levels
             button_1B.OnChanged.AddListener(active => MirrorButton(button_1A, active));
             button_3A.OnChanged.AddListener(active => MirrorButton(button_3B, active));
             button_3B.OnChanged.AddListener(active => MirrorButton(button_3A, active));
-            
-            
+
             // Open doors//
-           //indicator_1A.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1A, indicator_2A, indicator_3A}, door_A));
-           //indicator_2A.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1A, indicator_2A, indicator_3A}, door_A));
-           //indicator_3A.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1A, indicator_2A, indicator_3A}, door_A));
-           //
-           //indicator_1B.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1B, indicator_2B, indicator_3B}, door_B));
-           //indicator_2B.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1B, indicator_2B, indicator_3B}, door_B));
-           //indicator_3B.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1B, indicator_2B, indicator_3B}, door_B));
+            indicator_1A.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1A, indicator_2A, indicator_3A}, door_A));
+            indicator_2A.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1A, indicator_2A, indicator_3A}, door_A));
+            indicator_3A.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1A, indicator_2A, indicator_3A}, door_A));
+           
+            indicator_1B.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1B, indicator_2B, indicator_3B}, door_B));
+            indicator_2B.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1B, indicator_2B, indicator_3B}, door_B));
+            indicator_3B.OnChanged.AddListener(_ => RefreshDoors(new []{indicator_1B, indicator_2B, indicator_3B}, door_B));
         }
         
         private static void MirrorButton(TogglePressureButton button, bool active)
@@ -59,6 +58,6 @@ namespace PerceptionVR.Levels
                 button.SetActive(active);
         }
 
-        private static void RefreshDoors(IEnumerable<Indicator> indicators, ControlBase door) => door.SetActive(indicators.All(x => x.isActivated));
+        private static void RefreshDoors(IEnumerable<Indicator> indicators, ControlBase door) => door.SetActive(!indicators.All(x => x.isActivated));
     }
 }

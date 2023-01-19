@@ -109,13 +109,17 @@ namespace PerceptionVR.Portal
 
         private void OnTeleportCallback(TeleportData teleportData)
         {
-            var swapData = teleportData.swapData;
-            var nt = vicinity.FirstOrDefault(x => x.teleportable == swapData.teleportableSwap.Item1 
-                                               && x.cloneTeleportable == swapData.teleportableSwap.Item2
-                                               && portal == teleportData.inPortal);
-            if (nt == null) 
-                return;
+            // nt = "nearby teleportable"
             
+            var nt = vicinity.FirstOrDefault(x => x.teleportable == teleportData.teleportable && portal == teleportData.inPortal);
+            if(nt == null)
+                return;
+
+            var swapData = new SwapData(nt.teleportable, nt.cloneTeleportable);
+            
+            // Notify swap
+            GlobalEvents.OnSwap?.Invoke(swapData);
+
             Debugger.LogInfo($"Swapping teleportables of {swapData.teleportableSwap.Item1} and {swapData.teleportableSwap.Item2} in {this}");
 
             // Swap colliders
@@ -135,6 +139,7 @@ namespace PerceptionVR.Portal
         {
             // Clone original
             var clone = GameObjectUtility.InstantiateNotify(original.gameObject);
+            clone.transform.name = clone.transform.name.Replace("(Clone)", "");
 
             IEnumerable<Type> defaultPreservedComponents = new [] { typeof(Rigidbody), typeof(Collider), typeof(MeshRenderer), 
                                                                     typeof(MeshFilter), typeof(Transform) };
@@ -172,7 +177,7 @@ namespace PerceptionVR.Portal
                 if(tb != null)
                     child.gameObject.AddComponentNotify<TeleportableBehaviourClone>();
                 
-                child.name += "(Clone)";
+                child.name += " (Clone)";
             }
 
             var teleportableClone = clone.AddComponentNotify<TeleportableClone>();

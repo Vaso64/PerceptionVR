@@ -1,8 +1,12 @@
+using System;
+using PerceptionVR.Common;
+using PerceptionVR.Physics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace PerceptionVR.Player
 {
+    [RequireComponent(typeof(TeleportableJoint))]
     public class KBMPlayer : PlayerBase
     {
         [Range(0, 10)]
@@ -14,6 +18,15 @@ namespace PerceptionVR.Player
         [Range(0, 1)]
         public float lookSpeed;
         
+        [Range(0,3)]
+        public float grabRange;
+        [SerializeField] private float grabSpring;
+        [SerializeField] private float grabDamper;
+        
+        private IGrabbable grabbable;
+        private TeleportableJoint grabJoint;
+
+
 
         private PlayerInputAction.KBMPlayerActions playerActions;
 
@@ -23,18 +36,36 @@ namespace PerceptionVR.Player
             var playerInputAction = new PlayerInputAction();
             playerInputAction.Enable();
             this.playerActions = playerInputAction.KBMPlayer;
+            grabJoint = GetComponent<TeleportableJoint>();
+        }
+
+        private void OnValidate()
+        {
+            var joint = GetComponent<ConfigurableJoint>();
+            joint.xDrive = new JointDrive {positionSpring = grabSpring, positionDamper = grabDamper};
+            joint.yDrive = new JointDrive {positionSpring = grabSpring, positionDamper = grabDamper};
+            joint.zDrive = new JointDrive {positionSpring = grabSpring, positionDamper = grabDamper};
+        }
+
+        private void Start()
+        {
+            this.playerActions.Grab.started += _ => OnGrab();
         }
 
         protected virtual void FixedUpdate()
         {
             InputSystem.Update();
 
-            // Controls
+            // Movement
             if(!playerActions.ControlBlock.IsPressed())
             {
                 Move(playerActions.Move.ReadValue<Vector3>(), playerActions.Sprint.IsPressed());
                 Look(playerActions.Look.ReadValue<Vector2>());
             }
+            
+            // Grab detection
+            if(grabJoint.joint.connectedBody == null && UnityEngine.Physics.Raycast(transform.position, transform.forward, out var hit, grabRange))
+                grabbable = hit.collider.GetComponent<IGrabbable>();
         }
 
         private void Move(Vector3 direction, bool sprint)
@@ -61,6 +92,17 @@ namespace PerceptionVR.Player
 
             // Yaw      
             transform.RotateAround(transform.position, transform.right, direction.y * -1);
+        }
+
+        private void OnGrab()
+        {
+            // Grab
+            if (grabJoint.joint.connectedBody == null && grabbable != null)
+                grabJoint.SetConnectedBody(grabbable.rigidbody);
+
+            // Release
+            else
+                grabJoint.SetConnectedBody(null);
         }
     }
 }
