@@ -64,10 +64,9 @@ namespace PerceptionVR.Player
             }
             
             // Grab detection
-            if(grabJoint.joint.connectedBody == null && UnityEngine.Physics.Raycast(transform.position, transform.forward, out var hit, grabRange))
-                grabbable = hit.collider.GetComponent<IGrabbable>();
+            grabbable = UnityEngine.Physics.Raycast(transform.position, transform.forward, out var hit, grabRange) ? hit.collider.GetComponent<IGrabbable>() : null;
         }
-
+    
         private void Move(Vector3 direction, bool sprint)
         {
             direction *= Time.deltaTime * moveSpeed * (sprint ? sprintMultiplier : 1);
@@ -96,13 +95,11 @@ namespace PerceptionVR.Player
 
         private void OnGrab()
         {
-            // Grab
-            if (grabJoint.joint.connectedBody == null && grabbable != null)
-                grabJoint.SetConnectedBody(grabbable.rigidbody);
+            if (grabJoint.isConnectedToBody)
+                grabJoint.ReleaseConnectedBody();
 
-            // Release
-            else
-                grabJoint.SetConnectedBody(null);
+            else if (grabbable != null)
+                grabJoint.SetConnectedBody<FixedJoint>(grabbable.rigidbody);
         }
     }
 }

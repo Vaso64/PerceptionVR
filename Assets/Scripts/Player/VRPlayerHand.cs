@@ -7,6 +7,7 @@ using PerceptionVR.Common;
 using MoreLinq.Extensions;
 using PerceptionVR.Portal;
 using PerceptionVR.Debug;
+using PerceptionVR.Physics;
 
 
 namespace PerceptionVR.Player
@@ -14,22 +15,16 @@ namespace PerceptionVR.Player
     //[RequireComponent(typeof(ConfigurableJoint))]
     public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
-        public enum VRPlayerHandSide
-        {
-            Left,
-            Right
-        }
-        
         private VRPlayerInput playerInput;
         
-        [SerializeField] private VRPlayerHandSide handSide;
+        [SerializeField] private Side handSide;
         
         private ConfigurableJoint bodyJoint;
-        
+
         // Grabbing
         private List<IGrabbable> grabbableItems = new();
         private IGrabbable holdingItem = null;
-        private FixedJoint grabJoint;
+        private TeleportableJoint grabJoint;
 
         public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
         {
@@ -47,6 +42,7 @@ namespace PerceptionVR.Player
         private void Awake()
         {
             GetComponent<Renderer>().material.color = Color.red;
+            grabJoint = GetComponent<TeleportableJoint>();
         }
 
         private void Start()
@@ -58,11 +54,11 @@ namespace PerceptionVR.Player
             // Register hand to player input events
             switch (handSide)
             {
-                case VRPlayerHandSide.Left:
+                case Side.Left:
                     playerInput.OnLeftControllerGrabbed += OnGrab;
                     playerInput.OnLeftControllerReleased += OnRelease;
                     break;
-                case VRPlayerHandSide.Right:
+                case Side.Right:
                     playerInput.OnRightControllerGrabbed += OnGrab;
                     playerInput.OnRightControllerReleased += OnRelease;
                     break;
@@ -76,10 +72,10 @@ namespace PerceptionVR.Player
             Pose controllerPose;
             switch (handSide)
             {
-                case VRPlayerHandSide.Left:
+                case Side.Left:
                     controllerPose = playerInput.leftControllerPose;
                     break;
-                case VRPlayerHandSide.Right:
+                case Side.Right:
                     controllerPose = playerInput.rightControllerPose;
                     break;
                 default:
@@ -123,8 +119,7 @@ namespace PerceptionVR.Player
 
             // Create fixed grab joint to hold item
             Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
-            grabJoint = gameObject.AddComponentNotify<FixedJoint>();
-            grabJoint.connectedBody = holdingItem.rigidbody;
+            grabJoint.SetConnectedBody<FixedJoint>(holdingItem.rigidbody);
         }
         
         private void OnRelease()
@@ -134,7 +129,7 @@ namespace PerceptionVR.Player
 
             // Destroy grab joint
             Debugger.LogInfo(holdingItem.transform.name + " released by " + handSide + " hand");
-            gameObject.RemoveComponentNotify(grabJoint);
+            grabJoint.ReleaseConnectedBody();
             holdingItem = null;
         }
     }
