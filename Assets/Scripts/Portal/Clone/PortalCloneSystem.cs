@@ -54,6 +54,10 @@ namespace PerceptionVR.Portal
                 return;
             }    
             
+            // Don't clone clones (yet)
+            if(other.GetComponentInParent<TeleportableClone>() != null)
+                return;
+            
             RegisterTeleportable(tp).collidersInVicinity.Add(other);
         }
     
