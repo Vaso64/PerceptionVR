@@ -37,11 +37,6 @@ namespace PerceptionVR.Player
 
         private void Update()
         {
-            /*
-            Dbg.LogInfo($"({Time.time}) ((center)): {transform.position}");
-            Dbg.LogInfo($"({Time.time}) ((center) PM):\n {this.playerCamera.projectionMatrix}");
-            Dbg.LogInfo($"({Time.time}) ((center) VM):\n {this.playerCamera.worldToCameraMatrix}");
-            */
             this.currentProjectionMatrix = this.playerCamera.projectionMatrix;
             this.currentViewMatrix = this.playerCamera.worldToCameraMatrix;
         }
@@ -54,14 +49,6 @@ namespace PerceptionVR.Player
                 playerCamera.worldToCameraMatrix = this.currentViewMatrix;
             }
 
-            /*var eye = playerCamera.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? Camera.StereoscopicEye.Left : Camera.StereoscopicEye.Right;
-            Dbg.LogInfo($"({Time.time}) ({eye} SPM):\n {this.playerCamera.GetStereoProjectionMatrix(eye)}");
-            Dbg.LogInfo($"({Time.time}) ({eye} SVM):\n {this.playerCamera.GetStereoViewMatrix(eye)}");
-            Dbg.LogInfo($"({Time.time}) ({eye} PM):\n {this.playerCamera.projectionMatrix}");
-            Dbg.LogInfo($"({Time.time}) ({eye} VM):\n {this.playerCamera.worldToCameraMatrix}");
-            */
-
-            Debugger.LogInfo(Screen.width + " " + Screen.height);
             OnBeforePlayerCameraRender?.Invoke(this.playerCamera);
         } 
     }

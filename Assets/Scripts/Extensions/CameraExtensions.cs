@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 
-
 namespace PerceptionVR.Extensions
 {
     public static class CameraExtension
@@ -27,7 +26,7 @@ namespace PerceptionVR.Extensions
                     corners[i] += dot >= 0 ? camera.transform.forward * (dot + 0.001f) : Vector3.zero;
 
                     // Project point
-                    screenspaceCorners[i] = camera.WorldToScreenPoint(corners[i]);
+                    screenspaceCorners[i] = camera.WorldToScreenPoint(corners[i], Camera.MonoOrStereoscopicEye.Mono);
                 }
 
                 // Note: the rect still fucks up if all corners are behind the camera.

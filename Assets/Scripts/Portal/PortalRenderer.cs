@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using PerceptionVR.Extensions;
 using PerceptionVR.Global;
+using PerceptionVR.Common;
 using PerceptionVR.Player;
 using UnityEngine;
 using System.Linq;
-using PerceptionVR.Debug;
 
 namespace PerceptionVR.Portal
 {
@@ -12,18 +12,20 @@ namespace PerceptionVR.Portal
     {
         // References
         private Portal portal;
-        
         [SerializeField] private Camera portalCamera;
-        
         [SerializeField] private Renderer portalRend;
-        
-        [SerializeField] private bool debug = false;
 
         private const int recurssionLimit = 3;
+        
 
-        private RenderTexture[] RTArray = new RenderTexture[recurssionLimit + 1];
-        private Stack<int> RTArrayIndexStack = new Stack<int>(recurssionLimit);
-        private bool RTArrayAlocated = false;
+        private Dictionary<DisplayMode, RenderTexture[]> RTArrays = new () {
+            { DisplayMode.VR, new RenderTexture[recurssionLimit + 1] },
+            { DisplayMode.Desktop, new RenderTexture[recurssionLimit + 1] }
+        };
+        private Dictionary<DisplayMode, Stack<int>> RTArraysIndexStack = new () {
+            { DisplayMode.VR, new Stack<int>(recurssionLimit) },
+            { DisplayMode.Desktop, new Stack<int>(recurssionLimit) }
+        };
 
         private static List<PortalRenderer> allPortalRenderers = new();
 
@@ -48,123 +50,91 @@ namespace PerceptionVR.Portal
             };
         }
 
-        private void AllocateRTArray(Vector2Int resolution)
+        private void AllocateRTArray(DisplayMode displayMode, Vector2Int resolution)
         {
             // Free old RTs
-            if (RTArrayAlocated)
-                for (var i = 0; i <= recurssionLimit; i++)
-                        RTArray[i].Release();
+            for (var i = 0; i <= recurssionLimit; i++)
+                        RTArrays[displayMode][i]?.Release();
 
             // Allocate
-            RTArrayAlocated = true;
             for (var i = 0; i <= recurssionLimit; i++)
-                RTArray[i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.ARGB32);
+                RTArrays[displayMode][i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.ARGB32);
         }
 
 
         private void OnBeforePlayerCameraRenderCallback(Camera playerCamera)
         {
-            // Skip if not yet allocated
-            if(!RTArrayAlocated)
-                return;
-            
-            var visibleArea = new Rect(0, 0, RenderingManagment.currentResolution.x, RenderingManagment.currentResolution.y);
+            var displayMode = playerCamera.stereoTargetEye.ToGameDisplayMode();
+            var visibleArea = new Rect(0, 0, RenderingManagment.CurrentResolutions[displayMode].x, RenderingManagment.CurrentResolutions[displayMode].y);
             var playerCameraFrustum = GeometryUtility.CalculateFrustumPlanes(playerCamera);
             var playerCameraPose = new Pose(playerCamera.transform.position, playerCamera.transform.rotation);
-            if(IsVisibleFromCamera(playerCamera, playerCameraFrustum, visibleArea, "PlayerCamera"))
-                RenderPortal(playerCameraPose, visibleArea, playerCamera.fieldOfView, 0, "PlayerCamera");
+            if(IsVisibleFromCamera(playerCamera, playerCameraFrustum, visibleArea))
+                RenderPortal(playerCameraPose, visibleArea, playerCamera.fieldOfView, 0, displayMode);
         }
 
 
-        public void OnAfterPortalRenderCallback()
+        public void OnAfterPortalRenderCallback(DisplayMode displayMode)
         {
             // Set portal to previous texture after being rendered
-            RTArrayIndexStack.Pop();
-            portalRend.material.mainTexture = RTArrayIndexStack.Count > 0 ? RTArray[RTArrayIndexStack.Peek()] : null;
-
+            RTArraysIndexStack[displayMode].Pop();
+            portalRend.material.mainTexture = RTArraysIndexStack[displayMode].Count > 0 ? RTArrays[displayMode][RTArraysIndexStack[displayMode].Peek()] : null;
         }
 
         // Recursively renders portals
-        public void RenderPortal(Pose fromPose, Rect visibleArea, float fov, int recursionDepth, string from)
+        public void RenderPortal(Pose fromPose, Rect visibleArea, float fov, int recursionDepth, DisplayMode displayMode)
         {
             // Calculate visible area
-            portalCamera.transform.SetPositionAndRotation(fromPose.position, fromPose.rotation);
+            portalCamera.transform.SetPose(fromPose);
+            portalCamera.fieldOfView = fov;
+            portalCamera.targetTexture = RTArrays[displayMode][recursionDepth]; // Set's camera resolution
             visibleArea = visibleArea.IntersectionWith(portalCamera.WorldToScreenBounds(portal.portalCollider.bounds));
 
-            // Position camera & calculate frustum
+            // Position camera
             var pairPose = portal.PairPose(fromPose);
-            portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
-            portalCamera.fieldOfView = fov;
-            var portalCameraFrustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
-            
+            portalCamera.transform.SetPose(pairPose);
 
             // Get all visible portals
             var visiblePortalRenderers = new List<PortalRenderer>();
             if (recursionDepth < recurssionLimit)
             {
-                foreach (var pr in allPortalRenderers)
-                {
-                    var visible = pr.IsVisibleFromCamera(portalCamera, portalCameraFrustum, visibleArea, from + " -> " + transform.parent.name);
-                    if (visible)
-                        visiblePortalRenderers.Add(pr);
-                    if(pr.debug && debug)
-                        Debugger.LogInfo("Visible check from " + from + " -> " + pr.transform.parent.name + ": " + visible);
-                }
+                var frustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
+                visiblePortalRenderers = allPortalRenderers.Where(p => p.IsVisibleFromCamera(portalCamera, frustum, visibleArea)).ToList();
             }
 
+            
             // Render others
-            visiblePortalRenderers.ForEach(pr => pr.RenderPortal(pairPose, visibleArea, fov, recursionDepth + 1, from + " -> " + transform.parent.name));
+            visiblePortalRenderers.ForEach(pr => pr.RenderPortal(pairPose, visibleArea, fov, recursionDepth + 1, displayMode));
 
             // Render self
-            portalCamera.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
-            portalCamera.targetTexture = RTArray[recursionDepth];
-            portalCamera.usePhysicalProperties = true;
-            portalCamera.fieldOfView = fov;
-            portalCamera.usePhysicalProperties = false;
-            var oldProjection = portalCamera.projectionMatrix;
+            portalCamera.transform.SetPose(pairPose);
+            portalCamera.targetTexture = RTArrays[displayMode][recursionDepth];
             portalCamera.projectionMatrix = ClipNearPlane(portalCamera, portal.portalPair);
             portalCamera.Render();
-            portalCamera.projectionMatrix = oldProjection;
+            portalCamera.ResetProjectionMatrix();
 
             // Notify others after render
-            visiblePortalRenderers.ForEach(pr => pr.OnAfterPortalRenderCallback());
+            visiblePortalRenderers.ForEach(pr => pr.OnAfterPortalRenderCallback(displayMode));
 
             // Set rendered texture and push it to stack
-            RTArrayIndexStack.Push(recursionDepth);
+            RTArraysIndexStack[displayMode].Push(recursionDepth);
             portalRend.material.mainTexture = portalCamera.targetTexture;
         }
 
 
         // Returns true if the portal is visible from the camera 
-        public bool IsVisibleFromCamera(Camera camera, Plane[] cameraFrustum, Rect visibleArea, string from)
+        public bool IsVisibleFromCamera(Camera camera, Plane[] cameraFrustum, Rect visibleArea)
         {
-            var debugVisible = false;
-            if (debug && from == "PlayerCamera -> Portal_1LeftOutside")
-            {
-                debugVisible = true;
-                DrawFrustum(camera);
-            }
-                
-            
             // Dot product check (is camera behind the portal?)
             if (Vector3.Dot(transform.forward, transform.position - camera.transform.position) < 0)
                 return false;
             
             // AABB frustum check (is portal in fov of the camera?)
             if (!GeometryUtility.TestPlanesAABB(cameraFrustum, portal.portalCollider.bounds))
-            {
-                if(debugVisible)
-                    Debugger.LogInfo($"AABB FAIL ({camera.transform.position}, {camera.transform.eulerAngles})");
                 return false;
-            }
-            if(debugVisible)
-                Debugger.LogInfo($"AABB PASS ({camera.transform.position}, {camera.transform.eulerAngles})");
-
-
+            
             // Overlap check (can portal be seen through another portal?)
             var portalRect = camera.WorldToScreenBounds(portal.portalCollider.bounds);
-            visibleArea.IntersectionWith(portalRect);
-            if(!visibleArea.Overlaps(portalRect))
+            if(!visibleArea.IntersectionWith(portalRect).Overlaps(portalRect))
                 return false;
 
             return true;
@@ -177,31 +147,6 @@ namespace PerceptionVR.Portal
             Vector3 cameraSpaceNormal = camera.worldToCameraMatrix.MultiplyVector(portal.portalPlane.normal) * signDotProduct;
             float cameraSpaceDistance = -Vector3.Dot(cameraSpacePos, cameraSpaceNormal) + 0.01f;
             return camera.CalculateObliqueMatrix(new Vector4(cameraSpaceNormal.x, cameraSpaceNormal.y, cameraSpaceNormal.z, cameraSpaceDistance));
-        }
-        
-        private void DrawFrustum ( Camera cam ) {
-            var nearCorners = new Vector3[4]; //Approx'd nearplane corners
-            var farCorners = new Vector3[4]; //Approx'd farplane corners
-            var camPlanes = GeometryUtility.CalculateFrustumPlanes( cam ); //get planes from matrix
-            (camPlanes[1], camPlanes[2]) = (camPlanes[2], camPlanes[1]);
-
-            for ( var i = 0; i < 4; i++ ) {
-                nearCorners[i] = Plane3Intersect( camPlanes[4], camPlanes[i], camPlanes[( i + 1 ) % 4] ); //near corners on the created projection matrix
-                farCorners[i] = Plane3Intersect( camPlanes[5], camPlanes[i], camPlanes[( i + 1 ) % 4] ); //far corners on the created projection matrix
-            }
- 
-            for ( var i = 0; i < 4; i++ ) {
-                UnityEngine.Debug.DrawLine( nearCorners[i], nearCorners[( i + 1 ) % 4], Color.red, Time.deltaTime, true ); //near corners on the created projection matrix
-                UnityEngine.Debug.DrawLine( farCorners[i], farCorners[( i + 1 ) % 4], Color.blue, Time.deltaTime, true ); //far corners on the created projection matrix
-                UnityEngine.Debug.DrawLine( nearCorners[i], farCorners[i], Color.green, Time.deltaTime, true ); //sides of the created projection matrix
-            }
-        }
- 
-        private Vector3 Plane3Intersect ( Plane p1, Plane p2, Plane p3 ) { //get the intersection point of 3 planes
-            return ( ( -p1.distance * Vector3.Cross( p2.normal, p3.normal ) ) +
-                     ( -p2.distance * Vector3.Cross( p3.normal, p1.normal ) ) +
-                     ( -p3.distance * Vector3.Cross( p1.normal, p2.normal ) ) ) /
-                   ( Vector3.Dot( p1.normal, Vector3.Cross( p2.normal, p3.normal ) ) );
         }
     }
 }
