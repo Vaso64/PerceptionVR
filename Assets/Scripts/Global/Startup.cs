@@ -18,7 +18,7 @@ namespace PerceptionVR.Global
         {
             var args = manualArgsEnabled ? manualArgs : Environment.GetCommandLineArgs();
             
-            Debugger.LogInfo(args.ToString());
+            Debugger.LogInfo(string.Join(", ", args));
             
             // Set mode (VR or KBM)
             SetMode(args);

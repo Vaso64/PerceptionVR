@@ -9,6 +9,8 @@ namespace PerceptionVR.Debug
     {
         [SerializeField] private LogLevel logLevel;
         [SerializeField] private bool frameSplit;
+
+        private void Awake() => _logLevel = logLevel;
         private void Update() => _logLevel = logLevel;
         
                
