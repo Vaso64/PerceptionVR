@@ -33,5 +33,12 @@ namespace PerceptionVR.Global
             GlobalEvents.OnBeforeRemoveComponent?.Invoke(component);
             Object.Destroy(component);
         }
+        
+        // Invoke OnBeforeRemoveComponent in GlobalEvents and Destroys the component
+        public static void DestroyComponentImmediateNotify(Component component)
+        {
+            GlobalEvents.OnBeforeRemoveComponent?.Invoke(component);
+            Object.DestroyImmediate(component);
+        }
     }
 }

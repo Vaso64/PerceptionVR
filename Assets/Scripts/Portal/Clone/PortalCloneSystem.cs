@@ -4,6 +4,7 @@ using System.Linq;
 using PerceptionVR.Debug;
 using PerceptionVR.Global;
 using PerceptionVR.Extensions;
+using PerceptionVR.Physics;
 using UnityEngine;
 
 
@@ -147,6 +148,11 @@ namespace PerceptionVR.Portal
 
             IEnumerable<Type> defaultPreservedComponents = new [] { typeof(Rigidbody), typeof(Collider), typeof(MeshRenderer), 
                                                                     typeof(MeshFilter), typeof(Transform) };
+
+            
+            // Strip joints immediately so it won't mess with physics
+            foreach (var cloneJoint in clone.GetComponentsInChildren<TeleportableJoint>().Cast<Component>().Concat(clone.GetComponentsInChildren<Joint>()))
+                GameObjectUtility.DestroyComponentImmediateNotify(cloneJoint);
 
             // Iterate through all children
             foreach (var child in clone.GetComponentsInChildren<Transform>())
