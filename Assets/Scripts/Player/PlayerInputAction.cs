@@ -80,6 +80,24 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Exit"",
+                    ""type"": ""Button"",
+                    ""id"": ""7243590f-53e4-4176-949d-3ea66b4ac43a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""2af38dcd-2b9f-4644-a43c-e1d24354f02c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +230,28 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Grab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76f1dd18-91d8-4a4b-a516-f4a6736cb00f"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Exit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""35e89958-fa07-414c-8329-d63ff74ac3f9"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reset"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -574,6 +614,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_KBMPlayer_Walk = m_KBMPlayer.FindAction("Walk", throwIfNotFound: true);
         m_KBMPlayer_ControlBlock = m_KBMPlayer.FindAction("ControlBlock", throwIfNotFound: true);
         m_KBMPlayer_Grab = m_KBMPlayer.FindAction("Grab", throwIfNotFound: true);
+        m_KBMPlayer_Exit = m_KBMPlayer.FindAction("Exit", throwIfNotFound: true);
+        m_KBMPlayer_Reset = m_KBMPlayer.FindAction("Reset", throwIfNotFound: true);
         // VRPlayer
         m_VRPlayer = asset.FindActionMap("VRPlayer", throwIfNotFound: true);
         m_VRPlayer_LeftControllerPosition = m_VRPlayer.FindAction("LeftControllerPosition", throwIfNotFound: true);
@@ -656,6 +698,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_KBMPlayer_Walk;
     private readonly InputAction m_KBMPlayer_ControlBlock;
     private readonly InputAction m_KBMPlayer_Grab;
+    private readonly InputAction m_KBMPlayer_Exit;
+    private readonly InputAction m_KBMPlayer_Reset;
     public struct KBMPlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -666,6 +710,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         public InputAction @Walk => m_Wrapper.m_KBMPlayer_Walk;
         public InputAction @ControlBlock => m_Wrapper.m_KBMPlayer_ControlBlock;
         public InputAction @Grab => m_Wrapper.m_KBMPlayer_Grab;
+        public InputAction @Exit => m_Wrapper.m_KBMPlayer_Exit;
+        public InputAction @Reset => m_Wrapper.m_KBMPlayer_Reset;
         public InputActionMap Get() { return m_Wrapper.m_KBMPlayer; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -693,6 +739,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Grab.started -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnGrab;
                 @Grab.performed -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnGrab;
                 @Grab.canceled -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnGrab;
+                @Exit.started -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnExit;
+                @Exit.performed -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnExit;
+                @Exit.canceled -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnExit;
+                @Reset.started -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnReset;
+                @Reset.performed -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnReset;
+                @Reset.canceled -= m_Wrapper.m_KBMPlayerActionsCallbackInterface.OnReset;
             }
             m_Wrapper.m_KBMPlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -715,6 +767,12 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Grab.started += instance.OnGrab;
                 @Grab.performed += instance.OnGrab;
                 @Grab.canceled += instance.OnGrab;
+                @Exit.started += instance.OnExit;
+                @Exit.performed += instance.OnExit;
+                @Exit.canceled += instance.OnExit;
+                @Reset.started += instance.OnReset;
+                @Reset.performed += instance.OnReset;
+                @Reset.canceled += instance.OnReset;
             }
         }
     }
@@ -890,6 +948,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         void OnWalk(InputAction.CallbackContext context);
         void OnControlBlock(InputAction.CallbackContext context);
         void OnGrab(InputAction.CallbackContext context);
+        void OnExit(InputAction.CallbackContext context);
+        void OnReset(InputAction.CallbackContext context);
     }
     public interface IVRPlayerActions
     {

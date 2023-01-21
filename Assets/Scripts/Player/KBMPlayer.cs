@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 
 namespace PerceptionVR.Player
 {
-    [RequireComponent(typeof(TeleportableJoint))]
     public class KBMPlayer : PlayerBase
     {
         [Range(0, 10)]
