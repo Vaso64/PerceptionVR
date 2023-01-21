@@ -26,7 +26,7 @@ namespace PerceptionVR.Portal
         
         private void FixedUpdate()
         {
-            if(!targetSet || trackingType != TrackingType.TrackByRigidbody)
+            if(!targetSet || trackingType != TrackingType.TrackByRigidbody || rbTarget.IsSleeping())
                 return;
             
             var pose = rbTarget.transform.GetPose();

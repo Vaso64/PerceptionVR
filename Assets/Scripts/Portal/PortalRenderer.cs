@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using PerceptionVR.Extensions;
 using PerceptionVR.Global;
@@ -5,6 +6,7 @@ using PerceptionVR.Common;
 using PerceptionVR.Player;
 using UnityEngine;
 using System.Linq;
+using PerceptionVR.Debug;
 
 namespace PerceptionVR.Portal
 {
@@ -16,6 +18,9 @@ namespace PerceptionVR.Portal
         [SerializeField] private Renderer portalRend;
 
         private const int recurssionLimit = 3;
+
+        private static int renderCount;
+        [SerializeField] private bool logRenderCount;
         
 
         private Dictionary<DisplayMode, RenderTexture[]> RTArrays = new () {
@@ -28,6 +33,16 @@ namespace PerceptionVR.Portal
         };
 
         private static List<PortalRenderer> allPortalRenderers = new();
+
+        private void Update()
+        {
+            if (logRenderCount)
+            {
+                Debugger.LogInfo("Render Count: " + renderCount);
+                renderCount = 0;
+            }
+                
+        }
 
         private void Awake()
         {
@@ -58,7 +73,7 @@ namespace PerceptionVR.Portal
 
             // Allocate
             for (var i = 0; i <= recurssionLimit; i++)
-                RTArrays[displayMode][i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.ARGB32);
+                RTArrays[displayMode][i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.Default);
         }
 
 
@@ -111,6 +126,7 @@ namespace PerceptionVR.Portal
             portalCamera.projectionMatrix = ClipNearPlane(portalCamera, portal.portalPair);
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
+            renderCount++;
 
             // Notify others after render
             visiblePortalRenderers.ForEach(pr => pr.OnAfterPortalRenderCallback(displayMode));

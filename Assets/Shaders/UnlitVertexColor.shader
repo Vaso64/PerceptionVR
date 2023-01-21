@@ -3,11 +3,11 @@ Shader "PerceptionVR/UnlitVertexColorTexture"
     Properties
     {
         _MainTex("Albedo (RGB)", 2D) = "white" {}
-		_ClipPlane ("Clip plane", Vector) = (0, 0, 0, 0)
+		//_ClipPlane ("Clip plane", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
-        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+        Tags { "RenderType"="Opaque" }
         Lighting Off
         ZTest LEqual
         Blend SrcAlpha OneMinusSrcAlpha
@@ -18,6 +18,7 @@ Shader "PerceptionVR/UnlitVertexColorTexture"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_instancing
             #include "UnityCG.cginc"
 
             
@@ -50,12 +51,12 @@ Shader "PerceptionVR/UnlitVertexColorTexture"
                 return o;
             }
 
-			float4 _ClipPlane;
+			//float4 _ClipPlane;
 
             half4 frag (v2f i) : COLOR
             {
-			    float distanceFromPlane = dot(i.worldPos, _ClipPlane.xyz) + _ClipPlane.w;
-				clip(-distanceFromPlane);
+			    //float distanceFromPlane = dot(i.worldPos, _ClipPlane.xyz) + _ClipPlane.w;
+				//clip(-distanceFromPlane);
                 return tex2D(_MainTex, i.uv) * i.color;
             }
 
