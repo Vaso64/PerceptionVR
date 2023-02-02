@@ -455,11 +455,33 @@
                 },
                 {
                     "name": "",
+                    "id": "4f2d01e6-ed72-427c-a9b6-9d79ba4594cc",
+                    "path": "<ViveWand>{LeftHand}/trackpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "103599a4-4b1b-4263-865d-36cffb67fdeb",
                     "path": "<XRController>{RightHand}/thumbstick",
                     "interactions": "",
                     "processors": "",
                     "groups": "VR",
+                    "action": "Rotate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2844d8da-04ba-4277-b839-58adde80e639",
+                    "path": "<ViveWand>{RightHand}/trackpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
                     "action": "Rotate",
                     "isComposite": false,
                     "isPartOfComposite": false

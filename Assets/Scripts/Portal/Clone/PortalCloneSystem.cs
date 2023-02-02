@@ -10,45 +10,60 @@ using UnityEngine;
 
 namespace PerceptionVR.Portal
 {
-    public class PortalCloneSystem : PortalCollisionFilteringSystem
+    [RequireComponent(typeof(Portal), typeof(PortalVicinity), typeof(PortalCollisionFilteringSystem))]
+    public class PortalCloneSystem : MonoBehaviour
     {
-        [SerializeField] private List<NearbyTeleportable> vicinity = new();
+        [SerializeField] private List<NearbyTeleportable> objectsInVicinity = new();
         
+        private Portal portal;
+        private PortalVicinity vicinity;
+        private PortalCollisionFilteringSystem collisionFilteringSystem;
         private PortalCloneSystem pairCloneSystem;
         
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
+            portal = GetComponent<Portal>();
+            vicinity = GetComponent<PortalVicinity>();
+            collisionFilteringSystem = GetComponent<PortalCollisionFilteringSystem>();
+            
             portal.OnPortalPairSet += portalPair =>
             {
                 pairCloneSystem = portalPair.transform.GetComponentInChildren<PortalCloneSystem>();
             };
             portal.OnPortalPairUnset += () =>
             {
-                vicinity.ToList().ForEach(UnregisterTeleportable);
+                objectsInVicinity.ToList().ForEach(UnregisterTeleportable);
                 pairCloneSystem = null;
             };
             
-            OnEnteredVicinity += OnVicinityEnter;
-            OnExitedVicinity += OnVicinityExit;
+            vicinity.OnOutsideToFront += OnVicinityEnter;
+            vicinity.OnFrontToOutside += OnVicinityExit;
+            
+            vicinity.OnBackToFront    += OnVicinityEnter;
+            vicinity.OnFrontToBack    += OnVicinityExit;
+            
             GlobalEvents.OnTeleport += OnTeleportCallback;
         }
 
 
         private void OnVicinityEnter(Collider other)
         {
+            // Ignore if clone is coming around the portal
+            if(collisionFilteringSystem.cloneGroup.Contains(other))
+                return;
+            
             Debugger.LogInfo($"{other} entered vicinity of {this}");
             var tp = other.GetComponentInParent<ITeleportable>();
             
             // Get nearby teleportable
-            var nearbyTeleportable = vicinity.FirstOrDefault(x => x.teleportable == tp);
+            var nearbyTeleportable = objectsInVicinity.FirstOrDefault(x => x.teleportable == tp);
             if (nearbyTeleportable != null)
             {
                 nearbyTeleportable.collidersInVicinity.Add(other);
                 return;
             }
             
-            nearbyTeleportable = pairCloneSystem.vicinity.FirstOrDefault(x => x.cloneTeleportable == tp);
+            nearbyTeleportable = pairCloneSystem.objectsInVicinity.FirstOrDefault(x => x.cloneTeleportable == tp);
             if (nearbyTeleportable != null)
             {
                 nearbyTeleportable.cloneColliderInPairVicinity.Add(other);
@@ -64,10 +79,14 @@ namespace PerceptionVR.Portal
     
         private void OnVicinityExit(Collider other)
         {
+            // Ignore if clone is coming around the portal
+            if(collisionFilteringSystem.cloneGroup.Contains(other))
+                return;
+            
             Debugger.LogInfo($"{other} exited vicinity of {this}");
             var tp = other.GetComponentInParent<ITeleportable>();
             
-            var nearbyTeleportable = vicinity.FirstOrDefault(x => x.teleportable == tp);
+            var nearbyTeleportable = objectsInVicinity.FirstOrDefault(x => x.teleportable == tp);
             if (nearbyTeleportable != null)
             {
                 nearbyTeleportable.collidersInVicinity.Remove(other);
@@ -76,7 +95,7 @@ namespace PerceptionVR.Portal
                 return;
             }
             
-            nearbyTeleportable = pairCloneSystem.vicinity.FirstOrDefault(x => x.cloneTeleportable == tp);
+            nearbyTeleportable = pairCloneSystem.objectsInVicinity.FirstOrDefault(x => x.cloneTeleportable == tp);
             if (nearbyTeleportable != null)
                 nearbyTeleportable.cloneColliderInPairVicinity.Remove(other);
         }
@@ -90,12 +109,12 @@ namespace PerceptionVR.Portal
             
             // Register teleportable
             var nearbyTeleportable = new NearbyTeleportable(teleportable, clone);
-            vicinity.Add(nearbyTeleportable);
+            objectsInVicinity.Add(nearbyTeleportable);
             
             // Add clone colliders to nearbyTeleportable and pair's cloneGroup
             var cloneColliders = clone.transform.GetComponentsInChildren<Collider>();
             nearbyTeleportable.cloneColliderInPairVicinity.AddRange(cloneColliders);
-            pairCloneSystem.cloneGroup.AddRange(cloneColliders);
+            pairCloneSystem.collisionFilteringSystem.cloneGroup.AddRange(cloneColliders);
             
             return nearbyTeleportable;
         }
@@ -108,7 +127,7 @@ namespace PerceptionVR.Portal
             GameObjectUtility.DestroyNotify(teleportable.cloneTeleportable.gameObject);
             
             // Unregister teleportable
-            vicinity.Remove(teleportable);
+            objectsInVicinity.Remove(teleportable);
         }
 
 
@@ -116,7 +135,7 @@ namespace PerceptionVR.Portal
         {
             // nt = "nearby teleportable"
             
-            var nt = vicinity.FirstOrDefault(x => x.teleportable == teleportData.teleportable && portal == teleportData.inPortal);
+            var nt = objectsInVicinity.FirstOrDefault(x => x.teleportable == teleportData.teleportable && portal == teleportData.inPortal);
             if(nt == null)
                 return;
 
@@ -135,8 +154,8 @@ namespace PerceptionVR.Portal
             (nt.collidersInVicinity, nt.cloneColliderInPairVicinity) = (nt.cloneColliderInPairVicinity, nt.collidersInVicinity);
 
             // Transfer nt to pair
-            vicinity.Remove(nt);
-            pairCloneSystem.vicinity.Add(nt);
+            objectsInVicinity.Remove(nt);
+            pairCloneSystem.objectsInVicinity.Add(nt);
         }
         
         

@@ -10,18 +10,16 @@ using PerceptionVR.Debug;
 
 namespace PerceptionVR.Portal
 {
+    [RequireComponent(typeof(Renderer))]
     public class PortalRenderer : MonoBehaviour
     {
         // References
-        private Portal portal;
         [SerializeField] private Camera portalCamera;
-        [SerializeField] private Renderer portalRend;
+        
+        private Portal portal;
+        private Renderer portalRend;
 
         private const int recurssionLimit = 3;
-
-        private static int renderCount;
-        [SerializeField] private bool logRenderCount;
-        
 
         private Dictionary<DisplayMode, RenderTexture[]> RTArrays = new () {
             { DisplayMode.VR, new RenderTexture[recurssionLimit + 1] },
@@ -34,22 +32,13 @@ namespace PerceptionVR.Portal
 
         private static List<PortalRenderer> allPortalRenderers = new();
 
-        private void Update()
-        {
-            if (logRenderCount)
-            {
-                Debugger.LogInfo("Render Count: " + renderCount);
-                renderCount = 0;
-            }
-                
-        }
-
         private void Awake()
         {
             RenderingManagment.OnResolutionChange += AllocateRTArray;
             
             // Get references
-            portal ??= GetComponentInParent<Portal>();
+            portal = GetComponentInParent<Portal>();
+            portalRend = GetComponent<Renderer>();
             portalCamera ??= GetComponentInChildren<Camera>();
 
             portal.OnPortalPairSet += _ =>
@@ -126,7 +115,6 @@ namespace PerceptionVR.Portal
             portalCamera.projectionMatrix = ClipNearPlane(portalCamera, portal.portalPair);
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
-            renderCount++;
 
             // Notify others after render
             visiblePortalRenderers.ForEach(pr => pr.OnAfterPortalRenderCallback(displayMode));

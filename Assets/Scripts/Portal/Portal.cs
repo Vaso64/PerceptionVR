@@ -30,10 +30,9 @@ namespace PerceptionVR.Portal
 
         public void Teleport(ITeleportable teleportable)
         {
-            var pairPose = PairPose(teleportable.transform.GetPose(), out var rotationDelta);
-
             // Teleport the object
-            teleportable.transform.SetPositionAndRotation(pairPose.position, pairPose.rotation);
+            var pairPose = this.PairPose(teleportable.transform.GetPose(), out var rotationDelta);
+            teleportable.transform.SetPose(pairPose);
             
             // Translate velocity
             foreach (var teleportedRB in teleportable.transform.GetComponentsInChildren<Rigidbody>())
@@ -55,25 +54,5 @@ namespace PerceptionVR.Portal
             GlobalEvents.OnTeleport?.Invoke(teleportData);
             teleportable.OnTeleport?.Invoke(teleportData);
         }
-
-        
-        public virtual Pose PairPose(Pose pose) => PairPose(pose, out _);
-
-        public virtual Pose PairPose(Pose pose, out Quaternion portalRotationDelta)
-        {
-            Pose resultPose;
-            
-            portalRotationDelta = portalPair.transform.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(transform.rotation);
-
-            // Calculate position
-            resultPose.position = portalPair.transform.position + portalRotationDelta * (pose.position - transform.position);
-
-            // Rotation rotation
-            resultPose.rotation = portalRotationDelta * pose.rotation;
-
-            return resultPose;
-        }
     }
 }
-
-
