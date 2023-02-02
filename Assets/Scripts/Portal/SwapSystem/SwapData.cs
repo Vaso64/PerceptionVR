@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using PerceptionVR.Common;
 using UnityEngine;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public struct SwapData
     {

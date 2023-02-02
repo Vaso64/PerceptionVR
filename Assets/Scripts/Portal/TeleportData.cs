@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public struct TeleportData
     {

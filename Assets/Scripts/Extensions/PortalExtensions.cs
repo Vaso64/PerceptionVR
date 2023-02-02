@@ -1,13 +1,13 @@
 using UnityEngine;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 
 namespace PerceptionVR.Extensions
 {
     public static class PortalExtensions
     {
-        public static Pose PairPose(this Portal.Portal portal, Pose pose) => portal.PairPose(pose, out _);
+        public static Pose PairPose(this Portal portal, Pose pose) => portal.PairPose(pose, out _);
 
-        public static Pose PairPose(this Portal.Portal portal, Pose pose, out Quaternion portalRotationDelta)
+        public static Pose PairPose(this Portal portal, Pose pose, out Quaternion portalRotationDelta)
         {
             Pose resultPose;
             

@@ -2,7 +2,7 @@ using UnityEngine;
 using PerceptionVR.Debug;
 
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public class TeleportableBehaviourClone : TrackedCloneBase<Transform>
     {

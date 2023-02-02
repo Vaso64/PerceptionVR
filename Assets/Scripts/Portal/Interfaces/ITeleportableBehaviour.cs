@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public interface ITeleportableBehaviour : IMonoBehaviour
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using PerceptionVR.Common;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public interface ITeleportable : IMonoBehaviour
     {

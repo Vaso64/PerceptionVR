@@ -4,7 +4,7 @@ using System.Linq;
 using PerceptionVR.Debug;
 
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     // Tracks if object passed through portal
     public class TrackedCloneBase<T> : CloneBase<T> where T : Component

@@ -1,5 +1,5 @@
 using System;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 using UnityEngine;
 
 namespace PerceptionVR.Global

@@ -1,6 +1,6 @@
 using System.Linq;
 using MoreLinq.Extensions;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 using PerceptionVR.Common.Generic;
 using PerceptionVR.Common;
 using PerceptionVR.Debug;

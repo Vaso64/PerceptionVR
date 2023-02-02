@@ -5,7 +5,7 @@ using UnityEngine;
 using PerceptionVR.Extensions;
 using PerceptionVR.Common;
 using MoreLinq.Extensions;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 using PerceptionVR.Debug;
 using PerceptionVR.Physics;
 

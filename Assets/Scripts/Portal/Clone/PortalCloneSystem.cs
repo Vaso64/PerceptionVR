@@ -8,7 +8,7 @@ using PerceptionVR.Physics;
 using UnityEngine;
 
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     [RequireComponent(typeof(Portal), typeof(PortalVicinity), typeof(PortalCollisionFilteringSystem))]
     public class PortalCloneSystem : MonoBehaviour

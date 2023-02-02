@@ -5,7 +5,7 @@ using PerceptionVR.Common;
 using PerceptionVR.Debug;
 
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public class TeleportableClone : TrackedCloneBase<Transform>, ITeleportable
     {

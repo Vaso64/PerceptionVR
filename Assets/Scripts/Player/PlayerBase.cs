@@ -1,6 +1,6 @@
 using System;
 using PerceptionVR.Physics;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 using UnityEngine;
 
 namespace PerceptionVR.Player

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     [System.Serializable]
     public class NearbyTeleportable

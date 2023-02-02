@@ -5,7 +5,7 @@ using PerceptionVR.Physics;
 using PerceptionVR.Debug;
 
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     [RequireComponent(typeof(PortalVicinity))]
     public class PortalCollisionFilteringSystem : MonoBehaviour

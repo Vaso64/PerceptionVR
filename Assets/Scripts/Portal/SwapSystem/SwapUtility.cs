@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public static class SwapUtility
     {

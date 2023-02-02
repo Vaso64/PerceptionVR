@@ -5,7 +5,7 @@ using PerceptionVR.Debug;
 using PerceptionVR.Physics;
 using UnityEngine;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public class PortalVicinity : MonoBehaviour
     {

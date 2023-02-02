@@ -1,7 +1,7 @@
 using UnityEngine;
 using PerceptionVR.Extensions;
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public class MovementClone : CloneBase<Transform>
     {

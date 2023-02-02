@@ -5,7 +5,7 @@ using PerceptionVR.Global;
 using PerceptionVR.Physics;
 
 
-namespace PerceptionVR.Portal
+namespace PerceptionVR.Portals
 {
     public partial class Portal : MonoBehaviour
     {

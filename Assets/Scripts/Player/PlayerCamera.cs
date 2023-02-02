@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using PerceptionVR.Debug;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 using UnityEngine;
 
 namespace PerceptionVR.Player

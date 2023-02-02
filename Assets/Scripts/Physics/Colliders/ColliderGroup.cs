@@ -5,7 +5,7 @@ using PerceptionVR.Global;
 using UnityEngine;
 using PerceptionVR.Common.Generic;
 using PerceptionVR.Debug;
-using PerceptionVR.Portal;
+using PerceptionVR.Portals;
 
 namespace PerceptionVR.Physics
 {
