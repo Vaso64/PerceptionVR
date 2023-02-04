@@ -58,7 +58,7 @@ namespace PerceptionVR.Player
             // Movement
             if(!playerActions.ControlBlock.IsPressed())
             {
-                Move(playerActions.Move.ReadValue<Vector3>(), playerActions.Sprint.IsPressed());
+                Move(playerActions.Move.ReadValue<Vector3>() * transform.lossyScale.x, playerActions.Sprint.IsPressed());
                 Look(playerActions.Look.ReadValue<Vector2>());
             }
             

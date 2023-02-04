@@ -107,6 +107,9 @@ namespace PerceptionVR.Portals
             // Create clone
             var clone = CreateClone(teleportable, trackedPortal: portal) as ITeleportable;
             
+            // Scale clone
+            clone.transform.localScale *= 1 / portal.scaleRatio;
+            
             // Register teleportable
             var nearbyTeleportable = new NearbyTeleportable(teleportable, clone);
             objectsInVicinity.Add(nearbyTeleportable);
@@ -138,6 +141,9 @@ namespace PerceptionVR.Portals
             var nt = objectsInVicinity.FirstOrDefault(x => x.teleportable == teleportData.teleportable && portal == teleportData.inPortal);
             if(nt == null)
                 return;
+            
+            // Scale clone
+            nt.cloneTeleportable.transform.localScale *= teleportData.inPortal.scaleRatio;
 
             var swapData = new SwapData(nt.teleportable, nt.cloneTeleportable);
             

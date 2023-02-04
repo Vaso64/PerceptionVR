@@ -14,7 +14,7 @@ namespace PerceptionVR.Extensions
             portalRotationDelta = portal.portalPair.transform.rotation * Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(portal.transform.rotation);
 
             // Calculate position
-            resultPose.position = portal.portalPair.transform.position + portalRotationDelta * (pose.position - portal.transform.position);
+            resultPose.position = portal.portalPair.transform.position + portalRotationDelta * (portal.portalPair.scaleRatio * (pose.position - portal.transform.position));
 
             // Rotation rotation
             resultPose.rotation = portalRotationDelta * pose.rotation;

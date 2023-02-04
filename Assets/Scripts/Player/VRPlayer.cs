@@ -61,8 +61,8 @@ namespace PerceptionVR.Player
             var hmdMove = body.rotation * vrInput.hmdDeltaPose.position.x0z();
             
             // Joystick & HMD position
-            body.MovePosition(body.position + (joystickMove + hmdMove));
-            head.targetPosition = vrInput.hmdPose.position._0y0();
+            body.MovePosition(body.position + body.transform.lossyScale.x * (joystickMove + hmdMove));
+            head.targetPosition = body.transform.lossyScale.x * vrInput.hmdPose.position._0y0();
             
             // Joystick & HMD rotation
             body.MoveRotation(body.rotation * Quaternion.Euler(joystickRotateSpeed * Time.fixedDeltaTime * vrInput.rotate._0x0()));

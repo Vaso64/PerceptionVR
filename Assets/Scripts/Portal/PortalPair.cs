@@ -44,6 +44,8 @@ namespace PerceptionVR.Portals
             // Set new pairs
             portalA._portalPair = portalB;
             portalB._portalPair = portalA;
+            portalA.scaleRatio = portalA.transform.lossyScale.x / portalB.transform.lossyScale.x;
+            portalB.scaleRatio = portalB.transform.lossyScale.x / portalA.transform.lossyScale.x;
             portalA.OnPortalPairSet?.Invoke(portalB);
             portalB.OnPortalPairSet?.Invoke(portalA);
         }

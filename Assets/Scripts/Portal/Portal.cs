@@ -13,6 +13,8 @@ namespace PerceptionVR.Portals
 
         public Collider portalCollider { get; private set; }
 
+        public float scaleRatio { get; private set; } = 1;
+
         public Plane portalPlane => new(transform.forward, transform.position);
         
 
@@ -41,6 +43,9 @@ namespace PerceptionVR.Portals
             // Reorient the object
             foreach (var gravityObject in teleportable.transform.GetComponentsInChildren<IGravityObject>())
                 gravityObject.gravityDirection = rotationDelta * gravityObject.gravityDirection;
+            
+            // Scale
+            teleportable.transform.localScale *= 1 / scaleRatio;
 
             // Notify
             var teleportData = new TeleportData

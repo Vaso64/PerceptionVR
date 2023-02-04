@@ -29,19 +29,19 @@ namespace PerceptionVR.Player
         public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
         {
             preservedComponents = Enumerable.Empty<Type>();
-            clone.GetComponent<Renderer>().material.color = Color.gray;
+            clone.GetComponentInChildren<Renderer>().material.color = Color.gray;
         }
 
         public void TransferBehaviour(GameObject from, GameObject to)
         {
             // TODO: Transfer behaviour
-            from.GetComponent<Renderer>().material.color = Color.gray;
-            to.GetComponent<Renderer>().material.color = Color.red;
+            from.GetComponentInChildren<Renderer>().material.color = Color.gray;
+            to.GetComponentInChildren<Renderer>().material.color = Color.red;
         }
 
         private void Awake()
         {
-            GetComponent<Renderer>().material.color = Color.red;
+            GetComponentInChildren<Renderer>().material.color = Color.red;
             grabJoint = GetComponent<TeleportableJoint>();
         }
 
@@ -84,7 +84,7 @@ namespace PerceptionVR.Player
             }
             
             // Move hand
-            bodyJoint.targetPosition = controllerPose.position - playerInput.hmdPose.position.x0z();
+            bodyJoint.targetPosition = transform.lossyScale.x * (controllerPose.position - playerInput.hmdPose.position.x0z());
             if(!controllerPose.rotation.IsNaN())
                 bodyJoint.targetRotation = controllerPose.rotation;
         }
