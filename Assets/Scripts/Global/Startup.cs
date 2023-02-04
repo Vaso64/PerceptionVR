@@ -40,8 +40,14 @@ namespace PerceptionVR.Global
             }
         }
 
+        private void OnDestroy()
+        {
+            if(XRGeneralSettings.Instance.Manager.activeLoader != null)
+                StopXR();
+        } 
 
-        private IEnumerator StartXR()
+
+        private static IEnumerator StartXR()
         {
             Debugger.LogInfo("Initializing XR...");
             yield return XRGeneralSettings.Instance.Manager.InitializeLoader();
@@ -55,6 +61,13 @@ namespace PerceptionVR.Global
                 Debugger.LogInfo("Starting XR...");
                 XRGeneralSettings.Instance.Manager.StartSubsystems();
             }
+        }
+
+        private static void StopXR()
+        {
+            Debugger.LogInfo("Stopping XR...");
+            XRGeneralSettings.Instance.Manager.StopSubsystems();
+            XRGeneralSettings.Instance.Manager.DeinitializeLoader();
         }
     }
 }
