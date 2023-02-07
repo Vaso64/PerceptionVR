@@ -38,10 +38,7 @@ namespace PerceptionVR.Portals
             
             vicinity.OnOutsideToFront += OnVicinityEnter;
             vicinity.OnFrontToOutside += OnVicinityExit;
-            
-            vicinity.OnBackToFront    += OnVicinityEnter;
-            vicinity.OnFrontToBack    += OnVicinityExit;
-            
+
             GlobalEvents.OnTeleport += OnTeleportCallback;
         }
 
@@ -49,7 +46,7 @@ namespace PerceptionVR.Portals
         private void OnVicinityEnter(Collider other)
         {
             // Ignore if clone is coming around the portal
-            if(collisionFilteringSystem.cloneGroup.Contains(other))
+            if(collisionFilteringSystem.insideGroup.Contains(other))
                 return;
             
             Debugger.LogInfo($"{other} entered vicinity of {this}");
@@ -80,7 +77,7 @@ namespace PerceptionVR.Portals
         private void OnVicinityExit(Collider other)
         {
             // Ignore if clone is coming around the portal
-            if(collisionFilteringSystem.cloneGroup.Contains(other))
+            if(collisionFilteringSystem.insideGroup.Contains(other))
                 return;
             
             Debugger.LogInfo($"{other} exited vicinity of {this}");
@@ -117,7 +114,7 @@ namespace PerceptionVR.Portals
             // Add clone colliders to nearbyTeleportable and pair's cloneGroup
             var cloneColliders = clone.transform.GetComponentsInChildren<Collider>();
             nearbyTeleportable.cloneColliderInPairVicinity.AddRange(cloneColliders);
-            pairCloneSystem.collisionFilteringSystem.cloneGroup.AddRange(cloneColliders);
+            pairCloneSystem.collisionFilteringSystem.insideGroup.AddRange(cloneColliders);
             
             return nearbyTeleportable;
         }

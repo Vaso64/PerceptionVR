@@ -40,10 +40,20 @@ namespace PerceptionVR.Physics
         {
             OnBeforeProcessQueue?.Invoke();
             while (onTriggerEnterQueue.Count > 0)
-                onTriggerEnter?.Invoke(onTriggerEnterQueue.Dequeue());
+            {
+                
+                var other = onTriggerEnterQueue.Dequeue();
+                Debugger.LogInfo($"OnTriggerEnter {other} to {this}");
+                onTriggerEnter?.Invoke(other);
+            }
+
 
             while (onTriggerExitQueue.Count > 0)
-                onTriggerExit?.Invoke(onTriggerExitQueue.Dequeue());
+            {
+                var other = onTriggerExitQueue.Dequeue();
+                Debugger.LogInfo($"OnTriggerExit {other} from {this}");
+                onTriggerExit?.Invoke(other);
+            }
         }
     
         protected virtual void OnTriggerEnter(Collider other)

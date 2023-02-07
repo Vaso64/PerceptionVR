@@ -68,7 +68,7 @@ namespace PerceptionVR.Physics
         // Duplicate protection
         public new void AddRange(IEnumerable<Collider> colliders)
         {
-            base.AddRange(colliders.Where(x => !Contains(x)));
+            base.AddRange(colliders.Where(x => !Contains(x)).ToList());
         }
 
         public new void Add(Collider collider)

@@ -23,8 +23,8 @@ namespace PerceptionVR.Physics
 
         public static void SetCollision(Collider x, Collider y, bool collide)
         {
-            // Don't include triggers and static object into collision matrix (for now)
-            if(x.isTrigger || y.isTrigger || x.gameObject.isStatic || y.gameObject.isStatic)
+            // Don't include static object into collision matrix (for now)
+            if(x.gameObject.isStatic || y.gameObject.isStatic)
                 return;
             
             if (Matrix.ContainsKey((x,y)))

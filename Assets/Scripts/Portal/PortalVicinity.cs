@@ -4,6 +4,7 @@ using System.Linq;
 using PerceptionVR.Debug;
 using PerceptionVR.Physics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PerceptionVR.Portals
 {
@@ -11,22 +12,18 @@ namespace PerceptionVR.Portals
     {
         [SerializeField] public SubscribableSwapTrigger frontArea;
         [SerializeField] public SubscribableSwapTrigger passingArea;
-        [SerializeField] public SubscribableSwapTrigger backArea;
+        [SerializeField] public SubscribableSwapTrigger insideArea;
         
         private List<Collider> frontAreaLastFrame;
         private List<Collider> passingAreaLastFrame;
-        private List<Collider> backAreaLastFrame;
+        private List<Collider> insideAreaLastFrame;
 
         public event Action<Collider> OnOutsideToFront;
         public event Action<Collider> OnFrontToOutside;
         public event Action<Collider> OnFrontToPass;
         public event Action<Collider> OnPassToFront;
-        public event Action<Collider> OnPassToBack;
-        public event Action<Collider> OnBackToPass;
-        public event Action<Collider> OnBackToOutside;
-        public event Action<Collider> OnOutsideToBack;
-        public event Action<Collider> OnFrontToBack;
-        public event Action<Collider> OnBackToFront;
+        public event Action<Collider> OnPassToInside;
+        public event Action<Collider> OnInsideToPass;
 
 
         private void Awake()
@@ -35,13 +32,18 @@ namespace PerceptionVR.Portals
             frontArea.onTriggerExit    += OnFrontAreaExit;
             passingArea.onTriggerEnter += OnPassingAreaEnter;
             passingArea.onTriggerExit  += OnPassingAreaExit;
-            backArea.onTriggerEnter    += OnBackAreaEnter;
-            backArea.onTriggerExit     += OnBackAreaExit;
+            
+            OnOutsideToFront += other => Debugger.LogInfo($"{other} outside to front");
+            OnFrontToOutside += other => Debugger.LogInfo($"{other} front to outside");
+            OnFrontToPass    += other => Debugger.LogInfo($"{other} front to pass");
+            OnPassToFront    += other => Debugger.LogInfo($"{other} pass to front");
+            OnPassToInside   += other => Debugger.LogInfo($"{other} pass to inside");
+            OnInsideToPass   += other => Debugger.LogInfo($"{other} inside to pass");
         }
 
         private void FixedUpdate()
         {
-            backAreaLastFrame    = backArea.ToList();
+            insideAreaLastFrame  = insideArea.ToList();
             passingAreaLastFrame = passingArea.ToList();
             frontAreaLastFrame   = frontArea.ToList();
         }
@@ -52,10 +54,6 @@ namespace PerceptionVR.Portals
             if (passingArea.Contains(other) || passingAreaLastFrame.Contains(other))
                 return;
 
-            // Entered from back area
-            if(backAreaLastFrame.Contains(other))
-                OnBackToFront?.Invoke(other);
-            
             // Entered from outside
             else
                 OnOutsideToFront?.Invoke(other);
@@ -66,11 +64,7 @@ namespace PerceptionVR.Portals
             // Entered to passing area
             if(passingArea.Contains(other))
                 return;
-            
-            // Entered to back area
-            if(backArea.Contains(other))
-                OnFrontToBack?.Invoke(other);
-            
+
             // Entered to outside
             else
                 OnFrontToOutside?.Invoke(other);
@@ -82,9 +76,9 @@ namespace PerceptionVR.Portals
             if(frontAreaLastFrame.Contains(other))
                 OnFrontToPass?.Invoke(other);
             
-            // Entered from back area
-            else if(backAreaLastFrame.Contains(other))
-                OnBackToPass?.Invoke(other);
+            // Entered from inside area
+            else if(insideAreaLastFrame.Contains(other))
+                OnInsideToPass?.Invoke(other);
             
             else
                 Debugger.LogWarning($"Collider {other} entered passing area from unknown area");
@@ -97,28 +91,11 @@ namespace PerceptionVR.Portals
                 OnPassToFront?.Invoke(other);
             
             // Entered to back area
-            else if (backArea.Contains(other))
-                OnPassToBack?.Invoke(other);
+            else if (insideArea.Contains(other))
+                OnPassToInside?.Invoke(other);
             
             else
                 Debugger.LogWarning($"Collider {other} exited passing area to unknown area");
-        }
-        
-        private void OnBackAreaEnter(Collider other)
-        {
-            // Entered from passing area
-            if (passingArea.Contains(other) || frontArea.Contains(other) || passingAreaLastFrame.Contains(other) || frontAreaLastFrame.Contains(other))
-                return;
-
-            OnOutsideToBack?.Invoke(other);
-        }
-        
-        private void OnBackAreaExit(Collider other)
-        {
-            if(passingArea.Contains(other) || frontArea.Contains(other))
-                return;
-            
-            OnBackToOutside?.Invoke(other);
         }
     }
 }
