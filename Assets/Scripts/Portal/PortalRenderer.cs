@@ -112,7 +112,7 @@ namespace PerceptionVR.Portals
             // Render self
             portalCamera.transform.SetPose(pairPose);
             portalCamera.targetTexture = RTArrays[displayMode][recursionDepth];
-            portalCamera.projectionMatrix = ClipNearPlane(portalCamera, portal.portalPair);
+            portalCamera.SetNearPlane(portal.portalPair.portalPlane, offset: -0.0001f, dropOffset: 0.01f);
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
 
@@ -142,15 +142,6 @@ namespace PerceptionVR.Portals
                 return false;
 
             return true;
-        }
-
-        private static Matrix4x4 ClipNearPlane(Camera camera, Portal portal)
-        {
-            float signDotProduct = Mathf.Sign(Vector3.Dot(portal.portalPlane.normal, portal.transform.position - camera.transform.position));
-            Vector3 cameraSpacePos = camera.worldToCameraMatrix.MultiplyPoint(portal.transform.position);
-            Vector3 cameraSpaceNormal = camera.worldToCameraMatrix.MultiplyVector(portal.portalPlane.normal) * signDotProduct;
-            float cameraSpaceDistance = -Vector3.Dot(cameraSpacePos, cameraSpaceNormal) + 0.01f;
-            return camera.CalculateObliqueMatrix(new Vector4(cameraSpaceNormal.x, cameraSpaceNormal.y, cameraSpaceNormal.z, cameraSpaceDistance));
         }
     }
 }

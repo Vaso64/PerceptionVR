@@ -3,7 +3,7 @@ Shader "PerceptionVR/UnlitVertexColorTexture"
     Properties
     {
         _MainTex("Albedo (RGB)", 2D) = "white" {}
-		//_ClipPlane ("Clip plane", Vector) = (0, 0, 0, 0)
+		_ClipPlane ("Clip plane", Vector) = (0, 0, 0, 0)
     }
     SubShader
     {
@@ -51,12 +51,12 @@ Shader "PerceptionVR/UnlitVertexColorTexture"
                 return o;
             }
 
-			//float4 _ClipPlane;
+			float4 _ClipPlane;
 
             half4 frag (v2f i) : COLOR
             {
-			    //float distanceFromPlane = dot(i.worldPos, _ClipPlane.xyz) + _ClipPlane.w;
-				//clip(-distanceFromPlane);
+                const float distanceFromPlane = dot(i.worldPos, _ClipPlane.xyz) + _ClipPlane.w;
+				clip(-distanceFromPlane);
                 return tex2D(_MainTex, i.uv) * i.color;
             }
 
