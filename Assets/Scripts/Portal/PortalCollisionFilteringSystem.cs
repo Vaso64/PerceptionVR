@@ -38,6 +38,7 @@ namespace PerceptionVR.Portals
             vicinity.OnPassToFront    += OnPassToFront;
             vicinity.OnPassToInside   += PassToInside;
             vicinity.OnInsideToPass   += InsideToPass;
+            vicinity.OnCloneIn        += OnCloneIn;
         }
 
 
@@ -74,6 +75,11 @@ namespace PerceptionVR.Portals
             if(!insideGroup.Remove(other))
                 Debugger.LogWarning($"{other} entering portal from behind");
             passingGroup.Add(other);
+        }
+        
+        private void OnCloneIn(GameObject clone)
+        {
+            insideGroup.AddRange(clone.GetComponentsInChildren<Collider>());
         }
     }
 }

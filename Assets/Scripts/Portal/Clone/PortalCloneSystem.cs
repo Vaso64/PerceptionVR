@@ -109,12 +109,10 @@ namespace PerceptionVR.Portals
             
             // Register teleportable
             var nearbyTeleportable = new NearbyTeleportable(teleportable, clone);
+            nearbyTeleportable.cloneColliderInPairVicinity.AddRange(clone.transform.GetComponentsInChildren<Collider>());
             objectsInVicinity.Add(nearbyTeleportable);
             
-            // Add clone colliders to nearbyTeleportable and pair's cloneGroup
-            var cloneColliders = clone.transform.GetComponentsInChildren<Collider>();
-            nearbyTeleportable.cloneColliderInPairVicinity.AddRange(cloneColliders);
-            pairCloneSystem.collisionFilteringSystem.insideGroup.AddRange(cloneColliders);
+            pairCloneSystem.vicinity.OnCloneIn?.Invoke(clone.gameObject);
             
             return nearbyTeleportable;
         }

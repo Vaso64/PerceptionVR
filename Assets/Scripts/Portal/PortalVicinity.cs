@@ -4,7 +4,6 @@ using System.Linq;
 using PerceptionVR.Debug;
 using PerceptionVR.Physics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace PerceptionVR.Portals
 {
@@ -24,6 +23,7 @@ namespace PerceptionVR.Portals
         public event Action<Collider> OnPassToFront;
         public event Action<Collider> OnPassToInside;
         public event Action<Collider> OnInsideToPass;
+        public       Action<GameObject> OnCloneIn; // Invoked by PortalCloneSystem
 
 
         private void Awake()
@@ -32,13 +32,6 @@ namespace PerceptionVR.Portals
             frontArea.onTriggerExit    += OnFrontAreaExit;
             passingArea.onTriggerEnter += OnPassingAreaEnter;
             passingArea.onTriggerExit  += OnPassingAreaExit;
-            
-            OnOutsideToFront += other => Debugger.LogInfo($"{other} outside to front");
-            OnFrontToOutside += other => Debugger.LogInfo($"{other} front to outside");
-            OnFrontToPass    += other => Debugger.LogInfo($"{other} front to pass");
-            OnPassToFront    += other => Debugger.LogInfo($"{other} pass to front");
-            OnPassToInside   += other => Debugger.LogInfo($"{other} pass to inside");
-            OnInsideToPass   += other => Debugger.LogInfo($"{other} inside to pass");
         }
 
         private void FixedUpdate()
