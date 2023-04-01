@@ -1,56 +1,70 @@
-using System;
-using System.Collections.Generic;
-using PerceptionVR.Extensions;
-using PerceptionVR.Global;
 using PerceptionVR.Portals;
 using UnityEngine;
 
 namespace PerceptionVR.Physics
 {
-    [RequireComponent(typeof(Joint))]
+    //[RequireComponent(typeof(Joint))]
     public class TeleportableJoint : MonoBehaviour
     {
         public bool isConnectedToBody { get; private set; }
-        private Joint joint;
-        private ITeleportable connectedBodyTeleportable;
+        public ConfigurableJoint joint;
+        private TeleportableObject selfTeleportableBody;
+        private TeleportableObject connectedTeleportableBody;
 
-        private void Awake() => GetComponentInParent<ITeleportable>().OnTeleport += OnTeleportCallback;
+        private void Awake()
+        {
+            selfTeleportableBody = GetComponentInParent<TeleportableObject>();
+            if(joint.connectedBody != null)
+                SetConnectedBody(joint.connectedBody);
+        } 
 
-        public T SetConnectedBody<T>(Rigidbody body) where T : Joint
+        public void SetConnectedBody(Rigidbody body)
         {
             // Release old body
             ReleaseConnectedBody();
+                
+            if (body.TryGetComponent(out connectedTeleportableBody))
+            {
+                if (joint.swapBodies)
+                {
+                    // Teleport self when connected body teleports
+                    selfTeleportableBody.manualTeleport = true;
+                    connectedTeleportableBody.OnTeleport += teleportData => teleportData.inPortal.Teleport(selfTeleportableBody);
+                }
 
-            joint = gameObject.AddComponentNotify<T>();
-            connectedBodyTeleportable = body.GetComponentInParent<ITeleportable>();
-            connectedBodyTeleportable.manualTeleport = true;
-            
+                else
+                {
+                    // Teleport connected body when self teleports
+                    connectedTeleportableBody.manualTeleport = true;
+                    selfTeleportableBody.OnTeleport += teleportData => teleportData.inPortal.Teleport(connectedTeleportableBody);
+                }
+            }
+
             joint.connectedBody = body;
-            
             isConnectedToBody = true;
-
-            return (T)joint;
         }
         
         public void ReleaseConnectedBody()
         {
-            if (connectedBodyTeleportable != null)
+            if (connectedTeleportableBody != null)
             {
-                connectedBodyTeleportable.manualTeleport = false;
-                connectedBodyTeleportable = null;
+                if (joint.swapBodies)
+                {
+                    selfTeleportableBody.manualTeleport = false;
+                    connectedTeleportableBody.OnTeleport -= teleportData => teleportData.inPortal.Teleport(selfTeleportableBody);
+                }
+
+                else
+                {
+                    connectedTeleportableBody.manualTeleport = false;
+                    selfTeleportableBody.OnTeleport -= teleportData => teleportData.inPortal.Teleport(connectedTeleportableBody);
+                }
+                    
+                connectedTeleportableBody = null;
             }
             
-            if(joint != null)
-                GameObjectUtility.DestroyComponentNotify(joint);
-            
+            joint.connectedBody = null;
             isConnectedToBody = false;
-        }
-
-        private void OnTeleportCallback(TeleportData teleportData)
-        {
-            if(connectedBodyTeleportable != null)
-                teleportData.inPortal.Teleport(connectedBodyTeleportable);
-            
         }
     }
 }

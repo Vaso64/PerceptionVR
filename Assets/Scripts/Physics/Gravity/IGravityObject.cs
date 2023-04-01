@@ -7,6 +7,6 @@ namespace PerceptionVR.Physics
     {
         Rigidbody rigidbody { get; }
         
-        Quaternion gravityDirection { get; set; }
+        Quaternion gravityRotation { get; set; }
     }
 }

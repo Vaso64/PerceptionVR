@@ -8,7 +8,7 @@ namespace PerceptionVR.Player
 {
     public class PlayerCamera : MonoBehaviour, ITeleportableBehaviour
     {
-        public static event Camera.CameraCallback OnBeforePlayerCameraRender;
+        public static event Action<Camera, Plane[]> OnBeforePlayerCameraRender;
         
         private Camera playerCamera;
         
@@ -37,8 +37,10 @@ namespace PerceptionVR.Player
 
         private void Update()
         {
+            playerCamera.ResetProjectionMatrix();
             this.currentProjectionMatrix = this.playerCamera.projectionMatrix;
             this.currentViewMatrix = this.playerCamera.worldToCameraMatrix;
+
         }
 
         private void OnPreRender()
@@ -49,7 +51,7 @@ namespace PerceptionVR.Player
                 playerCamera.worldToCameraMatrix = this.currentViewMatrix;
             }
 
-            OnBeforePlayerCameraRender?.Invoke(this.playerCamera);
+            OnBeforePlayerCameraRender?.Invoke(this.playerCamera, GeometryUtility.CalculateFrustumPlanes(this.playerCamera));
         } 
     }
 }

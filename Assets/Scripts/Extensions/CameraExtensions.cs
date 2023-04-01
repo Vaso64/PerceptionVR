@@ -6,39 +6,61 @@ namespace PerceptionVR.Extensions
     public static class CameraExtension
     {
             // Converts a bounding box to screenspace rect
-            public static Rect WorldToScreenBounds(this Camera camera, Bounds b)
+            public static Rect WorldToScreenBounds(this Camera camera, Bounds bounds)
+            {
+                var corners = GetWorldSpaceCorners(camera, bounds);
+
+                // Project corners to screen space
+                for (var i = 0; i < 8; i++)
+                    corners[i] = camera.WorldToScreenPoint(corners[i], Camera.MonoOrStereoscopicEye.Mono);
+
+                return new Rect
+                {
+                    xMin = corners.Min(corner => corner.x),
+                    xMax = corners.Max(corner => corner.x),
+                    yMin = corners.Min(corner => corner.y),
+                    yMax = corners.Max(corner => corner.y)
+                };
+            }
+
+            public static Rect WorldToViewportBounds(this Camera camera, Bounds bounds)
+            {
+                var corners = GetWorldSpaceCorners(camera, bounds);
+
+                for (var i = 0; i < 8; i++)
+                    corners[i] = camera.WorldToViewportPoint(corners[i], Camera.MonoOrStereoscopicEye.Mono);
+
+                return new Rect
+                {
+                    xMin = corners.Min(corner => corner.x),
+                    xMax = corners.Max(corner => corner.x),
+                    yMin = corners.Min(corner => corner.y),
+                    yMax = corners.Max(corner => corner.y)
+                };
+            }
+
+            public static Vector3[] GetWorldSpaceCorners(Camera camera, Bounds b)
             {
                 Vector3[] corners = { b.center + new Vector3( b.extents.x,  b.extents.y,  b.extents.z),
-                                    b.center + new Vector3( b.extents.x,  b.extents.y, -b.extents.z),
-                                    b.center + new Vector3( b.extents.x, -b.extents.y,  b.extents.z),
-                                    b.center + new Vector3( b.extents.x, -b.extents.y, -b.extents.z),
-                                    b.center + new Vector3(-b.extents.x,  b.extents.y,  b.extents.z),
-                                    b.center + new Vector3(-b.extents.x,  b.extents.y, -b.extents.z),
-                                    b.center + new Vector3(-b.extents.x, -b.extents.y,  b.extents.z),
-                                    b.center + new Vector3(-b.extents.x, -b.extents.y, -b.extents.z) 
+                    b.center + new Vector3( b.extents.x,  b.extents.y, -b.extents.z),
+                    b.center + new Vector3( b.extents.x, -b.extents.y,  b.extents.z),
+                    b.center + new Vector3( b.extents.x, -b.extents.y, -b.extents.z),
+                    b.center + new Vector3(-b.extents.x,  b.extents.y,  b.extents.z),
+                    b.center + new Vector3(-b.extents.x,  b.extents.y, -b.extents.z),
+                    b.center + new Vector3(-b.extents.x, -b.extents.y,  b.extents.z),
+                    b.center + new Vector3(-b.extents.x, -b.extents.y, -b.extents.z) 
                 };
-
-                Vector3[] screenspaceCorners = new Vector3[8];
-                for (int i = 0; i < 8; i++)
+                
+                for (var i = 0; i < 8; i++)
                 {
                     // Shift corners from behind the projection plane to infront
-                    float dot = Vector3.Dot(camera.transform.forward, camera.transform.position - corners[i]);
+                    // Note: the rect still fucks up if all corners are behind the camera.
+                    //       maybe cap the points to screen dimmensions?
+                    var dot = Vector3.Dot(camera.transform.forward, camera.transform.position - corners[i]);
                     corners[i] += dot >= 0 ? camera.transform.forward * (dot + 0.001f) : Vector3.zero;
-
-                    // Project point
-                    screenspaceCorners[i] = camera.WorldToScreenPoint(corners[i], Camera.MonoOrStereoscopicEye.Mono);
                 }
-
-                // Note: the rect still fucks up if all corners are behind the camera.
-                //       maybe cap the points to screen dimmensions?
-
-                return new Rect() 
-                {
-                    xMin = screenspaceCorners.Min(corner => corner.x),
-                    xMax = screenspaceCorners.Max(corner => corner.x),
-                    yMin = screenspaceCorners.Min(corner => corner.y),
-                    yMax = screenspaceCorners.Max(corner => corner.y),
-                };
+                
+                return corners;
             }
             
             public static void SetNearPlane(this Camera camera, Plane plane, float offset = 0f, float dropOffset = 0.001f)
@@ -55,7 +77,18 @@ namespace PerceptionVR.Extensions
                 float cameraSpaceDistance = -Vector3.Dot(cameraSpacePos, cameraSpaceNormal);
                 camera.projectionMatrix = camera.CalculateObliqueMatrix(new Vector4(cameraSpaceNormal.x, cameraSpaceNormal.y, cameraSpaceNormal.z, cameraSpaceDistance));
             }
-            
-                
+
+
+            public static void SetScissorRect(this Camera camera, Rect rect)
+            {
+                var pm = camera.projectionMatrix;
+                var aspect = camera.aspect;
+                pm.m02 = (2f * rect.x + rect.width - 1f) / rect.width;
+                pm.m12 = (2f * rect.y + rect.height - 1f) / rect.height;
+                pm.m00 = 1f / (rect.width * aspect);
+                pm.m11 = 1f /  rect.height;
+                camera.projectionMatrix = pm;
+                camera.rect = rect;
+            }
     }
 }

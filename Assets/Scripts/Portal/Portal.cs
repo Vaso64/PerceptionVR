@@ -30,34 +30,36 @@ namespace PerceptionVR.Portals
                 SetPortalPair(this, startingPortalPair);
         }
 
-        public void Teleport(ITeleportable teleportable)
+        public void Teleport(TeleportableObject teleportableObject)
         {
             // Teleport the object
-            var pairPose = this.PairPose(teleportable.transform.GetPose(), out var rotationDelta);
-            teleportable.transform.SetPose(pairPose);
+            var pairPose = this.PairPose(teleportableObject.transform.GetPose(), out var rotationDelta);
+            teleportableObject.transform.SetPose(pairPose);
             
-            // Translate velocity
-            foreach (var teleportedRB in teleportable.transform.GetComponentsInChildren<Rigidbody>())
-                teleportedRB.velocity = rotationDelta * teleportedRB.velocity;
+            // Try get PhysicsObject
+            if (teleportableObject.TryGetComponent(out PhysicsObject physicsObject))
+            {
+                // Reorient velocity
+                physicsObject.rigidbody.velocity = rotationDelta * physicsObject.rigidbody.velocity;
+                
+                // Reorient gravity
+                physicsObject.gravityRotation = rotationDelta * physicsObject.gravityRotation;
+            }
 
-            // Reorient the object
-            foreach (var gravityObject in teleportable.transform.GetComponentsInChildren<IGravityObject>())
-                gravityObject.gravityDirection = rotationDelta * gravityObject.gravityDirection;
-            
             // Scale
-            teleportable.transform.localScale *= 1 / scaleRatio;
+            teleportableObject.transform.localScale *= 1 / scaleRatio;
 
             // Notify
             var teleportData = new TeleportData
             {
-                teleportable = teleportable,
+                teleportableObject = teleportableObject,
                 inPortal = this,
                 outPortal = portalPair,
                 rotationDelta = rotationDelta
             };
             
             GlobalEvents.OnTeleport?.Invoke(teleportData);
-            teleportable.OnTeleport?.Invoke(teleportData);
+            teleportableObject.OnTeleport?.Invoke(teleportData);
         }
     }
 }

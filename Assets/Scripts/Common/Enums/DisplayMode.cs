@@ -10,9 +10,9 @@ namespace PerceptionVR.Common
     
     public static class GameDisplayModeExtensions
     {
-        public static DisplayMode ToGameDisplayMode(this StereoTargetEyeMask targetEye)
+        public static DisplayMode GetDisplayMode(this Camera camera)
         {
-            switch (targetEye)
+            switch (camera.stereoTargetEye)
             {
                 case StereoTargetEyeMask.Left:
                 case StereoTargetEyeMask.Right:

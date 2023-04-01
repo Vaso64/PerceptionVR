@@ -42,8 +42,8 @@ Shader "PerceptionVR/PortalShader"
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float2 texCoords = i.screenPos.xy / i.screenPos.w;
-                return tex2D(_MainTex, texCoords);
+                const float2 texCoords = i.screenPos.xy / i.screenPos.w;
+                return tex2D(_MainTex, TRANSFORM_TEX(texCoords, _MainTex));
             }
             ENDCG
         }

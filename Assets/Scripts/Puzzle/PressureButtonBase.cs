@@ -1,5 +1,6 @@
 using PerceptionVR.Common;
 using PerceptionVR.Extensions;
+using PerceptionVR.Physics;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,7 +10,7 @@ namespace PerceptionVR.Puzzle
     [RequireComponent(typeof(ConfigurableJoint))]
     public abstract class PressureButtonBase : ControlBase
     {
-        [SerializeField] private WorldObjectBase button;
+        [SerializeField] private PhysicsObject button;
         
         public float buttonHeight = 0.3f;
         public float buttonOffset = 0.15f;
@@ -21,7 +22,7 @@ namespace PerceptionVR.Puzzle
         private void Awake()
         {
             // Setup joint
-            button.gravityDirection = transform.rotation;
+            button.gravityRotation = transform.rotation;
             var joint = GetComponent<ConfigurableJoint>();
             joint.anchor = new Vector3(0, buttonHeight, 0);
             joint.linearLimit = new SoftJointLimit { limit = buttonOffset };

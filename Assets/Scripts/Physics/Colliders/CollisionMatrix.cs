@@ -8,12 +8,13 @@ namespace PerceptionVR.Physics
 {
     public static class CollisionMatrix
     {
+        /*
         private static readonly OrderIndependentTupleDictionary<Collider, bool> Matrix = new();
         
         
         static CollisionMatrix()
         {
-            // Set default values
+            // Remove all collisions with removed colliders
             ComponentTracking.allColliders.OnRemoved += (colliders) =>
             {
                 foreach (var toDelete in Matrix.Keys.Where(key => colliders.Contains(key.Item1) || colliders.Contains(key.Item2)).ToList())
@@ -31,15 +32,18 @@ namespace PerceptionVR.Physics
                 Matrix[(x,y)] = collide;
             else
                 Matrix.Add((x,y), collide);
-            //Debugger.LogInfo($"{x} - {y} => Collide: {collide}");
+
             UnityEngine.Physics.IgnoreCollision(x, y, !collide);
         }
+        */
 
         public static void SetCollisions(IEnumerable<Collider> xs, IEnumerable<Collider> ys, bool collide)
         {
             foreach (var x in xs)
-            foreach (var y in ys)
-                SetCollision(x, y, collide);
+                if(!x.gameObject.isStatic)
+                    foreach (var y in ys)
+                        if(!y.gameObject.isStatic)
+                            UnityEngine.Physics.IgnoreCollision(x, y, !collide);
         }
     }
 }

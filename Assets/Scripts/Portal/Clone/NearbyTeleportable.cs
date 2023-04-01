@@ -6,15 +6,15 @@ namespace PerceptionVR.Portals
     [System.Serializable]
     public class NearbyTeleportable
     {
-        public readonly ITeleportable teleportable;
-        public readonly ITeleportable cloneTeleportable;
+        public readonly TeleportableObject teleportableObject;
+        public readonly TeleportableObjectClone cloneTeleportableObject;
         public List<Collider> collidersInVicinity;
         public List<Collider> cloneColliderInPairVicinity;
         
-        public NearbyTeleportable(ITeleportable teleportable, ITeleportable cloneTeleportable)
+        public NearbyTeleportable(TeleportableObject teleportableObject, TeleportableObjectClone teleportableObjectClone)
         {
-            this.teleportable = teleportable;
-            this.cloneTeleportable = cloneTeleportable;
+            this.teleportableObject = teleportableObject;
+            this.cloneTeleportableObject = teleportableObjectClone;
             this.collidersInVicinity = new List<Collider>();
             this.cloneColliderInPairVicinity = new List<Collider>();
         }

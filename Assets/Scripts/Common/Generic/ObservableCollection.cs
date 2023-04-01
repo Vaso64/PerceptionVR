@@ -9,7 +9,7 @@ namespace PerceptionVR.Common.Generic
     [System.Serializable]
     public class ObservableCollection<T> : ICollection<T>, INotifyCollectionChanged<T>
     {
-        [SerializeField] private List<T> collection = new();
+        [SerializeField] protected List<T> collection = new();
         
         public event Action<IEnumerable<T>> OnAdded;
         public event Action<IEnumerable<T>> OnRemoved;
@@ -52,7 +52,7 @@ namespace PerceptionVR.Common.Generic
         public bool Contains(T item) => collection.Contains(item);
         public void CopyTo(T[] array, int arrayIndex) => collection.CopyTo(array, arrayIndex);
         public int Count => collection.Count;
-        public IEnumerator<T> GetEnumerator() => collection.GetEnumerator();
+        public virtual IEnumerator<T> GetEnumerator() => collection.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => collection.GetEnumerator();
         public bool IsReadOnly => false;
     }

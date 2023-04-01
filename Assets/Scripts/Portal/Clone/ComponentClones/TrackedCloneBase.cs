@@ -35,13 +35,13 @@ namespace PerceptionVR.Portals
             if (!targetSet)
                 return;
             
-            currentPosition = target.transform.position;
-            currentPortalSide = throughPortal.portalPlane.GetSide(currentPosition);
+            currentPosition = currentTarget.transform.position;
+            currentPortalSide = currentThroughPortal.portalPlane.GetSide(currentPosition);
     
             // Target entered the portal
             if (currentPortalSide && !previousPortalSide && PassedThroughPortal(previousPosition, currentPosition))
             {
-                Debugger.LogInfo($"{target} entered portal {throughPortal.transform}");
+                Debugger.LogInfo($"{currentTarget} entered portal {currentThroughPortal.transform}");
                 OnEnterPortal?.Invoke();
             }
                 
@@ -49,7 +49,7 @@ namespace PerceptionVR.Portals
             // Target exited the portal
             else if (!currentPortalSide && previousPortalSide && PassedThroughPortal(previousPosition, currentPosition))
             {
-                Debugger.LogInfo($"{target} exited portal {throughPortal.transform}");
+                Debugger.LogInfo($"{currentTarget} exited portal {currentThroughPortal.transform}");
                 OnExitPortal?.Invoke();
             }
 
@@ -64,7 +64,7 @@ namespace PerceptionVR.Portals
             var origin = oldPosition - direction.normalized;
             var ray = new Ray(origin, direction);
             var hits = UnityEngine.Physics.RaycastAll(ray, Vector3.Distance(origin, newPosition));
-            var result = hits.Any(hit => hit.collider == throughPortal.portalCollider);
+            var result = hits.Any(hit => hit.collider == currentThroughPortal.portalCollider);
             if(!result)
                 Debugger.LogInfo($"{transform} passed through portal failed {oldPosition} -> {newPosition}");
             return result;

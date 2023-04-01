@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace PerceptionVR.Player
 {
-    [RequireComponent(typeof(VRPlayerInput))]
     public class VRPlayer : PlayerBase
     {
         private VRPlayerInput vrInput;
@@ -32,7 +31,7 @@ namespace PerceptionVR.Player
 
         protected void Start()
         {
-            vrInput = GetComponent<VRPlayerInput>();
+            vrInput = FindObjectOfType<VRPlayerInput>();
             
             vrInput.OnJump += Jump;
         }
@@ -56,8 +55,8 @@ namespace PerceptionVR.Player
         private void FixedUpdate()
         {
             // Joystick & HMD movement
-            var headY = Quaternion.Euler((Quaternion.Inverse(gravityDirection) * headPivot.rotation).eulerAngles._0y0());
-            var joystickMove = gravityDirection * (headY * vrInput.move.x0y() * joystickMoveSpeed * Time.fixedDeltaTime);
+            var headY = Quaternion.Euler((Quaternion.Inverse(playerPhysicsObject.gravityRotation) * headPivot.rotation).eulerAngles._0y0());
+            var joystickMove = playerPhysicsObject.gravityRotation * (headY * vrInput.move.x0y() * joystickMoveSpeed * Time.fixedDeltaTime);
             var hmdMove = body.rotation * vrInput.hmdDeltaPose.position.x0z();
             
             // Joystick & HMD position
@@ -79,7 +78,7 @@ namespace PerceptionVR.Player
         
         private void Jump()
         {
-            body.AddForce(gravityDirection * Vector3.up * jumpForce, ForceMode.Impulse);
+            body.AddForce(playerPhysicsObject.gravityRotation * Vector3.up * jumpForce, ForceMode.Impulse);
         }
 
     }

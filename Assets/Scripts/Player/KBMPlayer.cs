@@ -74,7 +74,7 @@ namespace PerceptionVR.Player
             transform.position += transform.forward * direction.z;
 
             // Up & Down
-            transform.position += gravityDirection * Vector3.up * direction.y;
+            transform.position += playerPhysicsObject.gravityRotation * Vector3.up * direction.y;
 
             // Left & Right
             transform.position += transform.right * direction.x;
@@ -86,7 +86,7 @@ namespace PerceptionVR.Player
             direction *= lookSpeed;
 
             // Pitch
-            transform.RotateAround(transform.position, gravityDirection * Vector3.up, direction.x);
+            transform.RotateAround(transform.position, playerPhysicsObject.gravityRotation * Vector3.up, direction.x);
 
             // Yaw      
             transform.RotateAround(transform.position, transform.right, direction.y * -1);
@@ -98,7 +98,7 @@ namespace PerceptionVR.Player
                 grabJoint.ReleaseConnectedBody();
 
             else if (grabbable != null)
-                grabJoint.SetConnectedBody<FixedJoint>(grabbable.rigidbody);
+                grabJoint.SetConnectedBody(grabbable.rigidbody);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace PerceptionVR.Portals
     public class TeleportableBehaviourClone : TrackedCloneBase<Transform>
     {
         private bool hasBehaviour;
-        private ITeleportableBehaviour targetTeleportableBehaviour;
+        private ITeleportableBehaviour currenTeleportableBehaviourTarget;
 
         private void Awake()
         {
@@ -15,25 +15,25 @@ namespace PerceptionVR.Portals
             base.OnEnterPortal += () =>
             {
                 hasBehaviour = true;
-                targetTeleportableBehaviour.TransferBehaviour(targetTeleportableBehaviour.gameObject, gameObject);
-                Debugger.LogInfo($"Transferred behaviour {targetTeleportableBehaviour.GetType()} from  {targetTeleportableBehaviour.gameObject} to {gameObject}");
+                currenTeleportableBehaviourTarget.TransferBehaviour(currenTeleportableBehaviourTarget.gameObject, gameObject);
+                Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from  {currenTeleportableBehaviourTarget.gameObject} to {gameObject}");
             };
             
             // Transfer behaviour from self to target
             base.OnExitPortal += () =>
             {
                 hasBehaviour = false;
-                targetTeleportableBehaviour.TransferBehaviour(gameObject, targetTeleportableBehaviour.gameObject);
-                Debugger.LogInfo($"Transferred behaviour {targetTeleportableBehaviour.GetType()} from {gameObject} to {targetTeleportableBehaviour.gameObject}");
+                currenTeleportableBehaviourTarget.TransferBehaviour(gameObject, currenTeleportableBehaviourTarget.gameObject);
+                Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from {gameObject} to {currenTeleportableBehaviourTarget.gameObject}");
             };
         }
 
         // Swap behaviour on main teleport
-        private void Start() => GetComponentInParent<TeleportableClone>().OnEnterPortal += SwapBehaviour;
+        private void Start() => GetComponentInParent<TeleportableObjectClone>().OnEnterPortal += SwapBehaviour;
 
         public void Track(ITeleportableBehaviour target, Portal throughPortal)
         {
-            this.targetTeleportableBehaviour = target;
+            this.currenTeleportableBehaviourTarget = target;
             base.Track(target.transform, throughPortal);
         }
 
@@ -41,13 +41,13 @@ namespace PerceptionVR.Portals
         {
             if (hasBehaviour)
             {
-                targetTeleportableBehaviour.TransferBehaviour(gameObject, targetTeleportableBehaviour.gameObject);
-                Debugger.LogInfo($"Transferred behaviour {targetTeleportableBehaviour.GetType()} from {gameObject} to {targetTeleportableBehaviour.gameObject}");
+                currenTeleportableBehaviourTarget.TransferBehaviour(gameObject, currenTeleportableBehaviourTarget.gameObject);
+                Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from {gameObject} to {currenTeleportableBehaviourTarget.gameObject}");
             }
             else
             {
-                targetTeleportableBehaviour.TransferBehaviour(targetTeleportableBehaviour.gameObject, gameObject);
-                Debugger.LogInfo($"Transferred behaviour {targetTeleportableBehaviour.GetType()} from  {targetTeleportableBehaviour.gameObject} to {gameObject}");
+                currenTeleportableBehaviourTarget.TransferBehaviour(currenTeleportableBehaviourTarget.gameObject, gameObject);
+                Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from  {currenTeleportableBehaviourTarget.gameObject} to {gameObject}");
             }
             hasBehaviour = !hasBehaviour;
         }

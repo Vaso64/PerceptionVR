@@ -1,8 +1,5 @@
-using System.Linq;
-using MoreLinq.Extensions;
+using System.Collections.Generic;
 using PerceptionVR.Portals;
-using PerceptionVR.Common.Generic;
-using PerceptionVR.Common;
 using PerceptionVR.Debug;
 using PerceptionVR.Global;
 using UnityEngine;
@@ -11,55 +8,63 @@ namespace PerceptionVR.Physics
 {
     public class SubscribableSwapTrigger : SubscribableTrigger
     {
-        private readonly TemporaryCollection<Collider> swappedInThisFrame  = new (FrameType.Fixed, 1);
-        private readonly TemporaryCollection<Collider> swappedOutThisFrame = new (FrameType.Fixed, 1);
+        private readonly List<Collider> shouldSwapIn = new();
+        private readonly List<Collider> shouldSwapOut = new();
 
         protected override void Awake()
         {
             base.Awake();
-            GlobalEvents.OnSwap += (swapData) =>
+            GlobalEvents.OnSwap += swapData =>
             {
+                if(collidersInside.Count == 0)
+                    return;
                 var applicableSwaps = SwapUtility.GetApplicableSwaps(collidersInside, swapData.colliderSwaps);
                 foreach (var applicableSwap in applicableSwaps)
                 {
-                    swappedInThisFrame.Add(applicableSwap.toAdd);
-                    swappedOutThisFrame.Add(applicableSwap.toRemove);
+                    collidersInside.Remove(applicableSwap.toRemove);
+                    collidersInside.Add(applicableSwap.toAdd);
+                    shouldSwapOut.Add(applicableSwap.toRemove);
+                    shouldSwapIn.Add(applicableSwap.toAdd);
                 }
             };
             
             OnBeforeProcessQueue += () =>
             {
-                // Colliders that swapped in but didn't triggered the OnTriggerEnter will be added to the exit queue
-                swappedInThisFrame.Where(x => !collidersInside.Contains(x)).ForEach(x => onTriggerExitQueue.Enqueue(x));
-                // Colliders that swapped out but didn't triggered the OnTriggerExit will be added to the enter queue
-                swappedOutThisFrame.Where(x => collidersInside.Contains(x)).ForEach(x => onTriggerEnterQueue.Enqueue(x));
+                if (shouldSwapIn.Count != 0)
+                {
+                    foreach (var didntSwappedIn in shouldSwapIn)
+                    {
+                        Debugger.LogWarning($"{didntSwappedIn} swapped in to {this} but it did not trigger OnTriggerEnter. " +
+                                            "Assuming it left the trigger in a swap frame");
+                        base.OnTriggerExit(didntSwappedIn);
+                    }
+                    shouldSwapIn.Clear();
+                }
+
+                if (shouldSwapOut.Count != 0)
+                {
+                    foreach (var didntSwappedOut in shouldSwapOut)
+                    {
+                        Debugger.LogWarning($"{didntSwappedOut} swapped out of {this} but it did not trigger OnTriggerExit. " +
+                                            "Don't know what to do here...");
+                        //base.OnTriggerEnter(didntSwappedOut);
+                    }
+                    shouldSwapOut.Clear();
+                }
+
             };
         }
         
         protected override void OnTriggerEnter(Collider other)
         {
-            //Debugger.LogInfo($"OnTriggerEnter {other} in {this}");
-            
-            // Confirm swap in
-            if(swappedInThisFrame.Contains(other))
-                collidersInside.Add(other);
-            
-            // Standard OnTriggerEnter
-            else
-                base.OnTriggerEnter(other);
+            if(!shouldSwapIn.Remove(other))    // Confirm swap in
+                base.OnTriggerEnter(other);    // Or do standard OnTriggerEnter
         }
         
         protected override void OnTriggerExit(Collider other)
         {
-            //Debugger.LogInfo($"OnTriggerExit {other} from {this}");
-            
-            // Confirm swap out
-            if(swappedOutThisFrame.Contains(other))
-                collidersInside.Remove(other);
-            
-            // Standard OnTriggerExit
-            else
-                base.OnTriggerExit(other);
+            if(!shouldSwapOut.Remove(other))   // Confirm swap out
+                base.OnTriggerExit(other);     // Or do standard OnTriggerExit
         }
     }
 }

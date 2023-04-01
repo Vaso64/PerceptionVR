@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq.Extensions;
@@ -18,25 +19,29 @@ namespace PerceptionVR.Physics
 
         public void SetFilter(FilterMode mode, IEnumerable<ColliderGroup> filterGroups)
         {
-            OnAdded += (colliders) => colliders.ForEach(c => Debugger.LogInfo($"{c} added to {debugName}"));
-            OnRemoved += (colliders) => colliders.ForEach(c => Debugger.LogInfo($"{c} removed from {debugName}"));
+            //OnAdded += colliders => colliders.ForEach(c => Debugger.LogInfo($"{c} added to {debugName}"));
+            //OnRemoved += colliders => colliders.ForEach(c => Debugger.LogInfo($"{c} removed from {debugName}"));
 
-            // Remove destroyed colliders
-            ComponentTracking.allColliders.OnRemoved += RemoveRange;
+            // Remove destroyed colliders   (Replaced by GetEnumerator override => collection clears itself when iterating)
+            //ComponentTracking.allColliders.OnRemoved += RemoveRange;        
             
             // Swap colliders on swap event
-            GlobalEvents.OnSwap += (swapData) => SwapUtility.PerformSwap(this, swapData.colliderSwaps);
+            GlobalEvents.OnSwap += swapData => SwapUtility.PerformSwap(this, swapData.colliderSwaps);
             
             // Un-ignore added colliders with rest of this group
-            OnAdded += (colliders) => CollisionMatrix.SetCollisions(this, colliders, true);
+            OnAdded += colliders => CollisionMatrix.SetCollisions(this, colliders, true);
             
             switch (mode)
             {
                 case FilterMode.Exclude:
-                    // Ignore with all colliders in the groups
+                    // Ignore with colliders in the filterGroups
                     CollisionMatrix.SetCollisions(this, filterGroups.SelectMany(g => g).Distinct(), false);
                     
-                    // Ignore and un-ignore colliders added / removed from the filterGroups
+                    // Ignore future colliders added to this group with filterGroups
+                    OnAdded   += colliders => filterGroups.ForEach(x => CollisionMatrix.SetCollisions(x, colliders, false));
+                    OnRemoved += colliders => filterGroups.ForEach(x => CollisionMatrix.SetCollisions(x, colliders, true));
+                    
+                    // Ignore future colliders added to the filterGroups
                     foreach (var group in filterGroups)
                     {
                         group.OnAdded   += colliders => CollisionMatrix.SetCollisions(this, colliders, false);
@@ -44,18 +49,21 @@ namespace PerceptionVR.Physics
                     }
                     break;
                 
+                // Expensive (don't use)
                 case FilterMode.Include:
-                    // Ignore with colliders not in filterGroups
+                    Debugger.LogWarning("FilterMode.Include is expensive and should not be used");
+                    
+                    // Ignore with all colliders not in filterGroups
                     CollisionMatrix.SetCollisions(this, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g).Union(this)), false);
                     
                     // Ignore all future colliders
                     ComponentTracking.allColliders.OnAdded += colliders => CollisionMatrix.SetCollisions(this, colliders, false);
                     
-                    // Ignore future added colliders with colliders not in the filterGroups
+                    // Un-ignore all future colliders added to this group
                     OnAdded += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders.Except(filterGroups.SelectMany(g => g).Union(this)), false);
                     OnRemoved += colliders => CollisionMatrix.SetCollisions(colliders, ComponentTracking.allColliders, true);
                     
-                    // Un-ignore and ignore colliders added / removed from the filterGroups
+                    // Un-ignore future colliders added to the filterGroups
                     foreach (var group in filterGroups)
                     {
                         group.OnAdded   += colliders => CollisionMatrix.SetCollisions(this, colliders, true);
@@ -75,6 +83,13 @@ namespace PerceptionVR.Physics
         {
             if (!Contains(collider))
                 base.Add(collider);
+        }
+        
+        // Auto remove null items before enumerating
+        public override IEnumerator<Collider> GetEnumerator()
+        {
+            collection.RemoveAll(x => x == null);
+            return base.GetEnumerator();
         }
     }
 }

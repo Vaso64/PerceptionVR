@@ -12,19 +12,21 @@ using PerceptionVR.Physics;
 
 namespace PerceptionVR.Player
 {
-    //[RequireComponent(typeof(ConfigurableJoint))]
+    //[RequireComponent(typeof(TeleportableJoint))]
     public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
     {
         private VRPlayerInput playerInput;
         
         [SerializeField] private Side handSide;
         
-        private ConfigurableJoint bodyJoint;
+        [SerializeField] private TeleportableJoint bodyJoint;
 
         // Grabbing
+        [SerializeField] private TeleportableJoint grabJoint;
+        private IGrabbable holdingItem;
         private List<IGrabbable> grabbableItems = new();
-        private IGrabbable holdingItem = null;
-        private TeleportableJoint grabJoint;
+        
+        
 
         public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
         {
@@ -42,14 +44,11 @@ namespace PerceptionVR.Player
         private void Awake()
         {
             GetComponentInChildren<Renderer>().material.color = Color.red;
-            grabJoint = GetComponent<TeleportableJoint>();
         }
 
         private void Start()
         {
-            this.bodyJoint = GetComponent<ConfigurableJoint>();
-            
-            this.playerInput = GetComponentInParent<VRPlayerInput>();
+            this.playerInput = FindObjectOfType<VRPlayerInput>();
             
             // Register hand to player input events
             switch (handSide)
@@ -84,9 +83,9 @@ namespace PerceptionVR.Player
             }
             
             // Move hand
-            bodyJoint.targetPosition = transform.lossyScale.x * (controllerPose.position - playerInput.hmdPose.position.x0z());
+            bodyJoint.joint.targetPosition = transform.lossyScale.x * (controllerPose.position - playerInput.hmdPose.position.x0z());
             if(!controllerPose.rotation.IsNaN())
-                bodyJoint.targetRotation = controllerPose.rotation;
+                bodyJoint.joint.targetRotation = controllerPose.rotation;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -119,7 +118,7 @@ namespace PerceptionVR.Player
 
             // Create fixed grab joint to hold item
             Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
-            grabJoint.SetConnectedBody<FixedJoint>(holdingItem.rigidbody);
+            grabJoint.SetConnectedBody(holdingItem.rigidbody);
         }
         
         private void OnRelease()

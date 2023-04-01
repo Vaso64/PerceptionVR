@@ -28,5 +28,7 @@ namespace PerceptionVR.Extensions
                 rb.VelocityMove(pose.position, isLocalPose);
                 rb.VelocityRotate(pose.rotation, isLocalPose);
             }
-        }
+            
+            public static float KineticEnergy(this Rigidbody rb) => 0.5f * rb.mass * rb.velocity.sqrMagnitude;
+    }
 }

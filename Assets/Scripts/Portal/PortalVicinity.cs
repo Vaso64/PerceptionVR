@@ -9,25 +9,36 @@ namespace PerceptionVR.Portals
 {
     public class PortalVicinity : MonoBehaviour
     {
+        [SerializeField] public SubscribableSwapTrigger largeArea;
         [SerializeField] public SubscribableSwapTrigger frontArea;
         [SerializeField] public SubscribableSwapTrigger passingArea;
         [SerializeField] public SubscribableSwapTrigger insideArea;
         
-        private List<Collider> frontAreaLastFrame;
-        private List<Collider> passingAreaLastFrame;
-        private List<Collider> insideAreaLastFrame;
+        
+        private readonly List<Collider> frontAreaLastFrame = new ();
+        private readonly List<Collider> passingAreaLastFrame = new ();
+        private readonly List<Collider> insideAreaLastFrame = new ();
 
-        public event Action<Collider> OnOutsideToFront;
-        public event Action<Collider> OnFrontToOutside;
+        
+        public event Action<Collider> OnOutsideToLarge;
+        public event Action<Collider> OnLargeToOutside;
+        
+        public event Action<Collider> OnLargeToFront;
+        public event Action<Collider> OnFrontToLarge;
+
         public event Action<Collider> OnFrontToPass;
         public event Action<Collider> OnPassToFront;
+        
         public event Action<Collider> OnPassToInside;
         public event Action<Collider> OnInsideToPass;
+        
         public       Action<GameObject> OnCloneIn; // Invoked by PortalCloneSystem
 
 
         private void Awake()
         {
+            largeArea.onTriggerEnter   += OnLargeAreaEnter;
+            largeArea.onTriggerExit    += OnLargeAreaExit;
             frontArea.onTriggerEnter   += OnFrontAreaEnter;
             frontArea.onTriggerExit    += OnFrontAreaExit;
             passingArea.onTriggerEnter += OnPassingAreaEnter;
@@ -36,10 +47,22 @@ namespace PerceptionVR.Portals
 
         private void FixedUpdate()
         {
-            insideAreaLastFrame  = insideArea.ToList();
-            passingAreaLastFrame = passingArea.ToList();
-            frontAreaLastFrame   = frontArea.ToList();
+            insideAreaLastFrame.Clear();  insideAreaLastFrame.AddRange(insideArea);
+            passingAreaLastFrame.Clear(); passingAreaLastFrame.AddRange(passingArea);
+            frontAreaLastFrame.Clear();   frontAreaLastFrame.AddRange(frontArea);
         }
+
+        private void OnLargeAreaEnter(Collider other)
+        {
+            if(!frontArea.Contains(other))
+                OnOutsideToLarge?.Invoke(other);
+        }
+
+        private void OnLargeAreaExit(Collider other)
+        {
+            if(!frontAreaLastFrame.Contains(other))
+                OnLargeToOutside?.Invoke(other);
+        } 
 
         private void OnFrontAreaEnter(Collider other)
         {
@@ -48,19 +71,17 @@ namespace PerceptionVR.Portals
                 return;
 
             // Entered from outside
-            else
-                OnOutsideToFront?.Invoke(other);
+            OnLargeToFront?.Invoke(other);
         }
         
         private void OnFrontAreaExit(Collider other)
         {
             // Entered to passing area
-            if(passingArea.Contains(other))
+            if(passingAreaLastFrame.Contains(other))
                 return;
 
             // Entered to outside
-            else
-                OnFrontToOutside?.Invoke(other);
+            OnFrontToLarge?.Invoke(other);
         }
         
         private void OnPassingAreaEnter(Collider other)

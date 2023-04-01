@@ -6,15 +6,15 @@ namespace PerceptionVR.Portals
 {
     public struct SwapData
     {
-        public readonly (ITeleportable, ITeleportable) teleportableSwap;
+        public readonly (TeleportableObject, TeleportableObjectClone) teleportableSwap;
         public readonly IEnumerable<(Collider, Collider)> colliderSwaps;
         public readonly IEnumerable<(Renderer, Renderer)> rendererSwaps;
         
-        public SwapData(ITeleportable teleportable, ITeleportable clone)
+        public SwapData(TeleportableObject teleportableObject, TeleportableObjectClone clone)
         {
-            teleportableSwap = (teleportable, clone);
-            colliderSwaps = ComponentUtility.CreateComponentTuple<Collider, Collider>(teleportable.transform, clone.transform);
-            rendererSwaps = ComponentUtility.CreateComponentTuple<Renderer, Renderer>(teleportable.transform, clone.transform);
+            teleportableSwap = (teleportableObject, clone);
+            colliderSwaps = ComponentUtility.CreateComponentTuple<Collider, Collider>(teleportableObject.transform, clone.transform);
+            rendererSwaps = ComponentUtility.CreateComponentTuple<Renderer, Renderer>(teleportableObject.transform, clone.transform);
         }
     }
 }

@@ -6,17 +6,19 @@ using UnityEngine;
 namespace PerceptionVR.Player
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class PlayerBase : MonoBehaviour, ITeleportable, IGravityObject
+    [RequireComponent(typeof(TeleportableObject))]
+    public class PlayerBase : MonoBehaviour
     {
         public Action<TeleportData> OnTeleport { get; set; }
         public bool manualTeleport { get; set; }
         
+        protected PhysicsObject playerPhysicsObject;
+        
         public new Rigidbody rigidbody {get; private set; }
-        public Quaternion gravityDirection { get; set; } = Quaternion.identity;
 
         protected virtual void Awake()
         {
-            rigidbody = GetComponent<Rigidbody>();
+            playerPhysicsObject = GetComponent<PhysicsObject>();
         }
     }
 }

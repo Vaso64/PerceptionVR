@@ -10,6 +10,7 @@ namespace PerceptionVR.Portals
     [RequireComponent(typeof(PortalVicinity))]
     public class PortalCollisionFilteringSystem : MonoBehaviour
     {
+        [SerializeField] public ColliderGroup largeGroup;
         [SerializeField] public ColliderGroup frontGroup;
         [SerializeField] public ColliderGroup passingGroup;
         [SerializeField] public ColliderGroup insideGroup;
@@ -22,34 +23,53 @@ namespace PerceptionVR.Portals
             portal = GetComponentInParent<Portal>();
             vicinity = GetComponent<PortalVicinity>();
 
+            largeGroup.debugName = $"largeGroup_{portal.transform.name}";
             frontGroup.debugName   = $"frontGroup_{portal.transform.name}";
             passingGroup.debugName = $"passingGroup_{portal.transform.name}";
-            insideGroup.debugName  = $"cloneGroup_{portal.transform.name}";
+            insideGroup.debugName  = $"insideGroup_{portal.transform.name}";
             
-            // Object passing through portals interact only with inside and front group
-            passingGroup.SetFilter(ColliderGroup.FilterMode.Include, new[] { insideGroup, frontGroup });
+            // Object in front of the portal interact only with outside and passing group (ignores inside group)
+            frontGroup.SetFilter(ColliderGroup.FilterMode.Exclude, new[] { insideGroup });
+            
+            // Object passing through portals interact only with inside and front group (ignores large group)
+            passingGroup.SetFilter(ColliderGroup.FilterMode.Exclude, new[] { largeGroup });
 
-            // Object inside the portal interact only with passing group
-            insideGroup.SetFilter(ColliderGroup.FilterMode.Include, new[] { passingGroup });
+            // Object inside the portal interact only with passing group (ignores front and large group)
+            insideGroup.SetFilter(ColliderGroup.FilterMode.Exclude, new[] { frontGroup, largeGroup });
 
-            vicinity.OnOutsideToFront += OnOutsideToFront;
-            vicinity.OnFrontToOutside += OnFrontToOutside;
+            vicinity.OnOutsideToLarge += OnOutsideToLarge;
+            vicinity.OnLargeToOutside += OnLargeToOutside;
+            vicinity.OnLargeToFront   += OnLargeToFront;
+            vicinity.OnFrontToLarge   += OnFrontToLarge;
             vicinity.OnFrontToPass    += OnFrontToPass;
             vicinity.OnPassToFront    += OnPassToFront;
             vicinity.OnPassToInside   += PassToInside;
             vicinity.OnInsideToPass   += InsideToPass;
             vicinity.OnCloneIn        += OnCloneIn;
         }
-
-
-        private void OnOutsideToFront(Collider other)
+        
+        
+        private void OnLargeToOutside(Collider other)
         {
+            largeGroup.Remove(other);
+        }
+        
+        private void OnOutsideToLarge(Collider other)
+        {
+            largeGroup.Add(other);
+        }
+
+
+        private void OnLargeToFront(Collider other)
+        {
+            largeGroup.Remove(other);
             frontGroup.Add(other);
         }
         
-        private void OnFrontToOutside(Collider other)
+        private void OnFrontToLarge(Collider other)
         {
             frontGroup.Remove(other);
+            largeGroup.Add(other);
         }
         
         private void OnFrontToPass(Collider other)
