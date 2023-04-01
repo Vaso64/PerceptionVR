@@ -3,7 +3,7 @@ using UnityEngine;
 namespace PerceptionVR.Physics
 {
     [RequireComponent(typeof(Collider))]
-    public class ColliderBase : MonoBehaviour
+    public class ColliderBase: MonoBehaviourBase
     {
         [HideInInspector] public new Collider collider;
         

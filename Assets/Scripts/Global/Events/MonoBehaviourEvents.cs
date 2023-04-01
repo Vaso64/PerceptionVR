@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace PerceptionVR.Global
 {
-    public class MonoBehaviourEvents : MonoBehaviour
+    public class MonoBehaviourEvents: MonoBehaviourBase
     {
         public static event Action OnAwake;
         public static event Action OnStart;

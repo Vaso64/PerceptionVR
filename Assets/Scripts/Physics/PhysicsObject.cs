@@ -8,7 +8,7 @@ using UnityEngine;
 namespace PerceptionVR.Physics
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class PhysicsObject : MonoBehaviour
+    public class PhysicsObject: MonoBehaviourBase
     {
         [SerializeField] private Direction startingGravityDirection = Direction.Down;
 

@@ -13,7 +13,7 @@ using UnityEngine.UI;
 namespace PerceptionVR.Portals
 {
     [RequireComponent(typeof(Renderer))]
-    public class PortalRenderer : MonoBehaviour
+    public class PortalRenderer: MonoBehaviourBase
     {
         // References
         [SerializeField] private Camera portalCamera;

@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace PerceptionVR.Player
 {
-    public class VRPlayerInput : MonoBehaviour
+    public class VRPlayerInput: MonoBehaviourBase
     {
         private PlayerInputAction.VRPlayerActions playerActions;
 

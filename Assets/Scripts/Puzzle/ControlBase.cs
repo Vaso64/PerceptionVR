@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace PerceptionVR.Puzzle
 {
-    public class ControlBase : MonoBehaviour
+    public class ControlBase: MonoBehaviourBase
     {
         public bool isActivated { get; private set; }
         public UnityEvent OnActivated;

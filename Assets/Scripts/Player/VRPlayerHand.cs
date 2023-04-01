@@ -13,7 +13,7 @@ using PerceptionVR.Physics;
 namespace PerceptionVR.Player
 {
     //[RequireComponent(typeof(TeleportableJoint))]
-    public class VRPlayerHand : MonoBehaviour, ITeleportableBehaviour
+    public class VRPlayerHand: MonoBehaviourBase, ITeleportableBehaviour
     {
         private VRPlayerInput playerInput;
         

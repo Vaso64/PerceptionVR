@@ -11,7 +11,7 @@ using UnityEngine;
 namespace PerceptionVR.Portals
 {
     [RequireComponent(typeof(Portal), typeof(PortalVicinity))]
-    public class PortalCloneSystem : MonoBehaviour
+    public class PortalCloneSystem: MonoBehaviourBase
     {
         [SerializeField] private List<NearbyTeleportable> objectsInVicinity = new();
         

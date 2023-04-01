@@ -7,7 +7,7 @@ using PerceptionVR.Physics;
 
 namespace PerceptionVR.Portals
 {
-    public partial class Portal : MonoBehaviour
+    public partial class Portal: MonoBehaviourBase
     {
         [SerializeField] private Portal startingPortalPair;
 

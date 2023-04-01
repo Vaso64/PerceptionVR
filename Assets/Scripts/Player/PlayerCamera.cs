@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace PerceptionVR.Player
 {
-    public class PlayerCamera : MonoBehaviour, ITeleportableBehaviour
+    public class PlayerCamera: MonoBehaviourBase, ITeleportableBehaviour
     {
         public static event Action<Camera, Plane[]> OnBeforePlayerCameraRender;
         

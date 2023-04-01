@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PerceptionVR.Physics
 {
-    public class PhysicsSettings : MonoBehaviour
+    public class PhysicsSettings: MonoBehaviourBase
     {
         [SerializeField] private float _gravityStrength = 9.81f;
         public static float gravityStrength { get; private set; }

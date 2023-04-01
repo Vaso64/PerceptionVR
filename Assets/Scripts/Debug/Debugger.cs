@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace PerceptionVR.Debug
 {
-    public class Debugger : MonoBehaviour
+    public class Debugger: MonoBehaviourBase
     {
         [SerializeField] private LogLevel logLevel;
         [SerializeField] private bool frameSplit;

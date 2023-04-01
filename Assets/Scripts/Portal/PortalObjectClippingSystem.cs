@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PerceptionVR.Portals
 {
     [RequireComponent(typeof(PortalVicinity), typeof(Portal))]
-    public class PortalObjectClippingSystem : MonoBehaviour
+    public class PortalObjectClippingSystem: MonoBehaviourBase
     {
         private static bool _registeredSwapCallback = false;
         private static readonly int ClipPlane = Shader.PropertyToID("_ClipPlane");

@@ -7,7 +7,7 @@ namespace PerceptionVR.Player
 {
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(TeleportableObject))]
-    public class PlayerBase : MonoBehaviour
+    public class PlayerBase: MonoBehaviourBase
     {
         public Action<TeleportData> OnTeleport { get; set; }
         public bool manualTeleport { get; set; }

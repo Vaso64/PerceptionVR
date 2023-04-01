@@ -7,7 +7,7 @@ using PerceptionVR.Common;
 
 namespace PerceptionVR.Global
 {
-    public class RenderingManagment : MonoBehaviour
+    public class RenderingManagment: MonoBehaviourBase
     {
         public static event Action<DisplayMode, Vector2Int> OnResolutionChange;
         public static readonly Dictionary<DisplayMode, Vector2Int> CurrentResolutions = new ()

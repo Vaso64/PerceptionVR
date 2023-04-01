@@ -9,7 +9,7 @@ using UnityEngine.XR.Management;
 
 namespace PerceptionVR.Global
 {
-    public class Startup : MonoBehaviour
+    public class Startup: MonoBehaviourBase
     {
         [SerializeField] private bool manualArgsEnabled;
         [SerializeField] private string[] manualArgs;

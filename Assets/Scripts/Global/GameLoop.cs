@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameLoop : MonoBehaviour
+public class GameLoop: MonoBehaviourBase
 {
     private void Start()
     {

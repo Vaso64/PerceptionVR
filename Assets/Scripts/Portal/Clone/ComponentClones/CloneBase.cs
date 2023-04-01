@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace PerceptionVR.Portals
 {
-    public abstract class CloneBase<T> : MonoBehaviour where T : Component
+    public abstract class CloneBase<T>: MonoBehaviourBase where T : Component
     {
         [FormerlySerializedAs("target")] [SerializeField] protected T currentTarget;
         protected Portal currentThroughPortal;

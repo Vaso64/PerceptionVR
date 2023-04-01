@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace PerceptionVR.Portals
 {
-    public class PortalVicinity : MonoBehaviour
+    public class PortalVicinity: MonoBehaviourBase
     {
         [SerializeField] public SubscribableSwapTrigger largeArea;
         [SerializeField] public SubscribableSwapTrigger frontArea;

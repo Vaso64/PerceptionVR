@@ -4,7 +4,7 @@ using UnityEngine;
 namespace PerceptionVR.Physics
 {
     //[RequireComponent(typeof(Joint))]
-    public class TeleportableJoint : MonoBehaviour
+    public class TeleportableJoint: MonoBehaviourBase
     {
         public bool isConnectedToBody { get; private set; }
         public ConfigurableJoint joint;

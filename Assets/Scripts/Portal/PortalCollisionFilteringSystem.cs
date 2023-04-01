@@ -8,7 +8,7 @@ using PerceptionVR.Debug;
 namespace PerceptionVR.Portals
 {
     [RequireComponent(typeof(PortalVicinity))]
-    public class PortalCollisionFilteringSystem : MonoBehaviour
+    public class PortalCollisionFilteringSystem: MonoBehaviourBase
     {
         [SerializeField] public ColliderGroup largeGroup;
         [SerializeField] public ColliderGroup frontGroup;
