@@ -241,30 +241,30 @@ MonoBehaviour:
   - {x: -1, y: 0, z: -0.00000005960386, w: -1}
   - {x: -1, y: 0, z: -0.00000011920772, w: -1}
   m_Colors:
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
-  - {r: 0.667, g: 0.667, b: 0.667, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
+  - {r: 1, g: 0.054726385, b: 0, a: 1}
   m_UnwrapParameters:
     m_HardAngle: 88
     m_PackMargin: 20
@@ -273,59 +273,11 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1465
+  m_VersionIndex: 1468
   m_IsSelectable: 1
-  m_SelectedFaces: 000000000100000002000000030000000400000005000000
-  m_SelectedEdges:
-  - a: 0
-    b: 1
-  - a: 2
-    b: 0
-  - a: 1
-    b: 3
-  - a: 3
-    b: 2
-  - a: 4
-    b: 5
-  - a: 6
-    b: 4
-  - a: 5
-    b: 7
-  - a: 7
-    b: 6
-  - a: 8
-    b: 9
-  - a: 10
-    b: 8
-  - a: 9
-    b: 11
-  - a: 11
-    b: 10
-  - a: 12
-    b: 13
-  - a: 14
-    b: 12
-  - a: 13
-    b: 15
-  - a: 15
-    b: 14
-  - a: 16
-    b: 17
-  - a: 18
-    b: 16
-  - a: 17
-    b: 19
-  - a: 19
-    b: 18
-  - a: 20
-    b: 21
-  - a: 22
-    b: 20
-  - a: 21
-    b: 23
-  - a: 23
-    b: 22
-  m_SelectedVertices: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000150000001600000017000000
+  m_SelectedFaces: 
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!23 &1161926365840093381
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -418,6 +370,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d4c14976c77e7f40a009dd811e06b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugInstance: 0
+  startingGravityDirection: 1
+  insomnia: 0
+  sleepTimer: 0
+  averagePositionDelta: 0
 --- !u!1 &1161926366235984801
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,13 +419,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1161926366235984801}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f564d02c36754d7cba69cefaa7a252b8, type: 3}
+  m_Script: {fileID: 11500000, guid: fbb0936ea69047ba90379f369c14f967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnActivated:
+  debugInstance: 0
+  OnPressed:
     m_PersistentCalls:
       m_Calls: []
-  OnDeactivated:
+  OnReleased:
     m_PersistentCalls:
       m_Calls: []
   OnChanged:

@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 4429293400569442596}
   - component: {fileID: 4429293400569442618}
   - component: {fileID: 4429293400569442619}
-  - component: {fileID: 4429293400569442616}
   - component: {fileID: 4429293400569442617}
   - component: {fileID: 4429293400569442598}
   - component: {fileID: 4429293400569442599}
+  - component: {fileID: 3778818776505195162}
   m_Layer: 0
   m_Name: Cone
   m_TagString: Untagged
@@ -29,8 +29,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4429293400569442597}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.75, y: 1.041, z: -2.5}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.19567, y: 0.19567, z: 0.19567}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -588,14 +588,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &4429293400569442616
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4429293400569442597}
-  m_Mesh: {fileID: 0}
 --- !u!64 &4429293400569442617
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -636,5 +628,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d4c14976c77e7f40a009dd811e06b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugInstance: 0
+  startingGravityDirection: 1
+  insomnia: 0
+  sleepTimer: 0
+  averagePositionDelta: 0
+--- !u!114 &3778818776505195162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4429293400569442597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6a40073f7b437f47ac45e2580e19e2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

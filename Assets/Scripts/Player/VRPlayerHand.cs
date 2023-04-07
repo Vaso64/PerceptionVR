@@ -23,8 +23,8 @@ namespace PerceptionVR.Player
 
         // Grabbing
         [SerializeField] private TeleportableJoint grabJoint;
-        private IGrabbable holdingItem;
-        private List<IGrabbable> grabbableItems = new();
+        private Grabbable holdingItem;
+        private List<Grabbable> grabbableItems = new();
         
         
 
@@ -90,7 +90,7 @@ namespace PerceptionVR.Player
 
         private void OnTriggerEnter(Collider other)
         {
-            var grabbable = other.GetComponent<IGrabbable>();
+            var grabbable = other.GetComponent<Grabbable>();
             if (grabbable == null || grabbableItems.Contains(grabbable))
                 return;
             
@@ -100,7 +100,7 @@ namespace PerceptionVR.Player
         
         private void OnTriggerExit(Collider other)
         {
-            var grabbable = other.GetComponent<IGrabbable>();
+            var grabbable = other.GetComponent<Grabbable>();
             if (grabbable == null)
                 return;
             

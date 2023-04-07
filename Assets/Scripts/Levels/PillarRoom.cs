@@ -1,38 +1,34 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using PerceptionVR.Levels;
 using PerceptionVR.Puzzle;
 using UnityEngine;
 
 public class PillarRoom : LevelBase
 {
-    [SerializeField] private HoldPressureButton pressurePlate;
+    [SerializeField] private Button pressurePlate;
     [SerializeField] private Door door;
     
     private Coroutine closeDoorCoroutine;
     
     private void Awake()
     {
-        pressurePlate.OnActivated.AddListener(OnActivateCallback);
-        pressurePlate.OnDeactivated.AddListener(OnDeactivateCallback);
+        pressurePlate.OnPressed.AddListener(OnActivateCallback);
+        pressurePlate.OnReleased.AddListener(OnDeactivateCallback);
     }
 
     private void OnActivateCallback()
     {
         if(closeDoorCoroutine != null)
             StopCoroutine(closeDoorCoroutine);
-        door.SetActive(false);
+        door.Open();
     }
     
-    private void OnDeactivateCallback()
-    {
-        closeDoorCoroutine = StartCoroutine(CloseDoor());
-    }
-    
-    private IEnumerator CloseDoor()
+    private void OnDeactivateCallback() => closeDoorCoroutine = StartCoroutine(CloseDoorTimeout());
+
+    private IEnumerator CloseDoorTimeout()
     {
         yield return new WaitForSeconds(7f);
-        door.SetActive(true);
+        door.Close();
     }
 }

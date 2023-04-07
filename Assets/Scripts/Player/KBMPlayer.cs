@@ -22,7 +22,7 @@ namespace PerceptionVR.Player
         [SerializeField] private float grabSpring;
         [SerializeField] private float grabDamper;
         
-        private IGrabbable grabbable;
+        private Grabbable grabbable;
         private TeleportableJoint grabJoint;
 
 
@@ -63,7 +63,7 @@ namespace PerceptionVR.Player
             }
             
             // Grab detection
-            grabbable = UnityEngine.Physics.Raycast(transform.position, transform.forward, out var hit, grabRange) ? hit.collider.GetComponent<IGrabbable>() : null;
+            grabbable = UnityEngine.Physics.Raycast(transform.position, transform.forward, out var hit, grabRange) ? hit.collider.GetComponent<Grabbable>() : null;
         }
     
         private void Move(Vector3 direction, bool sprint)

@@ -1,15 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using PerceptionVR.Levels;
 using PerceptionVR.Puzzle;
 using UnityEngine;
 
 public class MainHallway : LevelBase
 {
-    [SerializeField] private HoldPressureButton pressurePlate1;
-    [SerializeField] private HoldPressureButton pressurePlate2;
-    [SerializeField] private HoldPressureButton pressurePlate3;
+    [SerializeField] private Button pressurePlate1;
+    [SerializeField] private Button pressurePlate2;
+    [SerializeField] private Button pressurePlate3;
     
     [SerializeField] private Indicator indicator1;
     [SerializeField] private Indicator indicator2;
@@ -20,12 +18,12 @@ public class MainHallway : LevelBase
     private void Awake()
     {
         // Light up indicators
-        pressurePlate1.OnChanged.AddListener(active => indicator1.SetActive(active));
-        pressurePlate2.OnChanged.AddListener(active => indicator2.SetActive(active));
-        pressurePlate3.OnChanged.AddListener(active => indicator3.SetActive(active));
+        pressurePlate1.OnChanged.AddListener(active => indicator1.SetColor(active ? Color.green : Color.red));
+        pressurePlate2.OnChanged.AddListener(active => indicator2.SetColor(active ? Color.green : Color.red));
+        pressurePlate3.OnChanged.AddListener(active => indicator3.SetColor(active ? Color.green : Color.red));
 
         // Open door
-        foreach (var indicator in new [] {indicator1, indicator2, indicator3})
-            indicator.OnChanged.AddListener(_ => door.SetActive(!(indicator1.isActivated && indicator2.isActivated && indicator3.isActivated)));
+        foreach (var pressurePlate in new [] {pressurePlate1, pressurePlate2, pressurePlate3})
+            pressurePlate.OnChanged.AddListener(_ => door.SetOpen(new [] {pressurePlate1, pressurePlate2, pressurePlate3}.All(p => p.isPressed)));
     }
 }

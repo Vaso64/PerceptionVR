@@ -29,14 +29,14 @@ namespace PerceptionVR.Physics
                 {
                     // Teleport self when connected body teleports
                     selfTeleportableBody.manualTeleport = true;
-                    connectedTeleportableBody.OnTeleport += teleportData => teleportData.inPortal.Teleport(selfTeleportableBody);
+                    connectedTeleportableBody.OnTeleport += TeleportSelf;
                 }
 
                 else
                 {
                     // Teleport connected body when self teleports
                     connectedTeleportableBody.manualTeleport = true;
-                    selfTeleportableBody.OnTeleport += teleportData => teleportData.inPortal.Teleport(connectedTeleportableBody);
+                    selfTeleportableBody.OnTeleport += TeleportConnected;
                 }
             }
 
@@ -51,13 +51,13 @@ namespace PerceptionVR.Physics
                 if (joint.swapBodies)
                 {
                     selfTeleportableBody.manualTeleport = false;
-                    connectedTeleportableBody.OnTeleport -= teleportData => teleportData.inPortal.Teleport(selfTeleportableBody);
+                    connectedTeleportableBody.OnTeleport -= TeleportSelf;
                 }
 
                 else
                 {
                     connectedTeleportableBody.manualTeleport = false;
-                    selfTeleportableBody.OnTeleport -= teleportData => teleportData.inPortal.Teleport(connectedTeleportableBody);
+                    selfTeleportableBody.OnTeleport -= TeleportConnected;
                 }
                     
                 connectedTeleportableBody = null;
@@ -66,5 +66,8 @@ namespace PerceptionVR.Physics
             joint.connectedBody = null;
             isConnectedToBody = false;
         }
+        
+        private void TeleportConnected(TeleportData teleportData) => teleportData.inPortal.Teleport(connectedTeleportableBody);
+        private void TeleportSelf(TeleportData teleportData) => teleportData.inPortal.Teleport(selfTeleportableBody);
     }
 }

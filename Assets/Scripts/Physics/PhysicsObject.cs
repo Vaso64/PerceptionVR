@@ -23,9 +23,7 @@ namespace PerceptionVR.Physics
         public Quaternion gravityRotation { get; set; } = Quaternion.identity;
 
         private MeshFilter meshFilter;
-
-        [SerializeField] private float averageKineticEnergy;
-        [SerializeField] private float averageVelocity;
+        
         [SerializeField] private float sleepTimer;
         [SerializeField] private float averagePositionDelta;
         private Vector3 previousPosition;
@@ -54,11 +52,10 @@ namespace PerceptionVR.Physics
                 // RB woke up by physics engine
                 if (sleptLastFrame)
                 {
-                    Debugger.LogInfo($"{this} woke up by physics engine");
                     OnAwake?.Invoke();
                     sleepTimer = PhysicsSettings.timeToSleep;
-                    if(PhysicsSettings.debugSleep && meshFilter != null)
-                        meshFilter.mesh.SetVertexColor(Color.white);
+                    //if(PhysicsSettings.debugSleep && meshFilter != null)
+                    //    meshFilter.mesh.SetVertexColor(Color.white);
                 }
 
                 sleepTimer = !insomnia && averagePositionDelta < PhysicsSettings.sleepThreshold ? sleepTimer - Time.fixedDeltaTime : PhysicsSettings.timeToSleep;
@@ -83,8 +80,8 @@ namespace PerceptionVR.Physics
             {
                 rigidbody.Sleep();
                 OnSleep?.Invoke();
-                if(PhysicsSettings.debugSleep && meshFilter != null)
-                    meshFilter.mesh.SetVertexColor(Color.blue);
+                //if(PhysicsSettings.debugSleep && meshFilter != null)
+                //    meshFilter.mesh.SetVertexColor(Color.blue);
             }
         }
         
@@ -96,8 +93,8 @@ namespace PerceptionVR.Physics
                 sleepTimer = PhysicsSettings.timeToSleep;
                 rigidbody.WakeUp();
                 OnAwake?.Invoke();
-                if(PhysicsSettings.debugSleep && meshFilter != null)
-                    meshFilter.mesh.SetVertexColor(Color.white);
+                //if(PhysicsSettings.debugSleep && meshFilter != null)
+                //    meshFilter.mesh.SetVertexColor(Color.white);
             }
         }
 
