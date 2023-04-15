@@ -1,3 +1,5 @@
+using System;
+using PerceptionVR.Debug;
 using PerceptionVR.Portals;
 using UnityEngine;
 
@@ -11,7 +13,7 @@ namespace PerceptionVR.Physics
         private TeleportableObject selfTeleportableBody;
         private TeleportableObject connectedTeleportableBody;
 
-        private void Awake()
+        private void Start()
         {
             selfTeleportableBody = GetComponentInParent<TeleportableObject>();
             if(joint.connectedBody != null)
@@ -66,8 +68,18 @@ namespace PerceptionVR.Physics
             joint.connectedBody = null;
             isConnectedToBody = false;
         }
-        
-        private void TeleportConnected(TeleportData teleportData) => teleportData.inPortal.Teleport(connectedTeleportableBody);
-        private void TeleportSelf(TeleportData teleportData) => teleportData.inPortal.Teleport(selfTeleportableBody);
+
+        private void TeleportConnected(TeleportData teleportData)
+        {
+            //Debugger.LogInfo($"Teleporting {connectedTeleportableBody} through {teleportData.inPortal} because {selfTeleportableBody} also teleported."); 
+            teleportData.inPortal.Teleport(connectedTeleportableBody);
+        }
+        private void TeleportSelf(TeleportData teleportData)
+        {
+            //Debugger.LogInfo($"Teleporting {selfTeleportableBody} through {teleportData.inPortal} because {connectedTeleportableBody} also teleported.");
+            teleportData.inPortal.Teleport(selfTeleportableBody);
+        }
+
+        private void OnDestroy() => ReleaseConnectedBody();
     }
 }

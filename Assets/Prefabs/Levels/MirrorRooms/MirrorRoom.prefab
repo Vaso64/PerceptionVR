@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1797452848815159274}
+  - component: {fileID: 3758912413015888906}
   m_Layer: 0
   m_Name: MirrorRoom
   m_TagString: Untagged
@@ -37,6 +38,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3758912413015888906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7117505719880827779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d39b6ff25aa49cd8e42478dce7f043a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugInstance: 0
+  portalRenderers: []
 --- !u!1 &7754871517598601893
 GameObject:
   m_ObjectHideFlags: 0
@@ -5769,6 +5784,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5680408677026093990, guid: c5013bc3a05c86e409889f15ac95b234, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6539457091444475660, guid: c5013bc3a05c86e409889f15ac95b234, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6539457091444475702, guid: c5013bc3a05c86e409889f15ac95b234, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}

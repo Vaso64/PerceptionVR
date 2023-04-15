@@ -35,8 +35,9 @@ namespace PerceptionVR.Portals
             { DisplayMode.VR, new Stack<int>(RecursionLimit) },
             { DisplayMode.Desktop, new Stack<int>(RecursionLimit) }
         };
-
-        private static List<PortalRenderer> allPortalRenderers = new();
+        
+        public PortalRenderGroup renderGroup;
+        public PortalRenderGroup pairedRenderGroup;
 
         private void Awake()
         {
@@ -48,47 +49,24 @@ namespace PerceptionVR.Portals
             portalRendSharedMat = portalRend.sharedMaterial;
             portalCamera ??= GetComponentInChildren<Camera>();
             portalPropBlock = new();
+            renderGroup = GetComponentInParent<PortalRenderGroup>();
 
-            portal.OnPortalPairSet += _ =>
-            {
-                if (enabled)
-                {
-                    Debugger.LogInfo($"{this}: Portal renderer enabled");
-                    allPortalRenderers.Add(this);
-                    PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
-                }
-
-            };
-
-            portal.OnPortalPairUnset += () => 
-            {
-                if (!enabled)
-                {
-                    Debugger.LogInfo($"{this}: Portal renderer disabled");
-                    allPortalRenderers.Remove(this);
-                    PlayerCamera.OnBeforePlayerCameraRender -= OnBeforePlayerCameraRenderCallback;
-                }
-            };
+            portal.OnPortalPairSet += setPortal => EnablePortalRenderer(setPortal.GetComponentInChildren<PortalRenderer>()); 
+            portal.OnPortalPairUnset += DisablePortalRenderer;
         }
 
-        private void OnEnable()
+        private void EnablePortalRenderer(PortalRenderer portalRendererPair)
         {
-            if (portal.portalPair != null)
-            {
-                Debugger.LogInfo($"{this}: Portal renderer enabled");
-                allPortalRenderers.Add(this);
-                PlayerCamera.OnBeforePlayerCameraRender += OnBeforePlayerCameraRenderCallback;
-            }
+            Debugger.LogInfo($"Portal renderer {this} enabled");
+            renderGroup.Add(this);
+            pairedRenderGroup = portalRendererPair.renderGroup;
         }
         
-        private void OnDisable()
+        private void DisablePortalRenderer()
         {
-            if (portal.portalPair != null)
-            {
-                Debugger.LogInfo($"{this}: Portal renderer disabled");
-                allPortalRenderers.Remove(this);
-                PlayerCamera.OnBeforePlayerCameraRender -= OnBeforePlayerCameraRenderCallback;
-            }
+            Debugger.LogInfo($"Portal renderer {this} disabled");
+            renderGroup.Remove(this);
+            pairedRenderGroup = null;
         }
 
         private void AllocateRTArray(DisplayMode displayMode, Vector2Int resolution)
@@ -103,11 +81,10 @@ namespace PerceptionVR.Portals
         }
 
 
-        private void OnBeforePlayerCameraRenderCallback(Camera playerCamera, Plane[] playerFrustum)
+        public void OnBeforePlayerCameraRenderCallback(Camera playerCamera, Plane[] playerFrustum)
         {
             if (IsVisibleFrom(playerCamera, playerFrustum, out var visibleArea))
             {
-                portalCamera.targetTexture = RTArrays[playerCamera.GetDisplayMode()][0];
                 RenderPortal(playerCamera.transform.GetPose(), visibleArea, playerCamera.fieldOfView, playerCamera.GetDisplayMode(), 0);
                 portalRendSharedMat.mainTextureOffset = playerCamera.rect.position;
                 portalRendSharedMat.mainTextureScale = playerCamera.rect.size;
@@ -128,6 +105,7 @@ namespace PerceptionVR.Portals
         private void RenderPortal(Pose fromPose, Rect visibleArea, float fov, DisplayMode displayMode, int recursionDepth)
         {
             // Setup camera
+            portalCamera.ResetProjectionMatrix();
             portalCamera.rect = new Rect(0, 0, 1, 1);
             portalCamera.fieldOfView = fov;
             portalCamera.targetTexture = RTArrays[displayMode][recursionDepth]; // Set's camera resolution
@@ -143,7 +121,7 @@ namespace PerceptionVR.Portals
             {
                 Rect prVisibleArea = default;
                 var portalCameraFrustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
-                visiblePortalRenderers = allPortalRenderers
+                visiblePortalRenderers = pairedRenderGroup
                     .Where(pr => pr.IsVisibleFrom(portalCamera, portalCameraFrustum, out prVisibleArea))
                     .Select(pr => (pr, prVisibleArea))
                     .ToArray();
@@ -160,6 +138,7 @@ namespace PerceptionVR.Portals
             portalRendSharedMat.mainTextureOffset = visibleArea.position;
             portalRendSharedMat.mainTextureScale = visibleArea.size;
             portalCamera.Render();
+            portalCamera.ResetProjectionMatrix();
             
             // Notify after render
             visiblePortalRenderers?.ForEach(x => x.Item1.OnAfterPortalRenderCallback(displayMode));

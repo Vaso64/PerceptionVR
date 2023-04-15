@@ -14,6 +14,9 @@ namespace PerceptionVR.Global
         [SerializeField] private bool manualArgsEnabled;
         [SerializeField] private string[] manualArgs;
         
+        [SerializeField] private List<GameObject> vrOnlyObjects;
+        [SerializeField] private List<GameObject> kbmOnlyObjects;
+        
         private void Start()
         {
             var args = manualArgsEnabled ? manualArgs : Environment.GetCommandLineArgs();
@@ -28,15 +31,15 @@ namespace PerceptionVR.Global
         {
             if (args.Contains("-vr"))
             {
-                FindObjectOfType<VRPlayer>(includeInactive: true).gameObject.SetActive(true);
-                FindObjectOfType<KBMPlayer>(includeInactive: true).gameObject.SetActive(false);
+                vrOnlyObjects.ForEach(o => o.SetActive(true));
+                kbmOnlyObjects.ForEach(o => o.SetActive(false));
                 StartCoroutine(StartXR());
             }
             
             else
             {
-                FindObjectOfType<VRPlayer>(includeInactive: true).gameObject.SetActive(false);
-                FindObjectOfType<KBMPlayer>(includeInactive: true).gameObject.SetActive(true);
+                vrOnlyObjects.ForEach(o => o.SetActive(false));
+                kbmOnlyObjects.ForEach(o => o.SetActive(true));
             }
         }
 

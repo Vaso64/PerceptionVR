@@ -806,6 +806,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5327482005672431574}
+  - component: {fileID: 5017263958818004388}
   m_Layer: 0
   m_Name: InsideRoom
   m_TagString: Untagged
@@ -833,6 +834,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5017263958818004388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2286952736240294804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d39b6ff25aa49cd8e42478dce7f043a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugInstance: 0
+  portalRenderers: []
 --- !u!1 &2393390907283064373
 GameObject:
   m_ObjectHideFlags: 0

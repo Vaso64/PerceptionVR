@@ -13,8 +13,26 @@ namespace PerceptionVR.Portals
     [RequireComponent(typeof(Portal), typeof(PortalVicinity))]
     public class PortalCloneSystem: MonoBehaviourBase
     {
-        [SerializeField] private List<NearbyTeleportable> objectsInVicinity = new();
+        [Serializable]
+        public class NearbyTeleportable
+        {
+            public readonly TeleportableObject teleportableObject;
+            public readonly TeleportableObjectClone cloneTeleportableObject;
+            public List<Collider> collidersInVicinity;
+            public List<Collider> cloneColliderInPairVicinity;
         
+            public NearbyTeleportable(TeleportableObject teleportableObject, TeleportableObjectClone teleportableObjectClone)
+            {
+                this.teleportableObject = teleportableObject;
+                this.cloneTeleportableObject = teleportableObjectClone;
+                this.collidersInVicinity = new List<Collider>();
+                this.cloneColliderInPairVicinity = new List<Collider>();
+            }
+        }
+        
+        private readonly Dictionary<TeleportableObject, NearbyTeleportable> objectsInVicinity = new();
+        [SerializeField] private List<NearbyTeleportable> serializedObjectsInVicinity = new();
+
         private Portal portal;
         private PortalVicinity vicinity;
         private PortalCloneSystem pairCloneSystem;
@@ -22,19 +40,18 @@ namespace PerceptionVR.Portals
         private void Awake()
         {
             portal = GetComponent<Portal>();
-            vicinity = GetComponent<PortalVicinity>();
-
             portal.OnPortalPairSet   += portalPair => pairCloneSystem = portalPair.transform.GetComponentInChildren<PortalCloneSystem>();
             portal.OnPortalPairUnset += () =>
             {
-                objectsInVicinity.ToList().ForEach(UnregisterTeleportable);
+                objectsInVicinity.ToList().ForEach(x => UnregisterTeleportable(x.Value));
                 pairCloneSystem = null;
             };
+            portal.OnTeleport += OnTeleportCallback;
+            //GlobalEvents.OnTeleport += OnTeleportCallback;
             
+            vicinity = GetComponent<PortalVicinity>();
             vicinity.OnLargeToFront += OnVicinityEnter;
             vicinity.OnFrontToLarge += OnVicinityExit;
-
-            GlobalEvents.OnTeleport += OnTeleportCallback;
         }
 
 
@@ -45,10 +62,9 @@ namespace PerceptionVR.Portals
             // Collider belongs to teleportable
             if (other.GetComponentInParent<TeleportableObject>() is { } tp)
             {
-                // Teleportable is registered in vicinity
-                if(objectsInVicinity.FirstOrDefault(x => x.teleportableObject == tp) is { } nearbyTeleportable)
-                    nearbyTeleportable.collidersInVicinity.Add(other);
-
+                if(objectsInVicinity.TryGetValue(tp, out var nearbyTp))
+                    nearbyTp.collidersInVicinity.Add(other);
+                
                 // Teleportable not yet registered in vicinity
                 else
                     RegisterTeleportable(tp).collidersInVicinity.Add(other);
@@ -58,8 +74,8 @@ namespace PerceptionVR.Portals
             else if (other.GetComponentInParent<TeleportableObjectClone>() is { } tpClone)
             {
                 // Clone is registered in pair's vicinity
-                if (pairCloneSystem.objectsInVicinity.FirstOrDefault(x => x.cloneTeleportableObject == tpClone) is { } nearbyPairTeleportable)
-                    nearbyPairTeleportable.cloneColliderInPairVicinity.Add(other);
+                if (pairCloneSystem.objectsInVicinity.TryGetValue(tpClone.currentTarget, out var nearbyPairTp))
+                    nearbyPairTp.cloneColliderInPairVicinity.Add(other);
             }
             
             // Unknown collider
@@ -70,44 +86,47 @@ namespace PerceptionVR.Portals
         private void OnVicinityExit(Collider other)
         {
             Debugger.LogInfo($"{other} exited vicinity of {this}");
-            var tp = other.GetComponentInParent<TeleportableObject>();
-            
+
             // Collider belongs to object in vicinity
-            if (objectsInVicinity.FirstOrDefault(x => x.teleportableObject == tp) is { } nearbyTeleportable)
+            if (other.GetComponentInParent<TeleportableObject>() is { } tp && objectsInVicinity.TryGetValue(tp, out var nearbyTp))
             {
-                nearbyTeleportable.collidersInVicinity.Remove(other);
-                
-                // No more colliders in vicinity
-                if(nearbyTeleportable.collidersInVicinity.Count == 0)
-                    UnregisterTeleportable(nearbyTeleportable);
+                nearbyTp.collidersInVicinity.Remove(other);
+
+                    // No more colliders in vicinity
+                if(nearbyTp.collidersInVicinity.Count == 0)
+                    UnregisterTeleportable(nearbyTp);
             }
 
             // Collider belongs to object clone in vicinity
             else if (other.GetComponentInParent<TeleportableObjectClone>() is { } tpClone)
             {
-                if (pairCloneSystem.objectsInVicinity.FirstOrDefault(x => x.cloneTeleportableObject == tpClone) is { } nearbyPairTeleportable)
-                    nearbyPairTeleportable.cloneColliderInPairVicinity.Remove(other);
+                if (pairCloneSystem.objectsInVicinity.TryGetValue(tpClone.currentTarget, out var nearbyPairTp))
+                    nearbyPairTp.cloneColliderInPairVicinity.Remove(other);
             }
         }
         
-        private NearbyTeleportable RegisterTeleportable(TeleportableObject teleportableObjectObject)
+        private NearbyTeleportable RegisterTeleportable(TeleportableObject teleportableObject)
         {
-            Debugger.LogInfo($"Registering {teleportableObjectObject} in {this}");
+            Debugger.LogInfo($"Registering {teleportableObject} in {this}");
             
             // Create clone
-            var clone = CreateClone(teleportableObjectObject, trackedPortal: portal);
+            var clone = CreateClone(teleportableObject);
+            
+            // Track clone
+            clone.Track(teleportableObject, portal);
             
             // Scale clone
             clone.transform.localScale *= 1 / portal.scaleRatio;
             
             // Register teleportable
-            var nearbyTeleportable = new NearbyTeleportable(teleportableObjectObject, clone);
-            nearbyTeleportable.cloneColliderInPairVicinity.AddRange(clone.transform.GetComponentsInChildren<Collider>());
-            objectsInVicinity.Add(nearbyTeleportable);
+            var nt = new NearbyTeleportable(teleportableObject, clone);
+            nt.cloneColliderInPairVicinity.AddRange(clone.transform.GetComponentsInChildren<Collider>());
+            objectsInVicinity.Add(nt.teleportableObject, nt);
+            serializedObjectsInVicinity.Add(nt);
             
             pairCloneSystem.vicinity.OnCloneIn?.Invoke(clone.gameObject);
             
-            return nearbyTeleportable;
+            return nt;
         }
         
         private void UnregisterTeleportable(NearbyTeleportable teleportable)
@@ -118,18 +137,17 @@ namespace PerceptionVR.Portals
             GameObjectUtility.DestroyNotify(teleportable.cloneTeleportableObject.gameObject);
             
             // Unregister teleportable
-            objectsInVicinity.Remove(teleportable);
+            objectsInVicinity.Remove(teleportable.teleportableObject);
+            serializedObjectsInVicinity.Remove(teleportable);
         }
 
 
         private void OnTeleportCallback(TeleportData teleportData)
         {
             // nt = "nearby teleportable"
-            
-            var nt = objectsInVicinity.FirstOrDefault(x => x.teleportableObject == teleportData.teleportableObject && portal == teleportData.inPortal);
-            if(nt == null)
+            if(!objectsInVicinity.TryGetValue(teleportData.teleportableObject, out var nt))
                 return;
-            
+
             // Scale clone
             nt.cloneTeleportableObject.transform.localScale *= teleportData.inPortal.scaleRatio;
 
@@ -138,7 +156,7 @@ namespace PerceptionVR.Portals
             // Notify swap
             GlobalEvents.OnSwap?.Invoke(swapData);
 
-            Debugger.LogInfo($"Swapping teleportables of {swapData.teleportableSwap.Item1} and {swapData.teleportableSwap.Item2} in {this}");
+            //Debugger.LogInfo($"Swapping teleportables of {swapData.teleportableSwap.Item1} and {swapData.teleportableSwap.Item2} in {this}");
 
             // Swap colliders
             SwapUtility.PerformSwap(nt.collidersInVicinity, swapData.colliderSwaps);
@@ -148,23 +166,27 @@ namespace PerceptionVR.Portals
             (nt.collidersInVicinity, nt.cloneColliderInPairVicinity) = (nt.cloneColliderInPairVicinity, nt.collidersInVicinity);
 
             // Transfer nt to pair
-            objectsInVicinity.Remove(nt);
-            pairCloneSystem.objectsInVicinity.Add(nt);
+            objectsInVicinity.Remove(nt.teleportableObject);
+            serializedObjectsInVicinity.Remove(nt);
+            pairCloneSystem.objectsInVicinity.Add(nt.teleportableObject, nt);
+            pairCloneSystem.serializedObjectsInVicinity.Add(nt);
         }
         
         
-        private TeleportableObjectClone CreateClone(TeleportableObject original, Portal trackedPortal)
+        private TeleportableObjectClone CreateClone(TeleportableObject original)
         {
             // Clone original
             var clone = GameObjectUtility.InstantiateNotify(original.gameObject);
             clone.transform.name = clone.transform.name.Replace("(Clone)", "");
 
-            IEnumerable<Type> defaultPreservedComponents = new [] { typeof(Rigidbody), typeof(Collider), typeof(MeshRenderer), 
+            IEnumerable<Type> defaultPreservedComponents = new [] { typeof(Rigidbody),  typeof(Collider),  typeof(MeshRenderer), 
                                                                     typeof(MeshFilter), typeof(Transform), typeof(PhysicsObject) };
             
             // Strip joints immediately so it won't mess with physics
             foreach (var cloneJoint in clone.GetComponentsInChildren<TeleportableJoint>().Cast<Component>().Concat(clone.GetComponentsInChildren<Joint>()))
                 GameObjectUtility.DestroyComponentImmediateNotify(cloneJoint);
+            
+            var cloneData = new CloneData(original.gameObject, clone, portal, portal.portalPair);
             
             // Iterate children nodes
             foreach (var cloneNode in clone.GetComponentsInChildren<Component>().GroupBy(x => x.transform))
@@ -174,7 +196,8 @@ namespace PerceptionVR.Portals
                 // If node has TeleportableBehaviour
                 if (cloneNode.OfType<ITeleportableBehaviour>().FirstOrDefault() is { } tb)
                 {
-                    tb.OnCreateClone(cloneNode.Key.gameObject, out var extraPreservedComponents);
+                    cloneData.clone = tb.gameObject;
+                    tb.OnCreateClone(cloneData, out var extraPreservedComponents);
                     preservedComponents = preservedComponents.Concat(extraPreservedComponents);
                     cloneNode.Key.gameObject.AddComponent<TeleportableBehaviourClone>();
                 }
@@ -187,17 +210,20 @@ namespace PerceptionVR.Portals
                         GameObjectUtility.DestroyComponentNotify(component);
                 }
                 
+                // Add TransformClone
+                if (cloneNode.Key != clone.transform)
+                    cloneNode.Key.gameObject.AddComponent<LocalTransformClone>();
+                
                 // Append "(Clone)" to name
                 cloneNode.Key.name += " (Clone)";
             }
             
             // PhysicsObject / Transform
             if (original.TryGetComponent<PhysicsObject>(out _)) clone.AddComponentNotify<PhysicsObjectClone>();
-            else                                                clone.AddComponentNotify<TransformClone>();
+            else                                                clone.AddComponentNotify<LocalTransformClone>();
 
             var teleportableClone = clone.AddComponentNotify<TeleportableObjectClone>();
-            teleportableClone.Track(original, trackedPortal);
-            
+
             Debugger.LogInfo($"{original.transform} was cloned.");
 
             return teleportableClone;

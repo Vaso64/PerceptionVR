@@ -12,7 +12,7 @@ namespace PerceptionVR.Physics
     {
         [SerializeField] private Direction startingGravityDirection = Direction.Down;
 
-        [SerializeField] private bool insomnia;
+        public bool insomnia;
         
         private readonly List<PhysicsObject> touchingObjects = new();
         

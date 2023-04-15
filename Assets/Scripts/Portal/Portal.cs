@@ -1,4 +1,5 @@
 using System;
+using PerceptionVR.Debug;
 using UnityEngine;
 using PerceptionVR.Extensions;
 using PerceptionVR.Global;
@@ -10,6 +11,8 @@ namespace PerceptionVR.Portals
     public partial class Portal: MonoBehaviourBase
     {
         [SerializeField] private Portal startingPortalPair;
+
+        public event Action<TeleportData> OnTeleport;
 
         public Collider portalCollider { get; private set; }
 
@@ -32,6 +35,8 @@ namespace PerceptionVR.Portals
 
         public void Teleport(TeleportableObject teleportableObject)
         {
+            Debugger.LogInfo($"Teleporting {teleportableObject} through {this}!");
+            
             // Teleport the object
             var pairPose = this.PairPose(teleportableObject.transform.GetPose(), out var rotationDelta);
             teleportableObject.transform.SetPose(pairPose);
@@ -59,6 +64,7 @@ namespace PerceptionVR.Portals
             };
             
             GlobalEvents.OnTeleport?.Invoke(teleportData);
+            OnTeleport?.Invoke(teleportData);
             teleportableObject.OnTeleport?.Invoke(teleportData);
         }
     }

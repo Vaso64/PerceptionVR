@@ -19,14 +19,14 @@ namespace PerceptionVR.Portals
         
         
         // Set tracking target
-        public override void Track(T target, Portal throughPortal)
+        public override void Track(T targetTeleportable, Portal throughPortal)
         {
-            currentPosition = target.transform.position;
+            currentPosition = targetTeleportable.transform.position;
             previousPosition = currentPosition;
             currentPortalSide = throughPortal.portalPlane.GetSide(currentPosition);
             previousPortalSide = currentPortalSide;
             
-            base.Track(target, throughPortal);
+            base.Track(targetTeleportable, throughPortal);
         }
         
         // Track target position

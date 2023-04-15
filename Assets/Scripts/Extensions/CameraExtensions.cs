@@ -82,11 +82,11 @@ namespace PerceptionVR.Extensions
             public static void SetScissorRect(this Camera camera, Rect rect)
             {
                 var pm = camera.projectionMatrix;
-                var aspect = camera.aspect;
+                var cameraRect = camera.rect;
                 pm.m02 = (2f * rect.x + rect.width - 1f) / rect.width;
                 pm.m12 = (2f * rect.y + rect.height - 1f) / rect.height;
-                pm.m00 = 1f / (rect.width * aspect);
-                pm.m11 = 1f /  rect.height;
+                pm.m00 *= cameraRect.width / rect.width;
+                pm.m11 *= cameraRect.height / rect.height;
                 camera.projectionMatrix = pm;
                 camera.rect = rect;
             }

@@ -2,22 +2,20 @@ using System;
 using PerceptionVR.Physics;
 using PerceptionVR.Portals;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace PerceptionVR.Player
 {
-    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(PhysicsObject))]
     [RequireComponent(typeof(TeleportableObject))]
     public class PlayerBase: MonoBehaviourBase
     {
-        public Action<TeleportData> OnTeleport { get; set; }
-        public bool manualTeleport { get; set; }
-        
-        protected PhysicsObject playerPhysicsObject;
-        
-        public new Rigidbody rigidbody {get; private set; }
+        [FormerlySerializedAs("teleportableObject")] public TeleportableObject playerTeleportableObject;
+        [FormerlySerializedAs("physicsObject")] public PhysicsObject playerPhysicsObject;
 
         protected virtual void Awake()
         {
+            playerTeleportableObject = GetComponent<TeleportableObject>();
             playerPhysicsObject = GetComponent<PhysicsObject>();
         }
     }

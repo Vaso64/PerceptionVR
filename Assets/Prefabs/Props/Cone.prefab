@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 4429293400569442598}
   - component: {fileID: 4429293400569442599}
   - component: {fileID: 3778818776505195162}
+  - component: {fileID: 5752508697946194885}
+  - component: {fileID: 3454136230115836811}
   m_Layer: 0
   m_Name: Cone
   m_TagString: Untagged
@@ -647,3 +649,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a40073f7b437f47ac45e2580e19e2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!33 &5752508697946194885
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4429293400569442597}
+  m_Mesh: {fileID: 0}
+--- !u!114 &3454136230115836811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4429293400569442597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5997c7316c2c4c31a867e577f792e90e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugInstance: 0

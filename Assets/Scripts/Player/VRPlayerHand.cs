@@ -13,7 +13,8 @@ using PerceptionVR.Physics;
 namespace PerceptionVR.Player
 {
     //[RequireComponent(typeof(TeleportableJoint))]
-    public class VRPlayerHand: MonoBehaviourBase, ITeleportableBehaviour
+    // TODO: Teleportable behaviour
+    public class VRPlayerHand: MonoBehaviourBase
     {
         private VRPlayerInput playerInput;
         
@@ -23,23 +24,13 @@ namespace PerceptionVR.Player
 
         // Grabbing
         [SerializeField] private TeleportableJoint grabJoint;
+        [SerializeField] private float grabSpring = 1000;
+        [SerializeField] private float grabDamper = 10;
+        [SerializeField] private float grabAngularSpring = 360;
+        [SerializeField] private float grabAngularDamper = 1;
         private Grabbable holdingItem;
         private List<Grabbable> grabbableItems = new();
-        
-        
 
-        public void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents)
-        {
-            preservedComponents = Enumerable.Empty<Type>();
-            clone.GetComponentInChildren<Renderer>().material.color = Color.gray;
-        }
-
-        public void TransferBehaviour(GameObject from, GameObject to)
-        {
-            // TODO: Transfer behaviour
-            from.GetComponentInChildren<Renderer>().material.color = Color.gray;
-            to.GetComponentInChildren<Renderer>().material.color = Color.red;
-        }
 
         private void Awake()
         {
@@ -118,7 +109,10 @@ namespace PerceptionVR.Player
 
             // Create fixed grab joint to hold item
             Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
-            grabJoint.SetConnectedBody(holdingItem.rigidbody);
+            holdingItem.physicsObject.insomnia = true;
+            grabJoint.SetConnectedBody(holdingItem.physicsObject.rigidbody);
+            grabJoint.joint.SetDrive(grabSpring, grabDamper);
+            grabJoint.joint.SetAngularDrive(grabAngularSpring, grabAngularDamper);
         }
         
         private void OnRelease()
@@ -128,7 +122,10 @@ namespace PerceptionVR.Player
 
             // Destroy grab joint
             Debugger.LogInfo(holdingItem.transform.name + " released by " + handSide + " hand");
+            holdingItem.physicsObject.insomnia = false;
             grabJoint.ReleaseConnectedBody();
+            grabJoint.joint.SetDrive(0, 0);
+            grabJoint.joint.SetAngularDrive(0, 0);
             holdingItem = null;
         }
     }

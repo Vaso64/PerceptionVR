@@ -6,50 +6,40 @@ namespace PerceptionVR.Portals
 {
     public class TeleportableBehaviourClone : TrackedCloneBase<Transform>
     {
-        private bool hasBehaviour;
         private ITeleportableBehaviour currenTeleportableBehaviourTarget;
+        private CloneData cloneData;
 
         private void Awake()
         {
             // Transfer behaviour from target to self
             base.OnEnterPortal += () =>
             {
-                hasBehaviour = true;
-                currenTeleportableBehaviourTarget.TransferBehaviour(currenTeleportableBehaviourTarget.gameObject, gameObject);
+                currenTeleportableBehaviourTarget.OnEnterPortal(cloneData);
                 Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from  {currenTeleportableBehaviourTarget.gameObject} to {gameObject}");
             };
             
             // Transfer behaviour from self to target
             base.OnExitPortal += () =>
             {
-                hasBehaviour = false;
-                currenTeleportableBehaviourTarget.TransferBehaviour(gameObject, currenTeleportableBehaviourTarget.gameObject);
+                currenTeleportableBehaviourTarget.OnExitPortal(cloneData);
                 Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from {gameObject} to {currenTeleportableBehaviourTarget.gameObject}");
             };
         }
 
         // Swap behaviour on main teleport
-        private void Start() => GetComponentInParent<TeleportableObjectClone>().OnEnterPortal += SwapBehaviour;
+        private void Start() => GetComponentInParent<TeleportableObjectClone>().OnTeleport += SwapBehaviour;
 
         public void Track(ITeleportableBehaviour target, Portal throughPortal)
         {
             this.currenTeleportableBehaviourTarget = target;
+            cloneData = new CloneData(target.gameObject, gameObject, throughPortal.portalPair, throughPortal);
             base.Track(target.transform, throughPortal);
         }
 
-        private void SwapBehaviour()
+        private void SwapBehaviour(TeleportData _)
         {
-            if (hasBehaviour)
-            {
-                currenTeleportableBehaviourTarget.TransferBehaviour(gameObject, currenTeleportableBehaviourTarget.gameObject);
-                Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from {gameObject} to {currenTeleportableBehaviourTarget.gameObject}");
-            }
-            else
-            {
-                currenTeleportableBehaviourTarget.TransferBehaviour(currenTeleportableBehaviourTarget.gameObject, gameObject);
-                Debugger.LogInfo($"Transferred behaviour {currenTeleportableBehaviourTarget.GetType()} from  {currenTeleportableBehaviourTarget.gameObject} to {gameObject}");
-            }
-            hasBehaviour = !hasBehaviour;
+            currenTeleportableBehaviourTarget.OnTeleport(cloneData);
+            Debugger.LogInfo($"Swapped behaviour {currenTeleportableBehaviourTarget.GetType()} between {gameObject} and {currenTeleportableBehaviourTarget.gameObject}");
         }
     }
 }

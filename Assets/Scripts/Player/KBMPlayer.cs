@@ -23,6 +23,7 @@ namespace PerceptionVR.Player
         [SerializeField] private float grabDamper;
         
         private Grabbable grabbable;
+        private Grabbable holdingItem;
         private TeleportableJoint grabJoint;
 
 
@@ -94,11 +95,22 @@ namespace PerceptionVR.Player
 
         private void OnGrab()
         {
+            // Release
             if (grabJoint.isConnectedToBody)
+            {
+                holdingItem.physicsObject.insomnia = false;
                 grabJoint.ReleaseConnectedBody();
-
+                holdingItem = null;
+            }
+                
+            // Grab
             else if (grabbable != null)
-                grabJoint.SetConnectedBody(grabbable.rigidbody);
+            {
+                holdingItem = grabbable;
+                holdingItem.physicsObject.insomnia = true;
+                grabJoint.SetConnectedBody(grabbable.physicsObject.rigidbody);
+            }
+                
         }
     }
 }

@@ -7,8 +7,12 @@ namespace PerceptionVR.Portals
 {
     public interface ITeleportableBehaviour : IMonoBehaviour
     {
-        void OnCreateClone(GameObject clone, out IEnumerable<Type> preservedComponents);
+        void OnCreateClone(CloneData cloneData, out IEnumerable<Type> preservedComponents);
 
-        void TransferBehaviour(GameObject from, GameObject to);
+        void OnEnterPortal(CloneData cloneData);
+        
+        void OnExitPortal(CloneData cloneData);
+        
+        void OnTeleport(CloneData cloneData);
     }
 }

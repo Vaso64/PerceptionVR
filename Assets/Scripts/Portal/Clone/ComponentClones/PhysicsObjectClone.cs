@@ -13,7 +13,7 @@ namespace PerceptionVR.Portals
         private void Awake() => physicsObject = GetComponent<PhysicsObject>();
 
 
-        public override void Track(PhysicsObject target, Portal throughPortal)
+        public override void Track(PhysicsObject targetTeleportable, Portal throughPortal)
         {
             // Unregister from old target
             if(targetSet)
@@ -23,17 +23,17 @@ namespace PerceptionVR.Portals
             }
             
             // Register to new
-            target.OnAwake += physicsObject.WakeUp;
-            target.OnSleep += physicsObject.Sleep;
+            targetTeleportable.OnAwake += physicsObject.WakeUp;
+            targetTeleportable.OnSleep += physicsObject.Sleep;
             
             // Position object
-            physicsObject.transform.SetPose(throughPortal.PairPose(target.transform.GetPose(), out var rotationDelta));
+            physicsObject.transform.SetPose(throughPortal.PairPose(targetTeleportable.transform.GetPose(), out var rotationDelta));
             
             // Set gravity
-            physicsObject.rigidbody.useGravity = target.rigidbody.useGravity;
-            physicsObject.gravityRotation = rotationDelta * target.gravityRotation;
+            physicsObject.rigidbody.useGravity = targetTeleportable.rigidbody.useGravity;
+            physicsObject.gravityRotation = rotationDelta * targetTeleportable.gravityRotation;
             
-            base.Track(target, throughPortal);
+            base.Track(targetTeleportable, throughPortal);
         }
         
         private void FixedUpdate()
