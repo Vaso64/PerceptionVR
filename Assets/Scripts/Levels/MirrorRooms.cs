@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using MoreLinq;
 using PerceptionVR.Levels;
 using PerceptionVR.Portals;
 using PerceptionVR.Puzzle;
@@ -6,59 +8,85 @@ using UnityEngine;
 
 public class MirrorRooms : LevelBase
 {
-    [SerializeField] private List<Portal> randomPortalPool;
-    [SerializeField] private List<Button> buttons;
-    [SerializeField] private List<Indicator> indicators;
-    [SerializeField] private Door exitDoor;
-    private readonly List<Button> pressedButtons = new ();
+    [System.Serializable] private class Room
+    {
+        public List<Portal> portals;
+    }
+    
+    [System.Serializable] private class ButtonRoom : Room
+    {
+        public Button button;
+        public Indicator indicator;
+        public bool wasPressed;
+    }
+    
+    [System.Serializable] private class MainRoom : Room
+    {
+        public Door exitDoor;
+    }
+    
+    [SerializeField] private MainRoom mainRoom = new();
+    [SerializeField] private List<ButtonRoom> buttonRooms = new();
 
     private void Start()
     {
-        if (randomPortalPool.Count % 2 != 0)
-            Debug.LogWarning("Uneven number of portals in pool.");
-        
-        // Randomly connect portals
-        var randomPortalPoolCopy = new List<Portal>(randomPortalPool);
-        while (randomPortalPoolCopy.Count > 1)
+        // Get list of unconnected portals and rooms
+        var notConnectedRooms = buttonRooms.Cast<Room>().ToList();
+        notConnectedRooms.Add(mainRoom);
+        var notConnectedPortal = notConnectedRooms.SelectMany(x => x.portals).ToList();
+        if (notConnectedPortal.Count % 2 != 0)
+            Debug.LogWarning("Uneven number of total portals.");
+
+        // Connect one portal from each room to a random portal in the other room so all rooms are connected
+        var currentRoom = notConnectedRooms[Random.Range(0, notConnectedRooms.Count)];
+        notConnectedRooms.Remove(currentRoom);
+        while (notConnectedRooms.Count > 0)
         {
-            // Pick two random portals from the pool
-            var randomPortal1 = randomPortalPoolCopy[Random.Range(0, randomPortalPoolCopy.Count)];
-            randomPortalPoolCopy.Remove(randomPortal1);
-            var randomPortal2 = randomPortalPoolCopy[Random.Range(0, randomPortalPoolCopy.Count)];
-            randomPortalPoolCopy.Remove(randomPortal2);
+            var nextRoom = notConnectedRooms[Random.Range(0, notConnectedRooms.Count)];
+            notConnectedRooms.Remove(nextRoom);
             
-            // Connect them
+            // Pick two unpaired portals
+            var currentRoomPortal = currentRoom.portals.Shuffle().First(x => notConnectedPortal.Contains(x)); notConnectedPortal.Remove(currentRoomPortal);
+            var nextRoomPortal =       nextRoom.portals.Shuffle().First(x => notConnectedPortal.Contains(x)); notConnectedPortal.Remove(nextRoomPortal);
+            Portal.SetPortalPair(currentRoomPortal, nextRoomPortal);
+            currentRoom = nextRoom;
+        }
+        
+        // Connect rest of the portals
+        while (notConnectedPortal.Count > 1)
+        {
+            // Pick two random portals and pair them
+            var randomPortal1 = notConnectedPortal[Random.Range(0, notConnectedPortal.Count)]; notConnectedPortal.Remove(randomPortal1);
+            var randomPortal2 = notConnectedPortal[Random.Range(0, notConnectedPortal.Count)]; notConnectedPortal.Remove(randomPortal2);
             Portal.SetPortalPair(randomPortal1, randomPortal2);
         }
 
-        foreach (var button in buttons)
+        // Add listeners to buttons
+        foreach (var room in buttonRooms)
         {
-            button.OnPressed.AddListener(() => OnButtonPressed(button));
-            button.OnChanged.AddListener(active => button.SetColor(active ? Color.green : Color.red));
+            room.button.OnPressed.AddListener(() => OnButtonPressed(room));
+            room.button.OnChanged.AddListener(active => room.button.SetColor(active ? Color.green : Color.red));
         }
-            
     }
 
-    private void OnButtonPressed(Button button)    
+    private void OnButtonPressed(ButtonRoom pressedButtonRoom)   
     {
-        // If button was already pressed => Reset indicators
-        if (pressedButtons.Contains(button))
+        // If button was already pressed => Reset
+        if (pressedButtonRoom.wasPressed) foreach (var room in buttonRooms)
         {
-            pressedButtons.Clear();
-            foreach (var indicator in indicators)
-                indicator.SetColor(Color.red);
-            exitDoor.Close();
+            room.wasPressed = false;
+            room.indicator.SetColor(Color.red);
+            mainRoom.exitDoor.Close();
         }
-        
-        // If not => Light up indicator
+        // If not => Set button to pressed
         else
         {
-            pressedButtons.Add(button);
-            indicators[pressedButtons.IndexOf(button)].SetColor(Color.green);
+            pressedButtonRoom.wasPressed = true;
+            pressedButtonRoom.indicator.SetColor(Color.green);
         }
         
-        // If all indicators are lit up
-        if (pressedButtons.Count == buttons.Count)
-            exitDoor.Open();
+        // If all buttons are pressed => Open exit door
+        if (buttonRooms.All(room => room.wasPressed))
+            mainRoom.exitDoor.Open();
     }
 }
