@@ -80,9 +80,12 @@ namespace PerceptionVR.Physics
                 // If slow => Make "RegisterSwappable" without GetComponentInParent
                 TryUnregisterSwappable(applicableSwap.removed);
                 TryRegisterSwappable(applicableSwap.added);
+                StartCoroutine(AddLastFrame(applicableSwap.added));
+                StartCoroutine(RemoveLastFrame(applicableSwap.removed));
                 shouldSwapOut.Add(applicableSwap.removed);
                 shouldSwapIn.Add(applicableSwap.added);
             }
+            ProcessQueue();
         }
 
         private void TryRegisterSwappable(Collider other)

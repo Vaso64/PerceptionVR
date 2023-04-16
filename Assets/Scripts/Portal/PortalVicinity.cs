@@ -13,13 +13,7 @@ namespace PerceptionVR.Portals
         [SerializeField] public SubscribableSwapTrigger frontArea;
         [SerializeField] public SubscribableSwapTrigger passingArea;
         [SerializeField] public SubscribableSwapTrigger insideArea;
-        
-        
-        private readonly List<Collider> frontAreaLastFrame = new ();
-        private readonly List<Collider> passingAreaLastFrame = new ();
-        private readonly List<Collider> insideAreaLastFrame = new ();
 
-        
         public event Action<Collider> OnOutsideToLarge;
         public event Action<Collider> OnLargeToOutside;
         
@@ -45,13 +39,6 @@ namespace PerceptionVR.Portals
             passingArea.onTriggerExit  += OnPassingAreaExit;
         }
 
-        private void FixedUpdate()
-        {
-            insideAreaLastFrame.Clear();  insideAreaLastFrame.AddRange(insideArea);
-            passingAreaLastFrame.Clear(); passingAreaLastFrame.AddRange(passingArea);
-            frontAreaLastFrame.Clear();   frontAreaLastFrame.AddRange(frontArea);
-        }
-
         private void OnLargeAreaEnter(Collider other)
         {
             if(!frontArea.Contains(other))
@@ -60,14 +47,14 @@ namespace PerceptionVR.Portals
 
         private void OnLargeAreaExit(Collider other)
         {
-            if(!frontAreaLastFrame.Contains(other))
+            if(!frontArea.collidersInsideLastFrame.Contains(other))
                 OnLargeToOutside?.Invoke(other);
         } 
 
         private void OnFrontAreaEnter(Collider other)
         {
             // Entered from passing area
-            if (passingArea.Contains(other) || passingAreaLastFrame.Contains(other))
+            if (passingArea.Contains(other) || passingArea.collidersInsideLastFrame.Contains(other))
                 return;
 
             // Entered from outside
@@ -77,7 +64,7 @@ namespace PerceptionVR.Portals
         private void OnFrontAreaExit(Collider other)
         {
             // Entered to passing area
-            if(passingAreaLastFrame.Contains(other))
+            if(passingArea.collidersInsideLastFrame.Contains(other))
                 return;
 
             // Entered to outside
@@ -87,11 +74,11 @@ namespace PerceptionVR.Portals
         private void OnPassingAreaEnter(Collider other)
         {
             // Entered from front area
-            if(frontAreaLastFrame.Contains(other))
+            if(frontArea.collidersInsideLastFrame.Contains(other))
                 OnFrontToPass?.Invoke(other);
             
             // Entered from inside area
-            else if(insideAreaLastFrame.Contains(other))
+            else if(insideArea.collidersInsideLastFrame.Contains(other))
                 OnInsideToPass?.Invoke(other);
             
             else
