@@ -6,6 +6,7 @@ using PerceptionVR.Global;
 using UnityEngine;
 using PerceptionVR.Common.Generic;
 using PerceptionVR.Debug;
+using PerceptionVR.Extensions;
 using PerceptionVR.Portals;
 
 namespace PerceptionVR.Physics
@@ -16,6 +17,8 @@ namespace PerceptionVR.Physics
         public enum FilterMode { Include, Exclude }
 
         [HideInInspector] public string debugName = "";
+        
+        private Dictionary<ISwappable, List<Collider>> swappableColliders = new();
 
         public void SetFilter(FilterMode mode, IEnumerable<ColliderGroup> filterGroups)
         {
@@ -26,10 +29,44 @@ namespace PerceptionVR.Physics
             //ComponentTracking.allColliders.OnRemoved += RemoveRange;        
             
             // Swap colliders on swap event
-            GlobalEvents.OnSwap += swapData => SwapUtility.PerformSwap(this, swapData.colliderSwaps);
+            //GlobalEvents.OnSwap += swapData => SwapUtility.PerformSwap(this, swapData.colliderSwaps);
             
-            // Un-ignore added colliders with rest of this group
-            OnAdded += colliders => CollisionMatrix.SetCollisions(this, colliders, true);
+            
+            OnAdded += colliders =>
+            {
+                // Un-ignore added colliders with rest of this group
+                CollisionMatrix.SetCollisions(this, colliders, true);
+                
+                // Register swap event
+                foreach (var collider in colliders)
+                {
+                    if (collider.TryGetComponentInParent(out ISwappable swappable))
+                    {
+                        if (swappableColliders.TryGetValue(swappable, out var colliderList))
+                            colliderList.Add(collider);
+                        else
+                        {
+                            swappableColliders.Add(swappable, new List<Collider> {collider});
+                            swappable.OnSwap += PerformSwap;
+                        }
+                    }
+                }
+            };
+
+            OnRemoved += colliders =>
+            {
+                // Unregister swap event
+                foreach (var collider in colliders)
+                    if (collider.TryGetComponentInParent(out ISwappable swappable) && swappableColliders.TryGetValue(swappable, out var colliderList))
+                    {
+                        colliderList.Remove(collider);
+                        if (colliderList.Count == 0)
+                        {
+                            swappableColliders.Remove(swappable);
+                            swappable.OnSwap -= PerformSwap;
+                        }
+                    }
+            };
             
             switch (mode)
             {
@@ -91,5 +128,7 @@ namespace PerceptionVR.Physics
             collection.RemoveAll(x => x == null);
             return base.GetEnumerator();
         }
+        
+        private void PerformSwap(SwapData swapData) => SwapUtility.PerformSwap(this, swapData.colliderSwaps);
     }
 }

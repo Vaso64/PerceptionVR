@@ -155,6 +155,13 @@ namespace PerceptionVR.Portals
             
             // Notify swap
             GlobalEvents.OnSwap?.Invoke(swapData);
+            
+            // Create copy of OnSwap event
+            var ntOnSwap = (Action<SwapData>)nt.teleportableObject.OnSwap.Clone();
+            var ntcOnSwap = (Action<SwapData>)nt.cloneTeleportableObject.OnSwap.Clone();
+
+            ntOnSwap?.Invoke(swapData);
+            ntcOnSwap?.Invoke(swapData);
 
             //Debugger.LogInfo($"Swapping teleportables of {swapData.teleportableSwap.Item1} and {swapData.teleportableSwap.Item2} in {this}");
 

@@ -8,9 +8,12 @@ using PerceptionVR.Physics;
 
 namespace PerceptionVR.Portals
 {
-    public class TeleportableObjectClone : TrackedCloneBase<TeleportableObject>
+    public class TeleportableObjectClone : TrackedCloneBase<TeleportableObject>, ISwappable
     {
-        public event Action<TeleportData> OnTeleport; 
+        public event Action<TeleportData> OnTeleport;
+        
+        // Return currentTarget.OnSwap
+        public Action<SwapData> OnSwap { get; set; }
 
         private PhysicsObjectClone physicsObjectClone;
         private LocalTransformClone[] transformClones;
@@ -70,5 +73,6 @@ namespace PerceptionVR.Portals
         } 
 
         private void OnDestroy() => currentTarget.OnTeleport -= OnTargetTeleportCallback;
+        
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using PerceptionVR.Portals;
 using PerceptionVR.Debug;
-using PerceptionVR.Global;
+using PerceptionVR.Extensions;
 using UnityEngine;
 
 namespace PerceptionVR.Physics
@@ -10,24 +10,12 @@ namespace PerceptionVR.Physics
     {
         private readonly List<Collider> shouldSwapIn = new();
         private readonly List<Collider> shouldSwapOut = new();
+        private readonly Dictionary<ISwappable, List<Collider>> swappableCollidersInside = new();
 
         protected override void Awake()
         {
             base.Awake();
-            GlobalEvents.OnSwap += swapData =>
-            {
-                if(collidersInside.Count == 0)
-                    return;
-                var applicableSwaps = SwapUtility.GetApplicableSwaps(collidersInside, swapData.colliderSwaps);
-                foreach (var applicableSwap in applicableSwaps)
-                {
-                    collidersInside.Remove(applicableSwap.toRemove);
-                    collidersInside.Add(applicableSwap.toAdd);
-                    shouldSwapOut.Add(applicableSwap.toRemove);
-                    shouldSwapIn.Add(applicableSwap.toAdd);
-                }
-            };
-            
+
             OnBeforeProcessQueue += () =>
             {
                 if (shouldSwapIn.Count != 0)
@@ -51,20 +39,77 @@ namespace PerceptionVR.Physics
                     }
                     shouldSwapOut.Clear();
                 }
-
             };
         }
         
         protected override void OnTriggerEnter(Collider other)
         {
-            if(!shouldSwapIn.Remove(other))    // Confirm swap in
-                base.OnTriggerEnter(other);    // Or do standard OnTriggerEnter
+            // Try confirm swap in
+            if (!shouldSwapIn.Remove(other))   
+            {
+                // Register swappable   
+                TryRegisterSwappable(other);
+                    
+                // Do standard OnTriggerEnter
+                base.OnTriggerEnter(other);    
+            }    
+                
         }
         
         protected override void OnTriggerExit(Collider other)
         {
-            if(!shouldSwapOut.Remove(other))   // Confirm swap out
-                base.OnTriggerExit(other);     // Or do standard OnTriggerExit
+            // Try confirm swap out
+            if (!shouldSwapOut.Remove(other)) 
+            {
+                // Unregister swappable
+                TryUnregisterSwappable(other);
+                
+                // Do standard OnTriggerExit
+                base.OnTriggerExit(other);     
+            }
+                
+        }
+        
+        private void PerformSwap(SwapData swapData)
+        {
+            SwapUtility.PerformSwap(collidersInside, swapData.colliderSwaps, out var appliedSwaps);
+            foreach (var applicableSwap in appliedSwaps)
+            {
+                // Note:
+                // I already have ISwappable in swapData.
+                // If slow => Make "RegisterSwappable" without GetComponentInParent
+                TryUnregisterSwappable(applicableSwap.removed);
+                TryRegisterSwappable(applicableSwap.added);
+                shouldSwapOut.Add(applicableSwap.removed);
+                shouldSwapIn.Add(applicableSwap.added);
+            }
+        }
+
+        private void TryRegisterSwappable(Collider other)
+        {
+            if (other.TryGetComponentInParent(out ISwappable swappable))
+            {
+                if(swappableCollidersInside.TryGetValue(swappable, out var colliders))
+                    colliders.Add(other);
+                else
+                {
+                    swappableCollidersInside.Add(swappable, new List<Collider> {other});
+                    swappable.OnSwap += PerformSwap;
+                }
+            }
+        }
+        
+        private void TryUnregisterSwappable(Collider other)
+        {
+            if (other.TryGetComponentInParent(out ISwappable swappable) && swappableCollidersInside.TryGetValue(swappable, out var colliders))
+            {
+                colliders.Remove(other);
+                if (colliders.Count == 0)
+                {
+                    swappableCollidersInside.Remove(swappable);
+                    swappable.OnSwap -= PerformSwap;
+                }
+            }
         }
     }
 }
