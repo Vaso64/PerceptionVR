@@ -78,3 +78,7 @@ omnisharp.json
 
 # Rider
 .idea/
+
+Assets/Scripts/Portal/SwapSystem/SwapUtility_LEGACY.cs
+
+Assets/Scripts/Portal/SwapSystem/SwapUtility_LEGACY.cs.meta

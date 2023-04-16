@@ -31,14 +31,9 @@ namespace PerceptionVR.Player
         private Grabbable holdingItem;
         private List<Grabbable> grabbableItems = new();
 
-
-        private void Awake()
-        {
-            GetComponentInChildren<Renderer>().material.color = Color.red;
-        }
-
         private void Start()
         {
+            GetComponentInChildren<Renderer>().material.color = Color.red;
             this.playerInput = FindObjectOfType<VRPlayerInput>();
             
             // Register hand to player input events

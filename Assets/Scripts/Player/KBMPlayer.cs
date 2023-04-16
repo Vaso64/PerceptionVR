@@ -30,15 +30,6 @@ namespace PerceptionVR.Player
 
         private PlayerInputAction.KBMPlayerActions playerActions;
 
-        protected override void Awake()
-        {
-            base.Awake();
-            var playerInputAction = new PlayerInputAction();
-            playerInputAction.Enable();
-            this.playerActions = playerInputAction.KBMPlayer;
-            grabJoint = GetComponent<TeleportableJoint>();
-        }
-
         private void OnValidate()
         {
             var joint = GetComponent<ConfigurableJoint>();
@@ -49,6 +40,10 @@ namespace PerceptionVR.Player
 
         private void Start()
         {
+            var playerInputAction = new PlayerInputAction();
+            playerInputAction.Enable();
+            this.playerActions = playerInputAction.KBMPlayer;
+            grabJoint = GetComponent<TeleportableJoint>();
             this.playerActions.Grab.started += _ => OnGrab();
         }
 
