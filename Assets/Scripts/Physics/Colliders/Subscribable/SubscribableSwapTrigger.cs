@@ -52,8 +52,7 @@ namespace PerceptionVR.Physics
                     
                 // Do standard OnTriggerEnter
                 base.OnTriggerEnter(other);    
-            }    
-                
+            }
         }
         
         protected override void OnTriggerExit(Collider other)
@@ -67,12 +66,12 @@ namespace PerceptionVR.Physics
                 // Do standard OnTriggerExit
                 base.OnTriggerExit(other);     
             }
-                
         }
         
         private void PerformSwap(SwapData swapData)
         {
             SwapUtility.PerformSwap(collidersInside, swapData.colliderSwaps, out var appliedSwaps);
+            SwapUtility.PerformSwap(collidersInsideLastFrame, swapData.colliderSwaps);
             foreach (var applicableSwap in appliedSwaps)
             {
                 // Note:
@@ -80,8 +79,6 @@ namespace PerceptionVR.Physics
                 // If slow => Make "RegisterSwappable" without GetComponentInParent
                 TryUnregisterSwappable(applicableSwap.removed);
                 TryRegisterSwappable(applicableSwap.added);
-                StartCoroutine(AddLastFrame(applicableSwap.added));
-                StartCoroutine(RemoveLastFrame(applicableSwap.removed));
                 shouldSwapOut.Add(applicableSwap.removed);
                 shouldSwapIn.Add(applicableSwap.added);
             }

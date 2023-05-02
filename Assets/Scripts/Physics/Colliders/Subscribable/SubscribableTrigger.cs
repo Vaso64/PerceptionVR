@@ -11,7 +11,7 @@ namespace PerceptionVR.Physics
         public IEnumerator<Collider> GetEnumerator() => collidersInside.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         [SerializeField] protected List<Collider> collidersInside = new();
-        [SerializeField] public List<Collider> collidersInsideLastFrame = new();
+        public List<Collider> collidersInsideLastFrame = new();
     
         protected readonly Queue<Collider> onTriggerEnterQueue = new();
         public event Action<Collider> onTriggerEnter;
@@ -40,6 +40,8 @@ namespace PerceptionVR.Physics
             isProcessingQueue = true;
             yield return new WaitForFixedUpdate();
             OnBeforeProcessQueue?.Invoke();
+            
+            // Trigger enter
             while (onTriggerEnterQueue.Count > 0)
             {
                 var other = onTriggerEnterQueue.Dequeue();
@@ -47,19 +49,24 @@ namespace PerceptionVR.Physics
                 onTriggerEnter?.Invoke(other);
             }
             
+            // Trigger exit
             while (onTriggerExitQueue.Count > 0)
             {
                 var other = onTriggerExitQueue.Dequeue();
                 //Debugger.LogInfo($"OnTriggerExit {other} from {this}");
                 onTriggerExit?.Invoke(other);
             }
+
+            // Update last frame
+            collidersInsideLastFrame.Clear();
+            collidersInsideLastFrame.AddRange(collidersInside);
+            
             isProcessingQueue = false;
         }
     
         protected virtual void OnTriggerEnter(Collider other)
         {
             collidersInside.Add(other);
-            StartCoroutine(AddLastFrame(other));
             onTriggerEnterQueue.Enqueue(other);
             ProcessQueue();
         }
@@ -67,23 +74,8 @@ namespace PerceptionVR.Physics
         protected virtual void OnTriggerExit(Collider other)
         {
             collidersInside.Remove(other);
-            StartCoroutine(RemoveLastFrame(other));
             onTriggerExitQueue.Enqueue(other);
             ProcessQueue();
-        }
-        
-        protected IEnumerator AddLastFrame(Collider other)
-        {
-            yield return new WaitForFixedUpdate();
-            yield return new WaitForFixedUpdate();
-            collidersInsideLastFrame.Add(other);
-        }
-
-        protected IEnumerator RemoveLastFrame(Collider other)
-        {
-            yield return new WaitForFixedUpdate();
-            yield return new WaitForFixedUpdate();
-            collidersInsideLastFrame.Remove(other);
         }
     }
 }
