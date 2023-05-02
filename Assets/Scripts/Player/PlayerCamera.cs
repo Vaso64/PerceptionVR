@@ -2,21 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
-using PerceptionVR.Extensions;
 using PerceptionVR.Portals;
 using UnityEngine;
 
 namespace PerceptionVR.Player
 {
-    public class PlayerCamera: MonoBehaviourBase, ITeleportableBehaviour
+    public class PlayerCamera : MonoBehaviourBase, ITeleportableBehaviour
     {
-        public Rect viewportRect = new (0, 0, 1, 1);
-        public Matrix4x4 projectionMatrix;
-        public bool pmDirection;
-        public bool scissor;
-        public bool resetProjectionMatrix;
-        
-        private Camera playerCamera;
+        private Camera cameraComponent;
         
         private Matrix4x4 currentViewMatrix;
         private Matrix4x4 currentProjectionMatrix;
@@ -27,11 +20,12 @@ namespace PerceptionVR.Player
         
         private void Start()
         {
-            playerCamera = GetComponent<Camera>();
-            playerCamera.nearClipPlane = 0.0001f;
+            cameraComponent = GetComponent<Camera>();
+            cameraComponent.nearClipPlane = 0.0001f;
             // Portal group belonging to the closest portal
             currentRenderGroup = FindObjectsOfType<PortalRenderer>().MinBy(renderer => Vector3.Distance(transform.position, renderer.transform.position)).Min().renderGroup;
-            GetComponentInParent<TeleportableObject>().OnTeleport += teleportData => currentRenderGroup = teleportData.outPortal.GetComponent<PortalRenderer>().renderGroup;
+            //if(this.TryGetComponentInParent(out TeleportableObject teleportableObject))
+            //    teleportableObject.OnTeleport += teleportData => currentRenderGroup = teleportData.outPortal.GetComponent<PortalRenderer>().renderGroup;
         }
         
 
@@ -55,58 +49,32 @@ namespace PerceptionVR.Player
 
         public void OnTeleport(CloneData cloneData)
         {
-            var cloneCamera = cloneData.clone.GetComponent<Camera>();
-            var originalCamera = cloneData.original.GetComponent<Camera>();
-            (cloneCamera.enabled, originalCamera.enabled) = (originalCamera.enabled, cloneCamera.enabled);
+            var cloneCamera = cloneData.clone.GetComponent<PlayerCamera>();
+            var originalCamera = cloneData.original.GetComponent<PlayerCamera>();
+            (cloneCamera.cameraComponent.enabled, originalCamera.cameraComponent.enabled) = (originalCamera.cameraComponent.enabled, cloneCamera.cameraComponent.enabled);
+            (cloneCamera.currentRenderGroup, originalCamera.currentRenderGroup) = (originalCamera.currentRenderGroup, cloneCamera.currentRenderGroup);
         }
 
 
         private void Update()
         {
             //playerCamera.ResetProjectionMatrix();
-            this.currentProjectionMatrix = this.playerCamera.projectionMatrix;
-            this.currentViewMatrix = this.playerCamera.worldToCameraMatrix;
-
+            this.currentProjectionMatrix = this.cameraComponent.projectionMatrix;
+            this.currentViewMatrix = this.cameraComponent.worldToCameraMatrix;
         }
 
         private void OnPreRender()
         {
-            if(playerCamera.stereoEnabled)
+            if(cameraComponent.stereoEnabled)
             {
-                playerCamera.projectionMatrix = this.currentProjectionMatrix;
-                playerCamera.worldToCameraMatrix = this.currentViewMatrix;
+                cameraComponent.projectionMatrix = this.currentProjectionMatrix;
+                cameraComponent.worldToCameraMatrix = this.currentViewMatrix;
             }
-            
-            // Scissor rect
-            //playerCamera.ResetProjectionMatrix();
-
-            if (scissor)
-            {
-                playerCamera.SetScissorRect(viewportRect);
-                scissor = false;
-            }
-            
-            if (resetProjectionMatrix)
-            {
-                playerCamera.ResetProjectionMatrix();
-                resetProjectionMatrix = false;
-            }
-            
-            //playerCamera.ResetProjectionMatrix();
-            //playerCamera.rect = new Rect(0, 0, 1, 1);   
-            //playerCamera.SetScissorRect(viewportRect);
-            
-            
-                
-            if(pmDirection) playerCamera.projectionMatrix = projectionMatrix;
-            else            projectionMatrix = playerCamera.projectionMatrix;
 
             // Render portals
-            var frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
+            var frustumPlanes = GeometryUtility.CalculateFrustumPlanes(cameraComponent);
             foreach (var portalRenderer in currentRenderGroup)
-                portalRenderer.OnBeforePlayerCameraRenderCallback(playerCamera, frustumPlanes);
-
-            //OnBeforePlayerCameraRender?.Invoke(this.playerCamera, GeometryUtility.CalculateFrustumPlanes(this.playerCamera));
+                portalRenderer.OnBeforePlayerCameraRenderCallback(cameraComponent, frustumPlanes);
         } 
     }
 }
