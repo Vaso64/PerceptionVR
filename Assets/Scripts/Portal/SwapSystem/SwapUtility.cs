@@ -42,9 +42,11 @@ namespace PerceptionVR.Portals
             var set = new HashSet<T>(collection);
             foreach (var (a, b) in swaps)
             {
-                if (set.Contains(a))
+                var aInSet = set.Contains(a);
+                var bInSet = set.Contains(b);
+                if (aInSet && !bInSet)
                     yield return (a, b);
-                else if (set.Contains(b))
+                else if (bInSet && !aInSet)
                     yield return (b, a);
             }
         }
