@@ -1,5 +1,3 @@
-using System;
-using PerceptionVR.Common;
 using PerceptionVR.Physics;
 using UnityEngine;
 using UnityEngine.InputSystem;

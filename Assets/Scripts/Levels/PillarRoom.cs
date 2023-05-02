@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using PerceptionVR.Levels;
 using PerceptionVR.Puzzle;

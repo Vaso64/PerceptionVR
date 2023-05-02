@@ -1,4 +1,3 @@
-using PerceptionVR.Extensions;
 using UnityEngine;
 
 namespace PerceptionVR.Portals

@@ -1,7 +1,6 @@
 using PerceptionVR.Physics;
 using PerceptionVR.Portals;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace PerceptionVR.Levels
 {

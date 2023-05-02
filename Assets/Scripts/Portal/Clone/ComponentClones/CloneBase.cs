@@ -1,6 +1,4 @@
 using UnityEngine;
-using PerceptionVR.Debug;
-using UnityEngine.Serialization;
 
 
 namespace PerceptionVR.Portals

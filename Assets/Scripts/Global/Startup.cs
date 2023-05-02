@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using PerceptionVR.Debug;
-using PerceptionVR.Player;
 using UnityEngine.XR.Management;
 
 namespace PerceptionVR.Global

@@ -27,10 +27,9 @@ namespace PerceptionVR.Levels
                 pressedButton.OnPressed.AddListener(() =>
                 {
                     controlGroup.state = !controlGroup.state;
-                    foreach (var indicator in controlGroup.indicators)
-                        indicator.SetColor(controlGroup.state ? Color.green : Color.red);
-                    foreach (var button in controlGroup.buttons) button.SetColor(controlGroup.state ? Color.green : Color.red);
-                    foreach (var door in doors) door.SetOpen(controlGroups.All(group => group.state));
+                    foreach (var indicator in controlGroup.indicators) indicator.SetColor(controlGroup.state ? Color.green : Color.red);
+                    foreach (var button in controlGroup.buttons)          button.SetColor(controlGroup.state ? Color.green : Color.red);
+                    foreach (var door in doors)                             door.SetOpen(controlGroups.All(group => group.state));
                 });
             }
         }

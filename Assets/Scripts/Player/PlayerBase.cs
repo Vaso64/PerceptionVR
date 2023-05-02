@@ -1,4 +1,3 @@
-using System;
 using PerceptionVR.Physics;
 using PerceptionVR.Portals;
 using UnityEngine;

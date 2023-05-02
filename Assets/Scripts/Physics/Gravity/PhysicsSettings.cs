@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-using PerceptionVR.Global;
 using UnityEngine;
 
 namespace PerceptionVR.Physics

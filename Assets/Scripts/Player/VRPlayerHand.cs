@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using PerceptionVR.Extensions;
 using PerceptionVR.Common;
 using MoreLinq.Extensions;
-using PerceptionVR.Portals;
 using PerceptionVR.Debug;
 using PerceptionVR.Physics;
 

@@ -1,5 +1,3 @@
-using System;
-using PerceptionVR.Extensions;
 using UnityEngine;
 
 namespace PerceptionVR.Puzzle

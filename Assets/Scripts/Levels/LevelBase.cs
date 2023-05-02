@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace PerceptionVR.Levels
 {
     public class LevelBase: MonoBehaviourBase

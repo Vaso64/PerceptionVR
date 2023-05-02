@@ -5,7 +5,7 @@ using PerceptionVR.Global;
 
 namespace PerceptionVR.Common.Generic
 {
-    // Collection of type T which last for only N frameS
+    // Collection of type T which last for only N frames
     public class TemporaryCollection<T> : ICollection<T>
     {
         private readonly Dictionary<T, int> _collection = new();

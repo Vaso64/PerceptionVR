@@ -1,14 +1,11 @@
-using System;
 using System.Collections.Generic;
 using PerceptionVR.Extensions;
 using PerceptionVR.Global;
 using PerceptionVR.Common;
-using PerceptionVR.Player;
 using UnityEngine;
 using System.Linq;
 using MoreLinq.Extensions;
 using PerceptionVR.Debug;
-using UnityEngine.UI;
 
 namespace PerceptionVR.Portals
 {

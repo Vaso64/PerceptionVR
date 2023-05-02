@@ -1,9 +1,7 @@
-using PerceptionVR.Common;
 using PerceptionVR.Extensions;
 using PerceptionVR.Physics;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace PerceptionVR.Puzzle
 {

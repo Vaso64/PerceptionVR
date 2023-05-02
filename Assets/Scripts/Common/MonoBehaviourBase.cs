@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MonoBehaviourBase: MonoBehaviour
+public abstract class MonoBehaviourBase: MonoBehaviour
 {
     [SerializeField] protected bool debugInstance = false;
 }

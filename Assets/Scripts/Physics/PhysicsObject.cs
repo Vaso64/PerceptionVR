@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using PerceptionVR.Extensions;
 using PerceptionVR.Common;
-using PerceptionVR.Debug;
 using UnityEngine;
 
 namespace PerceptionVR.Physics
