@@ -156,9 +156,9 @@ namespace PerceptionVR.Portals
             // Notify swap
             GlobalEvents.OnSwap?.Invoke(swapData);
             
-            // Create copy of OnSwap event
-            var ntOnSwap = (Action<SwapData>)nt.teleportableObject.OnSwap.Clone();
-            var ntcOnSwap = (Action<SwapData>)nt.cloneTeleportableObject.OnSwap.Clone();
+            // Create copy of OnSwap event to avoid double swap
+            var ntOnSwap = (Action<SwapData>)nt.teleportableObject.OnSwap?.Clone();
+            var ntcOnSwap = (Action<SwapData>)nt.cloneTeleportableObject.OnSwap?.Clone();
 
             ntOnSwap?.Invoke(swapData);
             ntcOnSwap?.Invoke(swapData);
@@ -214,7 +214,7 @@ namespace PerceptionVR.Portals
                 {
                     var componentType = component.GetType();
                     if (!preservedComponents.Any(preserveComp => preserveComp == componentType || componentType.IsSubclassOf(preserveComp)))
-                        GameObjectUtility.DestroyComponentNotify(component);
+                        GameObjectUtility.DestroyComponentImmediateNotify(component);
                 }
                 
                 // Add TransformClone
