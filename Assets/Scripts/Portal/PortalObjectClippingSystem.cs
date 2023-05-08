@@ -9,22 +9,22 @@ namespace PerceptionVR.Portals
     public class PortalObjectClippingSystem: MonoBehaviourBase
     {
         private static bool _registeredSwapCallback = false;
-        private static readonly int ClipPlane = Shader.PropertyToID("_ClipPlane");
+        private static readonly int ClipPlaneProperty = Shader.PropertyToID("_ClipPlane");
+        private Vector4 portalPlaneVec;
 
         private void Start()
         {
             var vicinity = GetComponent<PortalVicinity>();
             var portal = GetComponent<Portal>();
-            
-            var zeroPlane = new Plane(Vector3.zero, 0);
+            portalPlaneVec = portal.portalPlane.ToVector4();
 
-            vicinity.OnFrontToPass  += other =>   ClipByPlane(other, portal.portalPlane);
+            vicinity.OnFrontToPass  += other =>   ClipByPlane(other, portalPlaneVec);
 
-            vicinity.OnPassToFront  += other =>   ClipByPlane(other, zeroPlane);
+            vicinity.OnPassToFront  += other =>   ClipByPlane(other, Vector4.zero);
 
             vicinity.OnPassToInside += other =>   HideCompletely(other, true);
 
-            vicinity.OnInsideToPass += other => { HideCompletely(other, false); ClipByPlane(other, portal.portalPlane); };
+            vicinity.OnInsideToPass += other => { HideCompletely(other, false); ClipByPlane(other, portalPlaneVec); };
             
             vicinity.OnCloneIn += clone => clone.GetComponentsInChildren<Renderer>().ForEach( r => r.enabled = false);
 
@@ -35,10 +35,10 @@ namespace PerceptionVR.Portals
             }
         }
         
-        private static void ClipByPlane(Component component, Plane plane)
+        private void ClipByPlane(Component component, Vector4 plane)
         {
-            if (component.TryGetComponent(out Renderer renderer))
-                renderer.material.SetVector(ClipPlane, plane.ToVector4());
+            if (component.TryGetComponent(out Renderer renderer)) 
+                renderer.material.SetVector(ClipPlaneProperty, plane);
         }
         
         private static void HideCompletely(Component component, bool hide)
@@ -51,10 +51,10 @@ namespace PerceptionVR.Portals
         {
             foreach (var renderSwap in swapData.rendererSwaps)
             {
-                var item1ClipPlane = renderSwap.Item1.material.GetVector(ClipPlane);
-                var item2ClipPlane = renderSwap.Item2.material.GetVector(ClipPlane);
-                renderSwap.Item1.material.SetVector(ClipPlane, item2ClipPlane);
-                renderSwap.Item2.material.SetVector(ClipPlane, item1ClipPlane);
+                var item1ClipPlane = renderSwap.Item1.material.GetVector(ClipPlaneProperty);
+                var item2ClipPlane = renderSwap.Item2.material.GetVector(ClipPlaneProperty);
+                renderSwap.Item1.material.SetVector(ClipPlaneProperty, item2ClipPlane);
+                renderSwap.Item2.material.SetVector(ClipPlaneProperty, item1ClipPlane);
                 (renderSwap.Item1.enabled, renderSwap.Item2.enabled) = (renderSwap.Item2.enabled, renderSwap.Item1.enabled);
             }
         }
