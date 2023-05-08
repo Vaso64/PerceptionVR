@@ -23,7 +23,7 @@ namespace PerceptionVR.Player
         private Grabbable grabbable;
         private Grabbable holdingItem;
         private TeleportableJoint grabJoint;
-
+        private Ray grabRay;
 
 
         private PlayerInputAction.KBMPlayerActions playerActions;
@@ -57,7 +57,11 @@ namespace PerceptionVR.Player
             }
             
             // Grab detection
-            grabbable = UnityEngine.Physics.Raycast(transform.position, transform.forward, out var hit, grabRange) ? hit.collider.GetComponent<Grabbable>() : null;
+            grabRay.origin = transform.position;
+            grabRay.direction = transform.forward;
+            grabbable = UnityEngine.Physics.Raycast(grabRay, out var hit, grabRange, UnityEngine.Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore) 
+                            ? hit.collider.GetComponent<Grabbable>() 
+                            : null;
         }
     
         private void Move(Vector3 direction, bool sprint)
