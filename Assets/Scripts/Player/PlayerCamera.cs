@@ -23,7 +23,7 @@ namespace PerceptionVR.Player
             cameraComponent = GetComponent<Camera>();
             cameraComponent.nearClipPlane = 0.0001f;
             // Portal group belonging to the closest portal
-            currentRenderGroup = FindObjectsOfType<PortalRenderer>().MinBy(renderer => Vector3.Distance(transform.position, renderer.transform.position)).Min().renderGroup;
+            //currentRenderGroup = FindObjectsOfType<PortalRenderer>().MinBy(renderer => Vector3.Distance(transform.position, renderer.transform.position)).Min().renderGroup;
             //if(this.TryGetComponentInParent(out TeleportableObject teleportableObject))
             //    teleportableObject.OnTeleport += teleportData => currentRenderGroup = teleportData.outPortal.GetComponent<PortalRenderer>().renderGroup;
         }
@@ -32,7 +32,9 @@ namespace PerceptionVR.Player
         public void OnCreateClone(CloneData cloneData, out IEnumerable<Type> preservedComponents)
         {
             preservedComponents = new[] { typeof(Camera), typeof(PlayerCamera) };
-            cloneData.clone.GetComponent<Camera>().enabled = false;
+            cloneData.clone.GetComponentInChildren<Camera>().enabled = false;;
+            cloneData.clone.GetComponentInChildren<PlayerCamera>().currentRenderGroup = cloneData.outPortal.GetComponent<PortalRenderer>().renderGroup;
+            
         }
 
         public void OnEnterPortal(CloneData cloneData)
