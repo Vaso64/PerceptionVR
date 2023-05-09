@@ -24,6 +24,7 @@ namespace PerceptionVR.Puzzle
         private void Awake()
         {
             meshFilter = button.GetComponentInChildren<MeshFilter>();
+            isPressed = false;
             
             // Setup joint
             button.gravityRotation = transform.rotation;

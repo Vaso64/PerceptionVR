@@ -53,7 +53,7 @@ namespace PerceptionVR.Player
             playerActions.LeftControllerGrab.started += _ => OnLeftControllerGrabbed?.Invoke();
             playerActions.LeftControllerGrab.canceled += _=> OnLeftControllerReleased?.Invoke();
             playerActions.Jump.started += _ => OnJump?.Invoke();
-            playerActions.Reset.started += _ => OnReset?.Invoke();
+            playerActions.Reset.performed += _ => OnReset?.Invoke();
         }
 
         public void FixedUpdate()

@@ -14,7 +14,10 @@ namespace PerceptionVR.Global
         [SerializeField] private string[] manualArgs;
         
         [SerializeField] private List<GameObject> vrOnlyObjects;
+        [SerializeField] private List<Behaviour>  vrOnlyComponents;
         [SerializeField] private List<GameObject> kbmOnlyObjects;
+        [SerializeField] private List<Behaviour>  kbmOnlyComponents;
+        
         
         private void Start()
         {
@@ -28,18 +31,17 @@ namespace PerceptionVR.Global
         
         private void SetMode(IEnumerable<string> args)
         {
-            if (args.Contains("-vr"))
-            {
-                vrOnlyObjects.ForEach(o => o.SetActive(true));
-                kbmOnlyObjects.ForEach(o => o.SetActive(false));
-                StartCoroutine(StartXR());
-            }
+            var vrEnabled = args.Contains("-vr");
             
-            else
-            {
-                vrOnlyObjects.ForEach(o => o.SetActive(false));
-                kbmOnlyObjects.ForEach(o => o.SetActive(true));
-            }
+            vrOnlyComponents.ForEach(c =>  c.enabled = vrEnabled);
+            kbmOnlyComponents.ForEach(c => c.enabled = !vrEnabled);
+            vrOnlyObjects.ForEach(o =>  o.SetActive( vrEnabled));
+            kbmOnlyObjects.ForEach(o => o.SetActive(!vrEnabled));
+            
+            
+            // Start XR session if VR is enabled
+            if(vrEnabled)
+                StartCoroutine(StartXR());
         }
 
         private void OnDestroy()

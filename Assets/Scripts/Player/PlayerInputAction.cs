@@ -402,7 +402,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""id"": ""41153559-6f29-4f23-8811-d09b8d8ccb79"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold(duration=2)"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -598,7 +598,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""5f16ff0d-a75e-496b-ac4b-030f33a66239"",
                     ""path"": ""<XRController>/menu"",
-                    ""interactions"": ""Hold(duration=2)"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Reset"",
