@@ -10,6 +10,9 @@ namespace PerceptionVR.Global
 {
     public class RenderingManagment: MonoBehaviourBase
     {
+        public static int portalRenderCount;
+        [SerializeField] private bool logPortalRenderCount = false;
+        
         public static event Action<DisplayMode, Vector2Int> OnResolutionChange;
         public static readonly Dictionary<DisplayMode, Vector2Int> CurrentResolutions = new ()
         {
@@ -21,6 +24,14 @@ namespace PerceptionVR.Global
         void Start()
         {
             StartCoroutine(ResolutionTracker());
+        }
+
+        private void Update()
+        {
+            if(logPortalRenderCount){
+                Debugger.LogInfo($"Portal render count: {portalRenderCount}");
+                portalRenderCount = 0;
+            }
         }
 
 

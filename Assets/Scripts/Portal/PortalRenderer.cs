@@ -137,6 +137,7 @@ namespace PerceptionVR.Portals
             portalRendSharedMat.mainTextureScale = visibleArea.size;
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
+            RenderingManagment.portalRenderCount++;
             
             // Notify after render
             visiblePortalRenderers?.ForEach(x => x.Item1.OnAfterPortalRenderCallback(displayMode));
