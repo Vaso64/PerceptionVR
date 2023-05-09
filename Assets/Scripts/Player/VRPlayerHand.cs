@@ -14,6 +14,7 @@ namespace PerceptionVR.Player
     public class VRPlayerHand: MonoBehaviourBase
     {
         private VRPlayerInput playerInput;
+        [SerializeField] private VRPlayerHand otherHand;
         
         [SerializeField] private Side handSide;
         
@@ -98,6 +99,11 @@ namespace PerceptionVR.Player
             
             // Get nearest grabbable item
             holdingItem = grabbableItems.MinBy(item => Vector3.Distance(item.collider.ClosestPoint(transform.position), transform.position)).First();
+            
+            // TODO: Fix manualTeleport setting from multiple sources
+            // Temp workaround for physics joint bug when holding item with both hands
+            if (otherHand.holdingItem == holdingItem)
+                otherHand.OnRelease();
 
             // Create fixed grab joint to hold item
             Debugger.LogInfo(holdingItem.transform.name + " grabbed by " + handSide + " hand");
