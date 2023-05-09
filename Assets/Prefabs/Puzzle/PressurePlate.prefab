@@ -372,7 +372,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugInstance: 0
   startingGravityDirection: 1
-  insomnia: 0
+  insomnia: 1
   sleepTimer: 0
   averagePositionDelta: 0
 --- !u!1 &1161926366235984801

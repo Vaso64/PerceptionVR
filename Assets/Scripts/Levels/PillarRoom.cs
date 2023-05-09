@@ -7,6 +7,7 @@ public class PillarRoom : LevelBase
 {
     [SerializeField] private Button pressurePlate;
     [SerializeField] private Door door;
+    [SerializeField] private float doorCloseTimeout;
     
     private Coroutine closeDoorCoroutine;
     
@@ -18,6 +19,7 @@ public class PillarRoom : LevelBase
 
     private void OnActivateCallback()
     {
+        pressurePlate.SetColor(Color.green);
         if(closeDoorCoroutine != null)
             StopCoroutine(closeDoorCoroutine);
         door.Open();
@@ -27,7 +29,9 @@ public class PillarRoom : LevelBase
 
     private IEnumerator CloseDoorTimeout()
     {
-        yield return new WaitForSeconds(7f);
+        pressurePlate.SetColor(Color.yellow);
+        yield return new WaitForSeconds(doorCloseTimeout);
+        pressurePlate.SetColor(Color.red);
         door.Close();
     }
 }

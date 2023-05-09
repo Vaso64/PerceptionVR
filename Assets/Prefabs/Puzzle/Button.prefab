@@ -545,6 +545,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugInstance: 0
   startingGravityDirection: 1
-  insomnia: 0
+  insomnia: 1
   sleepTimer: 0
   averagePositionDelta: 0
