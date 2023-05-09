@@ -11,28 +11,18 @@ public class MirrorRooms : LevelBase
     [System.Serializable] private class Room
     {
         public List<Portal> portals;
-    }
-    
-    [System.Serializable] private class ButtonRoom : Room
-    {
         public Button button;
         public Indicator indicator;
         public bool wasPressed;
     }
-    
-    [System.Serializable] private class MainRoom : Room
-    {
-        public Door exitDoor;
-    }
-    
-    [SerializeField] private MainRoom mainRoom = new();
-    [SerializeField] private List<ButtonRoom> buttonRooms = new();
+
+    [SerializeField] private Door exitDoor;
+    [SerializeField] private List<Room> rooms = new();
 
     private void Start()
     {
         // Get list of unconnected portals and rooms
-        var notConnectedRooms = buttonRooms.Cast<Room>().ToList();
-        notConnectedRooms.Add(mainRoom);
+        var notConnectedRooms = rooms.ToList();
         var notConnectedPortal = notConnectedRooms.SelectMany(x => x.portals).ToList();
         if (notConnectedPortal.Count % 2 != 0)
             Debug.LogWarning("Uneven number of total portals.");
@@ -62,21 +52,21 @@ public class MirrorRooms : LevelBase
         }
 
         // Add listeners to buttons
-        foreach (var room in buttonRooms)
+        foreach (var room in rooms)
         {
             room.button.OnPressed.AddListener(() => OnButtonPressed(room));
             room.button.OnChanged.AddListener(active => room.button.SetColor(active ? Color.green : Color.red));
         }
     }
 
-    private void OnButtonPressed(ButtonRoom pressedButtonRoom)   
+    private void OnButtonPressed(Room pressedButtonRoom)   
     {
         // If button was already pressed => Reset
-        if (pressedButtonRoom.wasPressed) foreach (var room in buttonRooms)
+        if (pressedButtonRoom.wasPressed) foreach (var room in rooms)
         {
             room.wasPressed = false;
             room.indicator.SetColor(Color.red);
-            mainRoom.exitDoor.Close();
+            exitDoor.Close();
         }
         // If not => Set button to pressed
         else
@@ -86,7 +76,7 @@ public class MirrorRooms : LevelBase
         }
         
         // If all buttons are pressed => Open exit door
-        if (buttonRooms.All(room => room.wasPressed))
-            mainRoom.exitDoor.Open();
+        if (rooms.All(room => room.wasPressed))
+            exitDoor.Open();
     }
 }
