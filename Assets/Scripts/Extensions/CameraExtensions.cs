@@ -63,14 +63,14 @@ namespace PerceptionVR.Extensions
                 return corners;
             }
             
-            public static void SetNearPlane(this Camera camera, Plane plane, float offset = 0f, float dropOffset = 0.001f)
+            public static void SetNearPlane(this Camera camera, Plane plane, float offset = 0f)
             { 
                 plane.distance += offset;
                 var planePos = plane.ClosestPointOnPlane(camera.transform.position);
                 var dotProduct = Vector3.Dot(plane.normal, planePos - camera.transform.position);
 
                 // Skip if plane is behind the camera's near plane 
-                if (dotProduct + dropOffset > 0) // TODO: Fixed offsetting will probably break portal's which are scaled down too much
+                if (dotProduct + camera.nearClipPlane > 0) // TODO: Fixed offsetting will probably break portal's which are scaled down too much
                     return;
                 Vector3 cameraSpacePos = camera.worldToCameraMatrix.MultiplyPoint(planePos);
                 Vector3 cameraSpaceNormal = camera.worldToCameraMatrix.MultiplyVector(plane.normal) * Mathf.Sign(dotProduct);

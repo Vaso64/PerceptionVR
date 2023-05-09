@@ -148,6 +148,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugInstance: 0
   portalCamera: {fileID: 397232496080956894}
+  nearClipOffset: -0.0025
   renderGroup: {fileID: 0}
   pairedRenderGroup: {fileID: 0}
 --- !u!114 &6323915873169480460
@@ -223,6 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugInstance: 0
+  clipPlaneOffset: -0.0025
 --- !u!64 &3138777714870243395
 MeshCollider:
   m_ObjectHideFlags: 0

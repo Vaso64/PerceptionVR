@@ -14,6 +14,7 @@ namespace PerceptionVR.Portals
     {
         // References
         [SerializeField] private Camera portalCamera;
+        [SerializeField] private float nearClipOffset = -0.0025f;
         
         
         private Portal portal;
@@ -34,7 +35,7 @@ namespace PerceptionVR.Portals
         };
         
         public PortalRenderGroup renderGroup;
-        public PortalRenderGroup pairedRenderGroup;
+        public PortalRenderGroup pairRenderGroup;
 
         private void Awake()
         {
@@ -56,14 +57,14 @@ namespace PerceptionVR.Portals
         {
             Debugger.LogInfo($"Portal renderer {this} enabled");
             renderGroup.Add(this);
-            pairedRenderGroup = portalRendererPair.renderGroup;
+            pairRenderGroup = portalRendererPair.renderGroup;
         }
         
         private void DisablePortalRenderer()
         {
             Debugger.LogInfo($"Portal renderer {this} disabled");
             renderGroup.Remove(this);
-            pairedRenderGroup = null;
+            pairRenderGroup = null;
         }
 
         private void AllocateRTArray(DisplayMode displayMode, Vector2Int resolution)
@@ -108,7 +109,7 @@ namespace PerceptionVR.Portals
             portalCamera.targetTexture = RTArrays[displayMode][recursionDepth]; // Set's camera resolution
             var pairPose = portal.PairPose(fromPose);
             portalCamera.transform.SetPose(pairPose);
-            portalCamera.SetNearPlane(portal.portalPair.portalPlane, offset: -0.0015f, dropOffset: 0.01f);
+            portalCamera.SetNearPlane(portal.portalPair.portalPlane, offset: nearClipOffset);
             portalCamera.SetScissorRect(visibleArea);
             var pm = portalCamera.projectionMatrix;
 
@@ -118,7 +119,7 @@ namespace PerceptionVR.Portals
             {
                 Rect prVisibleArea = default;
                 var portalCameraFrustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
-                visiblePortalRenderers = pairedRenderGroup
+                visiblePortalRenderers = pairRenderGroup
                     .Where(pr => pr.IsVisibleFrom(portalCamera, portalCameraFrustum, out prVisibleArea))
                     .Select(pr => (pr, prVisibleArea))
                     .ToArray();

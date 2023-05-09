@@ -8,6 +8,8 @@ namespace PerceptionVR.Portals
     [RequireComponent(typeof(PortalVicinity), typeof(Portal))]
     public class PortalObjectClippingSystem: MonoBehaviourBase
     {
+        [SerializeField] private float clipPlaneOffset;
+        
         private static bool _registeredSwapCallback = false;
         private static readonly int ClipPlaneProperty = Shader.PropertyToID("_ClipPlane");
         private Vector4 portalPlaneVec;
@@ -17,6 +19,7 @@ namespace PerceptionVR.Portals
             var vicinity = GetComponent<PortalVicinity>();
             var portal = GetComponent<Portal>();
             portalPlaneVec = portal.portalPlane.ToVector4();
+            portalPlaneVec.w += clipPlaneOffset;
 
             vicinity.OnFrontToPass  += other =>   ClipByPlane(other, portalPlaneVec);
 
