@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace PerceptionVR.Player
 {
+    // TODO: Remove, mostly redundant, can be inside VRPlayer
     public class VRPlayerInput: MonoBehaviourBase
     {
         private PlayerInputAction.VRPlayerActions playerActions;
@@ -35,7 +36,8 @@ namespace PerceptionVR.Player
         public event Action OnLeftControllerGrabbed;
         public event Action OnLeftControllerReleased;
         public event Action OnJump;
-    
+        public event Action OnReset;
+            
         private void Awake()
         {
             var playerInputAction = new PlayerInputAction();
@@ -46,11 +48,12 @@ namespace PerceptionVR.Player
 
         private void Start()
         {
-            playerActions.RightControllerGrab.started += ctx => OnRightControllerGrabbed?.Invoke();
-            playerActions.RightControllerGrab.canceled += ctx => OnRightControllerReleased?.Invoke();
-            playerActions.LeftControllerGrab.started += ctx => OnLeftControllerGrabbed?.Invoke();
-            playerActions.LeftControllerGrab.canceled += ctx => OnLeftControllerReleased?.Invoke();
-            playerActions.Jump.started += ctx => OnJump?.Invoke();
+            playerActions.RightControllerGrab.started += _ => OnRightControllerGrabbed?.Invoke();
+            playerActions.RightControllerGrab.canceled += _ => OnRightControllerReleased?.Invoke();
+            playerActions.LeftControllerGrab.started += _ => OnLeftControllerGrabbed?.Invoke();
+            playerActions.LeftControllerGrab.canceled += _=> OnLeftControllerReleased?.Invoke();
+            playerActions.Jump.started += _ => OnJump?.Invoke();
+            playerActions.Reset.started += _ => OnReset?.Invoke();
         }
 
         public void FixedUpdate()

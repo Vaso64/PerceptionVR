@@ -4,6 +4,7 @@ using UnityEngine.XR;
 using System;
 using System.Collections.Generic;
 using PerceptionVR.Common;
+using PerceptionVR.Debug;
 
 namespace PerceptionVR.Global
 {
@@ -27,7 +28,8 @@ namespace PerceptionVR.Global
             while(true){
                 // VR
                 if(XRSettings.enabled){
-                    if(CurrentResolutions[DisplayMode.VR].x != XRSettings.eyeTextureWidth || CurrentResolutions[DisplayMode.VR].y !=  XRSettings.eyeTextureHeight){
+                    if(CurrentResolutions[DisplayMode.VR].x != XRSettings.eyeTextureWidth || CurrentResolutions[DisplayMode.VR].y != XRSettings.eyeTextureHeight){
+                        Debugger.LogInfo($"Updating VR resolution to {XRSettings.eyeTextureWidth}x{XRSettings.eyeTextureHeight}");
                         CurrentResolutions[DisplayMode.VR] = new Vector2Int(XRSettings.eyeTextureWidth, XRSettings.eyeTextureHeight);
                         OnResolutionChange?.Invoke(DisplayMode.VR, CurrentResolutions[DisplayMode.VR]);
                     }
@@ -36,6 +38,7 @@ namespace PerceptionVR.Global
                 // Flat
                 if (CurrentResolutions[DisplayMode.Desktop].x != Screen.width || CurrentResolutions[DisplayMode.Desktop].y != Screen.height)
                 {
+                    Debugger.LogInfo($"Updating desktop resolution to {Screen.width}x{Screen.height}");
                     CurrentResolutions[DisplayMode.Desktop] = new Vector2Int(Screen.width, Screen.height);
                     OnResolutionChange?.Invoke(DisplayMode.Desktop, CurrentResolutions[DisplayMode.Desktop]);
                 }

@@ -96,7 +96,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""id"": ""2af38dcd-2b9f-4644-a43c-e1d24354f02c"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold(duration=2)"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -395,6 +395,15 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reset"",
+                    ""type"": ""Button"",
+                    ""id"": ""41153559-6f29-4f23-8811-d09b8d8ccb79"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -584,6 +593,17 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5f16ff0d-a75e-496b-ac4b-030f33a66239"",
+                    ""path"": ""<XRController>/menu"",
+                    ""interactions"": ""Hold(duration=2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -655,6 +675,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         m_VRPlayer_LeftEyeRotation = m_VRPlayer.FindAction("LeftEyeRotation", throwIfNotFound: true);
         m_VRPlayer_RightEyeRotation = m_VRPlayer.FindAction("RightEyeRotation", throwIfNotFound: true);
         m_VRPlayer_Jump = m_VRPlayer.FindAction("Jump", throwIfNotFound: true);
+        m_VRPlayer_Reset = m_VRPlayer.FindAction("Reset", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -818,6 +839,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_VRPlayer_LeftEyeRotation;
     private readonly InputAction m_VRPlayer_RightEyeRotation;
     private readonly InputAction m_VRPlayer_Jump;
+    private readonly InputAction m_VRPlayer_Reset;
     public struct VRPlayerActions
     {
         private @PlayerInputAction m_Wrapper;
@@ -837,6 +859,7 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         public InputAction @LeftEyeRotation => m_Wrapper.m_VRPlayer_LeftEyeRotation;
         public InputAction @RightEyeRotation => m_Wrapper.m_VRPlayer_RightEyeRotation;
         public InputAction @Jump => m_Wrapper.m_VRPlayer_Jump;
+        public InputAction @Reset => m_Wrapper.m_VRPlayer_Reset;
         public InputActionMap Get() { return m_Wrapper.m_VRPlayer; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -891,6 +914,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Jump.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnJump;
+                @Reset.started -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnReset;
+                @Reset.performed -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnReset;
+                @Reset.canceled -= m_Wrapper.m_VRPlayerActionsCallbackInterface.OnReset;
             }
             m_Wrapper.m_VRPlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -940,6 +966,9 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
+                @Reset.started += instance.OnReset;
+                @Reset.performed += instance.OnReset;
+                @Reset.canceled += instance.OnReset;
             }
         }
     }
@@ -990,5 +1019,6 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
         void OnLeftEyeRotation(InputAction.CallbackContext context);
         void OnRightEyeRotation(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnReset(InputAction.CallbackContext context);
     }
 }

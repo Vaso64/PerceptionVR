@@ -34,6 +34,8 @@ namespace PerceptionVR.Player
             vrInput = FindObjectOfType<VRPlayerInput>();
             
             vrInput.OnJump += Jump;
+
+            vrInput.OnReset += Global.GameLoop.ResetGame;
         }
 
         private void OnValidate()

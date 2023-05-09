@@ -39,6 +39,9 @@ namespace PerceptionVR.Portals
 
         private void Awake()
         {
+            // Allocate RTs
+            AllocateRTArray(DisplayMode.Desktop, RenderingManagment.CurrentResolutions[DisplayMode.Desktop]);
+            AllocateRTArray(DisplayMode.VR, RenderingManagment.CurrentResolutions[DisplayMode.VR]);
             RenderingManagment.OnResolutionChange += AllocateRTArray;
             
             // Get references
@@ -55,27 +58,24 @@ namespace PerceptionVR.Portals
 
         private void EnablePortalRenderer(PortalRenderer portalRendererPair)
         {
-            Debugger.LogInfo($"Portal renderer {this} enabled");
             renderGroup.Add(this);
             pairRenderGroup = portalRendererPair.renderGroup;
         }
         
         private void DisablePortalRenderer()
         {
-            Debugger.LogInfo($"Portal renderer {this} disabled");
             renderGroup.Remove(this);
             pairRenderGroup = null;
         }
 
         private void AllocateRTArray(DisplayMode displayMode, Vector2Int resolution)
         {
-            // Free old RTs
+            if (resolution == Vector2Int.zero) return;
             for (var i = 0; i <= RecursionLimit; i++)
+            {
                 RTArrays[displayMode][i]?.Release();
-
-            // Allocate
-            for (var i = 0; i <= RecursionLimit; i++)
                 RTArrays[displayMode][i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.Default);
+            }
         }
 
 

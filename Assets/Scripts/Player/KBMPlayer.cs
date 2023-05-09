@@ -43,6 +43,7 @@ namespace PerceptionVR.Player
             this.playerActions = playerInputAction.KBMPlayer;
             grabJoint = GetComponent<TeleportableJoint>();
             this.playerActions.Grab.started += _ => OnGrab();
+            this.playerActions.Reset.performed += _ => Global.GameLoop.ResetGame();
         }
 
         protected virtual void FixedUpdate()

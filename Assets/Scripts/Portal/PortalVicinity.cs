@@ -115,9 +115,14 @@ namespace PerceptionVR.Portals
                 handlerTuple.subscribableTrigger.onTriggerExit  += handlerTuple.filterExitHandler;
             }
 
-            // Wait for first physics frame to finish and remove RB 
-            yield return new WaitForFixedUpdate();
-            DestroyImmediate(largeArea.GetComponent<Rigidbody>());
+            // Wait for all vicinities to be detected
+            for (var i = 0; i < 3; i++)
+                yield return new WaitForFixedUpdate();
+            
+            // Wait for RB removal
+            Destroy(largeArea.GetComponent<Rigidbody>());
+            yield return null;
+
 
             // Normal behaviour
             foreach (var handlerTuple in handlerTupleList)
@@ -129,12 +134,18 @@ namespace PerceptionVR.Portals
             }
         }
 
+        private readonly List<PortalVicinity> nearbyVicinities = new();
         private void RBTriggerFilter(Collider other, Action<Collider> normalHandler, Action<Collider> bypassEvent)
         {
             // If other is a other vicinity
             var otherVicinity = other.GetComponentInParent<PortalVicinity>();
-            if(otherVicinity != null && otherVicinity != this && other.GetComponent<Portal>() == null)
-                bypassEvent?.Invoke(other);
+            if (otherVicinity != null && otherVicinity != this && !nearbyVicinities.Contains(otherVicinity))
+            {
+                nearbyVicinities.Add(otherVicinity);
+                foreach (var otherArea in new[] { otherVicinity.largeArea, otherVicinity.frontArea, otherVicinity.passingArea, otherVicinity.insideArea})
+                    bypassEvent(otherArea.collider);
+            }
+
             else if(other.GetComponentInParent<PhysicsObject>() != null)
                 normalHandler(other);
         }
