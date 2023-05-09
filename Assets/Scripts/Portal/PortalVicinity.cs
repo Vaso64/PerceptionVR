@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using PerceptionVR.Debug;
 using PerceptionVR.Physics;
@@ -28,15 +30,7 @@ namespace PerceptionVR.Portals
         public       Action<GameObject> OnCloneIn; // Invoked by PortalCloneSystem
 
 
-        private void Awake()
-        {
-            largeArea.onTriggerEnter   += OnLargeAreaEnter;
-            largeArea.onTriggerExit    += OnLargeAreaExit;
-            frontArea.onTriggerEnter   += OnFrontAreaEnter;
-            frontArea.onTriggerExit    += OnFrontAreaExit;
-            passingArea.onTriggerEnter += OnPassingAreaEnter;
-            passingArea.onTriggerExit  += OnPassingAreaExit;
-        }
+        private void Awake() => StartCoroutine(FirstFrameFilterControl());
 
         private void OnLargeAreaEnter(Collider other)
         {
@@ -96,6 +90,59 @@ namespace PerceptionVR.Portals
             
             else
                 Debugger.LogWarning($"Collider {other} exited passing area to unknown area");
+        }
+        
+        
+        
+        // largeArea is a rigidbody in the first frame so it can capture other vicinities
+        private IEnumerator FirstFrameFilterControl()
+        {
+            var handlerTupleList = new List<(SubscribableTrigger subscribableTrigger, Action<Collider> filterEnterHandler, Action<Collider> normalEnterHandler,
+                                                                                      Action<Collider> filterExitHandler,  Action<Collider> normalExitHandler)>
+            {
+                (largeArea,   other => RBTriggerFilter(other, OnLargeAreaEnter, OnOutsideToLarge), OnLargeAreaEnter, 
+                              other => RBTriggerFilter(other, OnLargeAreaExit,  OnLargeToOutside), OnLargeAreaExit),
+                (frontArea,   other => NormalTriggerFilter(other, OnFrontAreaEnter),   OnFrontAreaEnter, 
+                              other => NormalTriggerFilter(other, OnFrontAreaExit),    OnFrontAreaExit),
+                (passingArea, other => NormalTriggerFilter(other, OnPassingAreaEnter), OnPassingAreaEnter, 
+                              other => NormalTriggerFilter(other, OnPassingAreaExit),  OnPassingAreaExit),
+            };
+
+            // Special first frame behaviour
+            foreach (var handlerTuple in handlerTupleList)
+            {
+                handlerTuple.subscribableTrigger.onTriggerEnter += handlerTuple.filterEnterHandler;
+                handlerTuple.subscribableTrigger.onTriggerExit  += handlerTuple.filterExitHandler;
+            }
+
+            // Wait for first physics frame to finish and remove RB 
+            yield return new WaitForFixedUpdate();
+            DestroyImmediate(largeArea.GetComponent<Rigidbody>());
+
+            // Normal behaviour
+            foreach (var handlerTuple in handlerTupleList)
+            {
+                handlerTuple.subscribableTrigger.onTriggerEnter -= handlerTuple.filterEnterHandler;
+                handlerTuple.subscribableTrigger.onTriggerExit  -= handlerTuple.filterExitHandler;
+                handlerTuple.subscribableTrigger.onTriggerEnter += handlerTuple.normalEnterHandler;
+                handlerTuple.subscribableTrigger.onTriggerExit  += handlerTuple.normalExitHandler;
+            }
+        }
+
+        private void RBTriggerFilter(Collider other, Action<Collider> normalHandler, Action<Collider> bypassEvent)
+        {
+            // If other is a other vicinity
+            var otherVicinity = other.GetComponentInParent<PortalVicinity>();
+            if(otherVicinity != null && otherVicinity != this && other.GetComponent<Portal>() == null)
+                bypassEvent?.Invoke(other);
+            else if(other.GetComponentInParent<PhysicsObject>() != null)
+                normalHandler(other);
+        }
+        
+        private static void NormalTriggerFilter(Collider other, Action<Collider> normalHandler)
+        {
+            if (!other.isTrigger)
+                normalHandler(other);
         }
     }
 }
