@@ -88,7 +88,7 @@ namespace PerceptionVR.Global
             // Allocate new RTs
             for (var i = 0; i < RenderTexturePoolSize; i++)
             {
-                var rt = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.Default)
+                var rt = new RenderTexture(resolution.x, resolution.y, 0, RenderTextureFormat.ARGB32)
                 {
                     name = $"Portal RT {displayMode} #{i}",
                     antiAliasing = 1,
