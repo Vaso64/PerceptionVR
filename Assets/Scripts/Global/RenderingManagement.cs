@@ -8,7 +8,7 @@ using PerceptionVR.Debug;
 
 namespace PerceptionVR.Global
 {
-    public class RenderingManagment: MonoBehaviourBase
+    public class RenderingManagement: MonoBehaviourBase
     {
         // Resolution tracking
         public static event Action<DisplayMode, Vector2Int> OnResolutionChange;

@@ -73,7 +73,7 @@ namespace PerceptionVR.Portals
             portalCamera.ResetProjectionMatrix();
             portalCamera.rect = new Rect(0, 0, 1, 1);
             portalCamera.fieldOfView = fov;
-            portalCamera.targetTexture = RenderingManagment.PeekRTPool(displayMode); // Sets resolution
+            portalCamera.targetTexture = RenderingManagement.PeekRTPool(displayMode); // Sets resolution
             var pairPose = portal.PairPose(fromPose);
             portalCamera.transform.SetPose(pairPose);
             portalCamera.SetNearPlane(portal.portalPair.portalPlane, offset: nearClipOffset);
@@ -82,7 +82,7 @@ namespace PerceptionVR.Portals
 
             // Get visible portals
             var visiblePortalRenderers = new (PortalRenderer visibleRenderer, Rect visibleArea)[] {};
-            if (recursionDepth < RenderingManagment.PortalRecursionLimit)
+            if (recursionDepth < RenderingManagement.PortalRecursionLimit)
                 visiblePortalRenderers = pairRenderGroup.GetVisible(portalCamera).ToArray();
 
             // Render visible (recurse)
@@ -94,10 +94,10 @@ namespace PerceptionVR.Portals
             portalCamera.rect = visibleArea;
             portalRendSharedMat.mainTextureOffset = visibleArea.position;
             portalRendSharedMat.mainTextureScale = visibleArea.size;
-            portalCamera.targetTexture = RenderingManagment.GetRTFromPool(displayMode);
+            portalCamera.targetTexture = RenderingManagement.GetRTFromPool(displayMode);
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
-            RenderingManagment.portalRenderCount++;
+            RenderingManagement.portalRenderCount++;
             
             // Notify after render
             visiblePortalRenderers.ForEach(x => x.visibleRenderer.OnAfterParentRender());
@@ -113,7 +113,7 @@ namespace PerceptionVR.Portals
         public void OnAfterParentRender()
         {
             // Return RT to shared pool
-            RenderingManagment.ReturnRTToPool(lastDisplayMode, rendererTexturesStack.Pop());
+            RenderingManagement.ReturnRTToPool(lastDisplayMode, rendererTexturesStack.Pop());
 
             // Set portal to previous texture
             if (rendererTexturesStack.Count > 0)
