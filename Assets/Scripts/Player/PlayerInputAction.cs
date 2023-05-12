@@ -585,8 +585,8 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""e92b9eb9-3a33-41c3-bf77-07aeba9e60bc"",
-                    ""path"": ""<WMRSpatialController>/touchpadClicked"",
+                    ""id"": ""3f9b98cf-016a-40cc-89c3-3c967cf01e2e"",
+                    ""path"": ""<XRController>/primaryButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -602,6 +602,17 @@ public partial class @PlayerInputAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Reset"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5e860c88-45a6-429d-a2bf-069c3f39dffc"",
+                    ""path"": ""<XRController>/touchpadClicked"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
