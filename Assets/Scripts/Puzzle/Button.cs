@@ -28,6 +28,7 @@ namespace PerceptionVR.Puzzle
             
             // Setup joint
             button.gravityRotation = transform.rotation;
+            button.transform.localPosition = new Vector3(0, buttonHeight + buttonOffset, 0);
             var joint = GetComponent<ConfigurableJoint>();
             joint.anchor = new Vector3(0, buttonHeight, 0);
             joint.linearLimit = new SoftJointLimit { limit = buttonOffset };
@@ -36,12 +37,8 @@ namespace PerceptionVR.Puzzle
         
         private void Update()
         {
-            // Wait for physic joint settle
-            if(Time.time < 1f)
-                return;
-            
             // Button pressed this frame
-            if (button.transform.localPosition.y < buttonHeight && !isPressed)
+            if (!isPressed && button.transform.localPosition.y < buttonHeight)
             {
                 isPressed = true;
                 OnPressed?.Invoke();
@@ -49,7 +46,7 @@ namespace PerceptionVR.Puzzle
             }   
                 
             // Button released this frame
-            if (button.transform.localPosition.y > buttonHeight && isPressed)
+            if (isPressed && button.transform.localPosition.y > buttonHeight)
             {
                 isPressed = false;
                 OnReleased?.Invoke();

@@ -372,6 +372,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button
       objectReference: {fileID: 0}
+    - target: {fileID: 1082764334312831285, guid: 3ebffe551c789c645939d978f7a72a20, type: 3}
+      propertyPath: buttonHeight
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082764334312831285, guid: 3ebffe551c789c645939d978f7a72a20, type: 3}
+      propertyPath: buttonOffset
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 1082764334738344521, guid: 3ebffe551c789c645939d978f7a72a20, type: 3}
       propertyPath: m_Mesh
       value: 
