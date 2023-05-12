@@ -19,6 +19,7 @@ namespace PerceptionVR.Global
         };
 
         // Portal rendering
+        public const bool PortalScissorRendering = false;
         public const int PortalRecursionLimit = 2;
         private const int RenderTexturePoolSize = 16;
         private static readonly Dictionary<DisplayMode, Stack<RenderTexture>> RTPool = new()

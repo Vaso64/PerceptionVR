@@ -60,8 +60,11 @@ namespace PerceptionVR.Portals
         public void StartRenderPortalChain(Camera fromCamera, Rect visibleArea)
         {
             RenderPortal(fromCamera.transform.GetPose(), visibleArea, fromCamera.fieldOfView, fromCamera.GetDisplayMode(), 0);
-            portalRendSharedMat.mainTextureOffset = fromCamera.rect.position; 
-            portalRendSharedMat.mainTextureScale = fromCamera.rect.size;
+            if (RenderingManagement.PortalScissorRendering)
+            {
+                portalRendSharedMat.mainTextureOffset = fromCamera.rect.position; 
+                portalRendSharedMat.mainTextureScale = fromCamera.rect.size;
+            }
         } 
 
         
@@ -77,13 +80,14 @@ namespace PerceptionVR.Portals
             var pairPose = portal.PairPose(fromPose);
             portalCamera.transform.SetPose(pairPose);
             portalCamera.SetNearPlane(portal.portalPair.portalPlane, offset: nearClipOffset);
-            portalCamera.SetScissorRect(visibleArea);
+            if(RenderingManagement.PortalScissorRendering)
+                portalCamera.SetScissorRect(visibleArea);
             var pm = portalCamera.projectionMatrix;
 
             // Get visible portals
             var visiblePortalRenderers = new (PortalRenderer visibleRenderer, Rect visibleArea)[] {};
             if (recursionDepth < RenderingManagement.PortalRecursionLimit)
-                visiblePortalRenderers = pairRenderGroup.GetVisible(portalCamera).ToArray();
+                visiblePortalRenderers = pairRenderGroup.GetVisible(portalCamera, visibleArea).ToArray();
 
             // Render visible (recurse)
             visiblePortalRenderers.ForEach(x => x.visibleRenderer.RenderPortal(pairPose, x.visibleArea, fov, displayMode, recursionDepth + 1));
@@ -91,9 +95,12 @@ namespace PerceptionVR.Portals
             // Render self
             portalCamera.transform.SetPose(pairPose);
             portalCamera.projectionMatrix = pm;
-            portalCamera.rect = visibleArea;
-            portalRendSharedMat.mainTextureOffset = visibleArea.position;
-            portalRendSharedMat.mainTextureScale = visibleArea.size;
+            if (RenderingManagement.PortalScissorRendering)
+            {
+                portalCamera.rect = visibleArea;
+                portalRendSharedMat.mainTextureOffset = visibleArea.position;
+                portalRendSharedMat.mainTextureScale = visibleArea.size;
+            }
             portalCamera.targetTexture = RenderingManagement.GetRTFromPool(displayMode);
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
@@ -123,7 +130,7 @@ namespace PerceptionVR.Portals
 
 
         // Returns true if the portal is visible from the camera 
-        public bool IsVisibleFrom(Camera fromCamera, Plane[] fromFrustum, out Rect visibleArea)
+        public bool IsVisibleFrom(Camera fromCamera, Plane[] fromFrustum, Rect fromArea, out Rect visibleArea)
         {
             visibleArea = Rect.zero;
             
@@ -135,9 +142,14 @@ namespace PerceptionVR.Portals
             if (!GeometryUtility.TestPlanesAABB(fromFrustum, portal.portalCollider.bounds))
                 return false;
             
+            // Overlap check (is portal visible through another portal?)
+            visibleArea = fromCamera.WorldToViewportBounds(portal.portalCollider.bounds);
+            if (!visibleArea.Overlaps(fromArea))
+                return false;
+            
             // Overlap edge check (portals overlapping but only on the edge => viewport less than one pixel)
             // Not necessary but unity complains when rendering at 0 resolution
-            visibleArea = fromCamera.WorldToViewportBounds(portal.portalCollider.bounds).Scale(fromCamera.rect).Clamp(fromCamera.rect);
+            visibleArea = visibleArea.Scale(fromCamera.rect).Clamp(fromCamera.rect);
             var screenSize = fromCamera.targetTexture != null ? new Vector2(fromCamera.targetTexture.width, fromCamera.targetTexture.height) 
                                                               : new Vector2(fromCamera.pixelWidth, fromCamera.pixelHeight);
             if (visibleArea.width * screenSize.x < 1f || visibleArea.height * screenSize.y < 1f)

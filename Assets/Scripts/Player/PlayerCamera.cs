@@ -70,7 +70,7 @@ namespace PerceptionVR.Player
             }
 
             // Render portals
-            visiblePortals = currentRenderGroup.GetVisible(cameraComponent).ToArray();
+            visiblePortals = currentRenderGroup.GetVisible(cameraComponent, cameraComponent.rect).ToArray();
             foreach (var visiblePortal in visiblePortals)
                 visiblePortal.portalRenderer.StartRenderPortalChain(cameraComponent, visiblePortal.visibleArea);
         }
