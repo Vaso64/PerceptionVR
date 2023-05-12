@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
 using PerceptionVR.Portals;
 using UnityEngine;
 
@@ -16,16 +15,13 @@ namespace PerceptionVR.Player
         
         
         [SerializeField] private PortalRenderGroup currentRenderGroup;
+        private (PortalRenderer portalRenderer, Rect visibleArea)[] visiblePortals;
         
         
         private void Start()
         {
             cameraComponent = GetComponent<Camera>();
             cameraComponent.nearClipPlane = 0.0001f;
-            // Portal group belonging to the closest portal
-            //currentRenderGroup = FindObjectsOfType<PortalRenderer>().MinBy(renderer => Vector3.Distance(transform.position, renderer.transform.position)).Min().renderGroup;
-            //if(this.TryGetComponentInParent(out TeleportableObject teleportableObject))
-            //    teleportableObject.OnTeleport += teleportData => currentRenderGroup = teleportData.outPortal.GetComponent<PortalRenderer>().renderGroup;
         }
         
 
@@ -74,9 +70,15 @@ namespace PerceptionVR.Player
             }
 
             // Render portals
-            var frustumPlanes = GeometryUtility.CalculateFrustumPlanes(cameraComponent);
-            foreach (var portalRenderer in currentRenderGroup)
-                portalRenderer.OnBeforePlayerCameraRenderCallback(cameraComponent, frustumPlanes);
-        } 
+            visiblePortals = currentRenderGroup.GetVisible(cameraComponent).ToArray();
+            foreach (var visiblePortal in visiblePortals)
+                visiblePortal.portalRenderer.StartRenderPortalChain(cameraComponent, visiblePortal.visibleArea);
+        }
+
+        private void OnPostRender()
+        {
+            foreach (var visiblePortal in visiblePortals)
+                visiblePortal.portalRenderer.OnAfterParentRender();
+        }
     }
 }

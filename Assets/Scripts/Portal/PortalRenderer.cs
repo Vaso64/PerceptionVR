@@ -22,28 +22,15 @@ namespace PerceptionVR.Portals
         private Material portalRendSharedMat;
         private MaterialPropertyBlock portalPropBlock;
         private static readonly int MainTex = Shader.PropertyToID("_MainTex");
-
-        private const int RecursionLimit = 2;
-
-        private Dictionary<DisplayMode, RenderTexture[]> RTArrays = new () {
-            { DisplayMode.VR, new RenderTexture[RecursionLimit + 1] },
-            { DisplayMode.Desktop, new RenderTexture[RecursionLimit + 1] }
-        };
-        private Dictionary<DisplayMode, Stack<int>> RTArraysIndexStack = new () {
-            { DisplayMode.VR, new Stack<int>(RecursionLimit) },
-            { DisplayMode.Desktop, new Stack<int>(RecursionLimit) }
-        };
         
-        public PortalRenderGroup renderGroup;
-        public PortalRenderGroup pairRenderGroup;
+        private readonly Stack<RenderTexture> rendererTexturesStack = new();
+        private DisplayMode lastDisplayMode;
+
+        public PortalRenderGroup renderGroup { get; private set; }
+        private PortalRenderGroup pairRenderGroup;
 
         private void Awake()
         {
-            // Allocate RTs
-            AllocateRTArray(DisplayMode.Desktop, RenderingManagment.CurrentResolutions[DisplayMode.Desktop]);
-            AllocateRTArray(DisplayMode.VR, RenderingManagment.CurrentResolutions[DisplayMode.VR]);
-            RenderingManagment.OnResolutionChange += AllocateRTArray;
-            
             // Get references
             portal = GetComponentInParent<Portal>();
             portalRend = GetComponent<Renderer>();
@@ -67,90 +54,76 @@ namespace PerceptionVR.Portals
             renderGroup.Remove(this);
             pairRenderGroup = null;
         }
-
-        private void AllocateRTArray(DisplayMode displayMode, Vector2Int resolution)
+        
+        
+        // Start portal recursion chain
+        public void StartRenderPortalChain(Camera fromCamera, Rect visibleArea)
         {
-            if (resolution == Vector2Int.zero) return;
-            for (var i = 0; i <= RecursionLimit; i++)
-            {
-                RTArrays[displayMode][i]?.Release();
-                RTArrays[displayMode][i] = new RenderTexture(resolution.x, resolution.y, 24, RenderTextureFormat.Default);
-            }
-        }
+            RenderPortal(fromCamera.transform.GetPose(), visibleArea, fromCamera.fieldOfView, fromCamera.GetDisplayMode(), 0);
+            portalRendSharedMat.mainTextureOffset = fromCamera.rect.position; 
+            portalRendSharedMat.mainTextureScale = fromCamera.rect.size;
+        } 
 
-
-        public void OnBeforePlayerCameraRenderCallback(Camera playerCamera, Plane[] playerFrustum)
-        {
-            if (IsVisibleFrom(playerCamera, playerFrustum, out var visibleArea))
-            {
-                RenderPortal(playerCamera.transform.GetPose(), visibleArea, playerCamera.fieldOfView, playerCamera.GetDisplayMode(), 0);
-                portalRendSharedMat.mainTextureOffset = playerCamera.rect.position;
-                portalRendSharedMat.mainTextureScale = playerCamera.rect.size;
-            }
-        }
-
-
-        private void OnAfterPortalRenderCallback(DisplayMode displayMode)
-        {
-            // Set portal to previous texture after being rendered
-            RTArraysIndexStack[displayMode].Pop();
-            if (RTArraysIndexStack[displayMode].Count > 0)
-                portalPropBlock.SetTexture(MainTex, RTArrays[displayMode][RTArraysIndexStack[displayMode].Peek()]);
-            portalRend.SetPropertyBlock(portalPropBlock);
-        }
-
-        // Recursively renders portals
+        
+        // Single render command
         private void RenderPortal(Pose fromPose, Rect visibleArea, float fov, DisplayMode displayMode, int recursionDepth)
         {
             // Setup camera
+            lastDisplayMode = displayMode;
             portalCamera.ResetProjectionMatrix();
             portalCamera.rect = new Rect(0, 0, 1, 1);
             portalCamera.fieldOfView = fov;
-            portalCamera.targetTexture = RTArrays[displayMode][recursionDepth]; // Set's camera resolution
+            portalCamera.targetTexture = RenderingManagment.PeekRTPool(displayMode); // Sets resolution
             var pairPose = portal.PairPose(fromPose);
             portalCamera.transform.SetPose(pairPose);
             portalCamera.SetNearPlane(portal.portalPair.portalPlane, offset: nearClipOffset);
             portalCamera.SetScissorRect(visibleArea);
             var pm = portalCamera.projectionMatrix;
 
-            // Get visible portals / recurse
-            (PortalRenderer, Rect)[] visiblePortalRenderers = null;
-            if (recursionDepth < RecursionLimit)
-            {
-                Rect prVisibleArea = default;
-                var portalCameraFrustum = GeometryUtility.CalculateFrustumPlanes(portalCamera);
-                visiblePortalRenderers = pairRenderGroup
-                    .Where(pr => pr.IsVisibleFrom(portalCamera, portalCameraFrustum, out prVisibleArea))
-                    .Select(pr => (pr, prVisibleArea))
-                    .ToArray();
-            }
+            // Get visible portals
+            var visiblePortalRenderers = new (PortalRenderer visibleRenderer, Rect visibleArea)[] {};
+            if (recursionDepth < RenderingManagment.PortalRecursionLimit)
+                visiblePortalRenderers = pairRenderGroup.GetVisible(portalCamera).ToArray();
 
-            // Render visible
-            visiblePortalRenderers?.ForEach(x => x.Item1.RenderPortal(pairPose, x.Item2, portalCamera.fieldOfView, displayMode, recursionDepth + 1));
+            // Render visible (recurse)
+            visiblePortalRenderers.ForEach(x => x.visibleRenderer.RenderPortal(pairPose, x.visibleArea, fov, displayMode, recursionDepth + 1));
 
             // Render self
             portalCamera.transform.SetPose(pairPose);
-            portalCamera.targetTexture = RTArrays[displayMode][recursionDepth];
             portalCamera.projectionMatrix = pm;
             portalCamera.rect = visibleArea;
             portalRendSharedMat.mainTextureOffset = visibleArea.position;
             portalRendSharedMat.mainTextureScale = visibleArea.size;
+            portalCamera.targetTexture = RenderingManagment.GetRTFromPool(displayMode);
             portalCamera.Render();
             portalCamera.ResetProjectionMatrix();
             RenderingManagment.portalRenderCount++;
             
             // Notify after render
-            visiblePortalRenderers?.ForEach(x => x.Item1.OnAfterPortalRenderCallback(displayMode));
+            visiblePortalRenderers.ForEach(x => x.visibleRenderer.OnAfterParentRender());
 
             // Display RT
-            RTArraysIndexStack[displayMode].Push(recursionDepth);
+            rendererTexturesStack.Push(portalCamera.targetTexture);
             portalPropBlock.SetTexture(MainTex, portalCamera.targetTexture);
+            portalRend.SetPropertyBlock(portalPropBlock);
+        }
+        
+        
+        // Gets called after being rendered
+        public void OnAfterParentRender()
+        {
+            // Return RT to shared pool
+            RenderingManagment.ReturnRTToPool(lastDisplayMode, rendererTexturesStack.Pop());
+
+            // Set portal to previous texture
+            if (rendererTexturesStack.Count > 0)
+                portalPropBlock.SetTexture(MainTex, rendererTexturesStack.Peek());
             portalRend.SetPropertyBlock(portalPropBlock);
         }
 
 
         // Returns true if the portal is visible from the camera 
-        private bool IsVisibleFrom(Camera fromCamera, Plane[] fromFrustum, out Rect visibleArea)
+        public bool IsVisibleFrom(Camera fromCamera, Plane[] fromFrustum, out Rect visibleArea)
         {
             visibleArea = Rect.zero;
             
