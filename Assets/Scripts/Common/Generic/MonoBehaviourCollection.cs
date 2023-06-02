@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace PerceptionVR.Common.Generic
 {
     public abstract class MonoBehaviourCollection<T> : MonoBehaviourBase, ICollection<T>
     {
-        private readonly List<T> collection = new();
+        [SerializeField] private List<T> collection = new();
         
         // ICollection implementation
         public IEnumerator<T> GetEnumerator() => collection.GetEnumerator();

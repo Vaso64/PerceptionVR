@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using PerceptionVR.Common;
 using PerceptionVR.Debug;
 using UnityEngine.XR.Management;
 
@@ -17,6 +18,7 @@ namespace PerceptionVR.Global
         [SerializeField] private List<Behaviour>  vrOnlyComponents;
         [SerializeField] private List<GameObject> kbmOnlyObjects;
         [SerializeField] private List<Behaviour>  kbmOnlyComponents;
+        [SerializeField] private GameObject       spectatorCamera;
         
         
         private void Start()
@@ -26,18 +28,21 @@ namespace PerceptionVR.Global
             Debugger.LogInfo(string.Join(", ", args));
             
             // Set mode (VR or KBM)
-            SetMode(args);
+            var mode = args.Contains("-vr") ? DisplayMode.VR : DisplayMode.Desktop;
+            SetMode(mode);
+            
+            // Enable spectate camera
+            spectatorCamera.SetActive(mode == DisplayMode.VR && args.Contains("-spectate"));
         }
         
-        private void SetMode(IEnumerable<string> args)
+        private void SetMode(DisplayMode mode)
         {
-            var vrEnabled = args.Contains("-vr");
+            var vrEnabled = mode == DisplayMode.VR;
             
             vrOnlyComponents.ForEach(c =>  c.enabled = vrEnabled);
             kbmOnlyComponents.ForEach(c => c.enabled = !vrEnabled);
             vrOnlyObjects.ForEach(o =>  o.SetActive( vrEnabled));
             kbmOnlyObjects.ForEach(o => o.SetActive(!vrEnabled));
-            
             
             // Start XR session if VR is enabled
             if(vrEnabled)
